@@ -215,8 +215,7 @@ func WithCert(cert *tls.Certificate) Option {
 	}
 }
 
-// NoTLS sets up the gRPC server to serve TLS. If no certificate is given, a
-// random self-signed certificate will be generated.
+// NoTLS sets up the gRPC server to serve plain connections only.
 func NoTLS() Option {
 	return func(tmpl *minoTemplate) {
 		tmpl.serveTLS = false
@@ -243,8 +242,13 @@ func NewMinogrpc(listen net.Addr, public *url.URL, router router.Router, opts ..
 
 	dela.Logger.Info().Msgf("public URL is: %s", public.String())
 
+	myAddr, err := session.NewAddressFromURL(*public)
+	if err != nil {
+		return nil, xerrors.Errorf("couldn't parse public URL: %v", err)
+	}
+
 	tmpl := minoTemplate{
-		myAddr:   session.NewAddress(public.Host + public.Path),
+		myAddr:   myAddr,
 		router:   router,
 		fac:      addressFac,
 		certs:    certs.NewInMemoryStore(),
@@ -274,12 +278,10 @@ func NewMinogrpc(listen net.Addr, public *url.URL, router router.Router, opts ..
 		grpc.StreamInterceptor(otgrpc.OpenTracingStreamServerInterceptor(tracer, otgrpc.SpanDecorator(decorateServerTrace))),
 	}
 
-	if !tmpl.serveTLS && public.Scheme != "https" {
+	if !tmpl.serveTLS {
 		dela.Logger.Warn().Msg("⚠️ running in insecure mode and no TLS endpoint, you should not " +
 			"publicly expose the node's socket without TLS")
-	}
-
-	if tmpl.serveTLS {
+	} else {
 		chainBuf := o.GetCertificateChain()
 		certificates, err := x509.ParseCertificates(chainBuf)
 		if err != nil {
