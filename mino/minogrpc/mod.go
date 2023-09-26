@@ -65,6 +65,9 @@ var listener = net.Listen
 type Joinable interface {
 	mino.Mino
 
+	// ServeTLS returns true if this node is running with TLS for gRPC.
+	ServeTLS() bool
+
 	// GetCertificateChain returns the certificate chain of the instance.
 	GetCertificateChain() certs.CertChain
 
@@ -119,16 +122,16 @@ type Minogrpc struct {
 }
 
 type minoTemplate struct {
-	myAddr session.Address
-	router router.Router
-	fac    mino.AddressFactory
-	certs  certs.Storage
-	secret interface{}
-	public interface{}
-	curve  elliptic.Curve
-	random io.Reader
-	cert   *tls.Certificate
-	useTLS bool
+	myAddr   session.Address
+	router   router.Router
+	fac      mino.AddressFactory
+	certs    certs.Storage
+	secret   interface{}
+	public   interface{}
+	curve    elliptic.Curve
+	random   io.Reader
+	cert     *tls.Certificate
+	serveTLS bool
 }
 
 func (m *minoTemplate) makeCertificate() error {
@@ -212,11 +215,11 @@ func WithCert(cert *tls.Certificate) Option {
 	}
 }
 
-// DisableTLS disables TLS encryption on gRPC connections. It takes precedence
-// over WithCert.
-func DisableTLS() Option {
+// NoTLS sets up the gRPC server to serve TLS. If no certificate is given, a
+// random self-signed certificate will be generated.
+func NoTLS() Option {
 	return func(tmpl *minoTemplate) {
-		tmpl.useTLS = false
+		tmpl.serveTLS = false
 	}
 }
 
@@ -241,13 +244,13 @@ func NewMinogrpc(listen net.Addr, public *url.URL, router router.Router, opts ..
 	dela.Logger.Info().Msgf("public URL is: %s", public.String())
 
 	tmpl := minoTemplate{
-		myAddr: session.NewAddress(public.Host + public.Path),
-		router: router,
-		fac:    addressFac,
-		certs:  certs.NewInMemoryStore(),
-		curve:  elliptic.P521(),
-		random: rand.Reader,
-		useTLS: true,
+		myAddr:   session.NewAddress(public.Host + public.Path),
+		router:   router,
+		fac:      addressFac,
+		certs:    certs.NewInMemoryStore(),
+		curve:    elliptic.P521(),
+		random:   rand.Reader,
+		serveTLS: true,
 	}
 
 	for _, opt := range opts {
@@ -271,28 +274,28 @@ func NewMinogrpc(listen net.Addr, public *url.URL, router router.Router, opts ..
 		grpc.StreamInterceptor(otgrpc.OpenTracingStreamServerInterceptor(tracer, otgrpc.SpanDecorator(decorateServerTrace))),
 	}
 
-	if !tmpl.useTLS {
-		dela.Logger.Warn().Msg("⚠️ running in insecure mode, you should not " +
-			"publicly expose the node's socket")
+	if !tmpl.serveTLS && public.Scheme != "https" {
+		dela.Logger.Warn().Msg("⚠️ running in insecure mode and no TLS endpoint, you should not " +
+			"publicly expose the node's socket without TLS")
 	}
 
-	if tmpl.useTLS {
+	if tmpl.serveTLS {
 		chainBuf := o.GetCertificateChain()
-		certs, err := x509.ParseCertificates(chainBuf)
+		certificates, err := x509.ParseCertificates(chainBuf)
 		if err != nil {
 			socket.Close()
 			return nil, xerrors.Errorf("failed to parse chain: %v", err)
 		}
 
-		certsBuf := make([][]byte, len(certs))
-		for i, c := range certs {
+		certsBuf := make([][]byte, len(certificates))
+		for i, c := range certificates {
 			certsBuf[i] = c.Raw
 		}
 
 		creds := credentials.NewTLS(&tls.Config{
 			Certificates: []tls.Certificate{{
 				Certificate: certsBuf,
-				Leaf:        certs[0],
+				Leaf:        certificates[0],
 				PrivateKey:  o.secret,
 			}},
 			MinVersion: tls.VersionTLS12,
