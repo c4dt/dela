@@ -9,11 +9,11 @@ import (
 	"math"
 	"math/big"
 
-	"go.dedis.ch/dela/core/store/kv"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/serde"
-	"go.dedis.ch/dela/serde/json"
-	"go.dedis.ch/dela/serde/registry"
+	"github.com/c4dt/dela/core/store/kv"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/serde"
+	"github.com/c4dt/dela/serde/json"
+	"github.com/c4dt/dela/serde/registry"
 	"golang.org/x/xerrors"
 )
 

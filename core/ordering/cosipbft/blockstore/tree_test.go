@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/c4dt/dela/core/store/hashtree"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/core/store/hashtree"
 )
 
 func TestTreeCache_Get(t *testing.T) {

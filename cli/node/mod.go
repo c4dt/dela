@@ -6,13 +6,12 @@
 // node. See the example.
 //
 // Document Last Review: 13.10.2020
-//
 package node
 
 import (
 	"io"
 
-	"go.dedis.ch/dela/cli"
+	"github.com/c4dt/dela/cli"
 )
 
 // Builder is the builder that will be provided to the initializers, which can

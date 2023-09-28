@@ -9,13 +9,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/c4dt/dela/cli"
+	"github.com/c4dt/dela/cli/node"
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/mino/minogrpc"
+	"github.com/c4dt/dela/mino/minogrpc/certs"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/cli"
-	"go.dedis.ch/dela/cli/node"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/mino/minogrpc"
-	"go.dedis.ch/dela/mino/minogrpc/certs"
 )
 
 func TestCertAction_Execute(t *testing.T) {

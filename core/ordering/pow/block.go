@@ -6,8 +6,8 @@ import (
 	"encoding/binary"
 	"math/big"
 
-	"go.dedis.ch/dela/core/validation"
-	"go.dedis.ch/dela/crypto"
+	"github.com/c4dt/dela/core/validation"
+	"github.com/c4dt/dela/crypto"
 	"golang.org/x/xerrors"
 )
 

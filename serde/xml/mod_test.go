@@ -3,8 +3,8 @@ package xml
 import (
 	"testing"
 
+	"github.com/c4dt/dela/serde"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/serde"
 )
 
 func TestXMLEngine_GetFormat(t *testing.T) {

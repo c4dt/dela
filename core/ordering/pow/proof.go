@@ -3,7 +3,7 @@ package pow
 import (
 	"bytes"
 
-	"go.dedis.ch/dela/core/store/hashtree"
+	"github.com/c4dt/dela/core/store/hashtree"
 	"golang.org/x/xerrors"
 )
 

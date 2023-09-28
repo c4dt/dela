@@ -7,7 +7,7 @@
 <p style="text-align:center">
     <a href="https://github.com/dedis/dela/actions?query=workflow%3A%22Go+lint%22"><img src="https://github.com/dedis/dela/workflows/Go%20lint/badge.svg"></a>
     <a href="https://github.com/dedis/dela/actions?query=workflow%3A%22Go+test%22"><img src="https://github.com/dedis/dela/workflows/Go%20test/badge.svg"></a>
-    <a href='https://coveralls.io/github/dedis/dela?branch=master'><img src='https://coveralls.io/repos/github/dedis/dela/badge.svg?branch=master' alt='Coverage Status' /></a>
+    <a href='https://coveralls.io/github/dedis/dela?branch=main'><img src='https://coveralls.io/repos/github/dedis/dela/badge.svg?branch=main' alt='Coverage Status' /></a>
     <a href="https://goreportcard.com/report/github.com/dedis/dela"><img src="https://goreportcard.com/badge/github.com/dedis/dela"></a>
 </p>
 

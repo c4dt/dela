@@ -3,9 +3,9 @@ package command
 import (
 	"testing"
 
+	"github.com/c4dt/dela/cli"
+	"github.com/c4dt/dela/internal/testing/fake"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/cli"
-	"go.dedis.ch/dela/internal/testing/fake"
 )
 
 func TestSetCommands(t *testing.T) {

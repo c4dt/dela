@@ -11,12 +11,12 @@ import (
 	"testing"
 	"time"
 
+	accessContract "github.com/c4dt/dela/contracts/access"
+	"github.com/c4dt/dela/core/txn"
+	"github.com/c4dt/dela/core/txn/signed"
+	"github.com/c4dt/dela/crypto/bls"
+	"github.com/c4dt/dela/crypto/loader"
 	"github.com/stretchr/testify/require"
-	accessContract "go.dedis.ch/dela/contracts/access"
-	"go.dedis.ch/dela/core/txn"
-	"go.dedis.ch/dela/core/txn/signed"
-	"go.dedis.ch/dela/crypto/bls"
-	"go.dedis.ch/dela/crypto/loader"
 )
 
 func init() {
@@ -63,9 +63,9 @@ func TestIntegration_Value_Simple(t *testing.T) {
 	require.NoError(t, err)
 
 	args := []txn.Arg{
-		{Key: "go.dedis.ch/dela.ContractArg", Value: []byte("go.dedis.ch/dela.Access")},
+		{Key: "github.com/c4dt/dela.ContractArg", Value: []byte("github.com/c4dt/dela.Access")},
 		{Key: "access:grant_id", Value: []byte(hex.EncodeToString(valueAccessKey[:]))},
-		{Key: "access:grant_contract", Value: []byte("go.dedis.ch/dela.Value")},
+		{Key: "access:grant_contract", Value: []byte("github.com/c4dt/dela.Value")},
 		{Key: "access:grant_command", Value: []byte("all")},
 		{Key: "access:identity", Value: []byte(base64.StdEncoding.EncodeToString(pubKeyBuf))},
 		{Key: "access:command", Value: []byte("GRANT")},
@@ -78,7 +78,7 @@ func TestIntegration_Value_Simple(t *testing.T) {
 	require.NoError(t, err)
 
 	args = []txn.Arg{
-		{Key: "go.dedis.ch/dela.ContractArg", Value: []byte("go.dedis.ch/dela.Value")},
+		{Key: "github.com/c4dt/dela.ContractArg", Value: []byte("github.com/c4dt/dela.Value")},
 		{Key: "value:key", Value: key1},
 		{Key: "value:value", Value: []byte("value1")},
 		{Key: "value:command", Value: []byte("WRITE")},
@@ -95,7 +95,7 @@ func TestIntegration_Value_Simple(t *testing.T) {
 	require.NoError(t, err)
 
 	args = []txn.Arg{
-		{Key: "go.dedis.ch/dela.ContractArg", Value: []byte("go.dedis.ch/dela.Value")},
+		{Key: "github.com/c4dt/dela.ContractArg", Value: []byte("github.com/c4dt/dela.Value")},
 		{Key: "value:key", Value: key2},
 		{Key: "value:value", Value: []byte("value2")},
 		{Key: "value:command", Value: []byte("WRITE")},

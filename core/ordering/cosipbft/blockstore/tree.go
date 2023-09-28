@@ -8,7 +8,7 @@ package blockstore
 import (
 	"sync"
 
-	"go.dedis.ch/dela/core/store/hashtree"
+	"github.com/c4dt/dela/core/store/hashtree"
 )
 
 // TreeCache is a storage for a tree. It supports asynchronous calls.

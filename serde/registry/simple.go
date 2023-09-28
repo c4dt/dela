@@ -6,7 +6,7 @@
 package registry
 
 import (
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/serde"
 	"golang.org/x/xerrors"
 )
 

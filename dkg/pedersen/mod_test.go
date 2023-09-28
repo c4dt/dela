@@ -3,17 +3,17 @@ package pedersen
 import (
 	"testing"
 
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/crypto/ed25519"
+	"github.com/c4dt/dela/dkg"
+	"github.com/c4dt/dela/dkg/pedersen/types"
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/mino/minogrpc"
+	"github.com/c4dt/dela/mino/router/tree"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/crypto/ed25519"
-	"go.dedis.ch/dela/dkg"
-	"go.dedis.ch/dela/dkg/pedersen/types"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/mino/minogrpc"
-	"go.dedis.ch/dela/mino/router/tree"
 	"go.dedis.ch/kyber/v3"
 )
 

@@ -10,16 +10,15 @@
 // https://link.springer.com/chapter/10.1007/0-387-34805-0_22
 //
 // Documentation Last Review: 05.10.2020
-//
 package ed25519
 
 import (
 	"bytes"
 	"fmt"
 
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/serde"
-	"go.dedis.ch/dela/serde/registry"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/serde"
+	"github.com/c4dt/dela/serde/registry"
 	"go.dedis.ch/kyber/v3"
 	"go.dedis.ch/kyber/v3/sign/schnorr"
 	"go.dedis.ch/kyber/v3/suites"

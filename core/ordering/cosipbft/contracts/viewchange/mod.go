@@ -2,25 +2,24 @@
 // a chain.
 //
 // Documentation Last Review: 08.10.2020
-//
 package viewchange
 
 import (
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/core/execution"
-	"go.dedis.ch/dela/core/execution/native"
-	"go.dedis.ch/dela/core/ordering/cosipbft/authority"
-	"go.dedis.ch/dela/core/store"
-	"go.dedis.ch/dela/core/txn"
-	"go.dedis.ch/dela/serde"
-	"go.dedis.ch/dela/serde/json"
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/core/execution"
+	"github.com/c4dt/dela/core/execution/native"
+	"github.com/c4dt/dela/core/ordering/cosipbft/authority"
+	"github.com/c4dt/dela/core/store"
+	"github.com/c4dt/dela/core/txn"
+	"github.com/c4dt/dela/serde"
+	"github.com/c4dt/dela/serde/json"
 	"golang.org/x/xerrors"
 )
 
 const (
 	// ContractName is the name of the contract.
-	ContractName = "go.dedis.ch/dela.ViewChange"
+	ContractName = "github.com/c4dt/dela.ViewChange"
 
 	// AuthorityArg is the key of the argument for the new authority.
 	AuthorityArg = "viewchange:authority"

@@ -2,14 +2,13 @@
 // transactions to a store snapshot.
 //
 // Documentation Last Review: 08.10.2020
-//
 package validation
 
 import (
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/core/store"
-	"go.dedis.ch/dela/core/txn"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/core/store"
+	"github.com/c4dt/dela/core/txn"
+	"github.com/c4dt/dela/serde"
 )
 
 // TransactionResult is the result of a transaction execution.

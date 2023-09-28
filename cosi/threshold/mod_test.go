@@ -4,14 +4,14 @@ import (
 	"context"
 	"testing"
 
+	"github.com/c4dt/dela/cosi"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/crypto/bls"
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/mino/minoch"
+	"github.com/c4dt/dela/serde"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/cosi"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/crypto/bls"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/mino/minoch"
-	"go.dedis.ch/dela/serde"
 )
 
 func TestThreshold_Scenario_Basic(t *testing.T) {

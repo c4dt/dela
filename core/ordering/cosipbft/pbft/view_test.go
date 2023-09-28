@@ -3,10 +3,10 @@ package pbft
 import (
 	"testing"
 
+	"github.com/c4dt/dela/core/ordering/cosipbft/types"
+	"github.com/c4dt/dela/crypto/bls"
+	"github.com/c4dt/dela/internal/testing/fake"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/core/ordering/cosipbft/types"
-	"go.dedis.ch/dela/crypto/bls"
-	"go.dedis.ch/dela/internal/testing/fake"
 )
 
 func TestView_Getters(t *testing.T) {

@@ -3,8 +3,8 @@ package tree
 import (
 	"testing"
 
+	"github.com/c4dt/dela/internal/testing/fake"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/internal/testing/fake"
 )
 
 func TestAddrSet_Search(t *testing.T) {

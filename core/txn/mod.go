@@ -9,12 +9,11 @@
 // the transaction to be valid.
 //
 // Documentation Last Review: 08.10.2020
-//
 package txn
 
 import (
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/serde"
 )
 
 // Transaction is what triggers a smart contract execution by passing it as part

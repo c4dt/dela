@@ -5,7 +5,7 @@
 package types
 
 import (
-	"go.dedis.ch/dela/core/access"
+	"github.com/c4dt/dela/core/access"
 	"golang.org/x/xerrors"
 )
 

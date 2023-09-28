@@ -10,6 +10,6 @@ NC='\033[0m' # No Color
 echo -e "${GREEN}[LIST]${NC} list all values via node $1 using nonce $2"
 memcoin --config /tmp/node$1 pool add\
     --key private.key\
-    --args go.dedis.ch/dela.ContractArg --args go.dedis.ch/dela.Value\
+    --args github.com/c4dt/dela.ContractArg --args github.com/c4dt/dela.Value\
     --args value:command --args LIST\
     --nonce $2

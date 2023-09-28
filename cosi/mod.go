@@ -13,15 +13,14 @@
 // https://eprint.iacr.org/2018/417.pdf
 //
 // Documentation Last Review: 05.10.2020
-//
 package cosi
 
 import (
 	"context"
 
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/serde"
 )
 
 // Reactor is a collective signature event handler. Every participant must react

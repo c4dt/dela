@@ -9,9 +9,9 @@ package pbft
 import (
 	"encoding/binary"
 
-	"go.dedis.ch/dela/core/ordering/cosipbft/types"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/mino"
+	"github.com/c4dt/dela/core/ordering/cosipbft/types"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/mino"
 	"golang.org/x/xerrors"
 )
 

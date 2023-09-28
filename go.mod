@@ -1,4 +1,4 @@
-module go.dedis.ch/dela
+module github.com/c4dt/dela
 
 go 1.19
 

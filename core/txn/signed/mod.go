@@ -5,7 +5,6 @@
 // of an existing transaction.
 //
 // Documentation Last Review: 08.10.2020
-//
 package signed
 
 import (
@@ -13,13 +12,13 @@ import (
 	"io"
 	"sort"
 
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/core/txn"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/crypto/common"
-	"go.dedis.ch/dela/serde"
-	"go.dedis.ch/dela/serde/registry"
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/core/txn"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/crypto/common"
+	"github.com/c4dt/dela/serde"
+	"github.com/c4dt/dela/serde/registry"
 	"golang.org/x/xerrors"
 )
 

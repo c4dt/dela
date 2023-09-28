@@ -8,12 +8,12 @@ import (
 	"testing"
 	"testing/quick"
 
+	"github.com/c4dt/dela/core/store"
+	"github.com/c4dt/dela/core/store/hashtree"
+	"github.com/c4dt/dela/core/store/kv"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/internal/testing/fake"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/core/store"
-	"go.dedis.ch/dela/core/store/hashtree"
-	"go.dedis.ch/dela/core/store/kv"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/internal/testing/fake"
 )
 
 func TestMerkleTree_IntegrationTest(t *testing.T) {

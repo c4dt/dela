@@ -1,13 +1,12 @@
 // Package xml implements the context engine for the XML encoding.
 //
 // Documentation Last Review: 14.10.2020
-//
 package xml
 
 import (
 	"encoding/xml"
 
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/serde"
 )
 
 // xmlEngine is a context engine that uses the XML encoding. See encoding/xml.

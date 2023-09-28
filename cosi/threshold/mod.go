@@ -5,18 +5,17 @@
 // end.
 //
 // Documentation Last Review: 05.10.2020
-//
 package threshold
 
 import (
 	"sync/atomic"
 
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/cosi"
+	"github.com/c4dt/dela/cosi/threshold/types"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/mino"
 	"github.com/rs/zerolog"
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/cosi"
-	"go.dedis.ch/dela/cosi/threshold/types"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/mino"
 )
 
 var (

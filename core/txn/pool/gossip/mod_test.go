@@ -7,16 +7,16 @@ import (
 	"testing"
 	"time"
 
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/core/txn"
+	"github.com/c4dt/dela/core/txn/pool"
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/mino/gossip"
+	"github.com/c4dt/dela/mino/minoch"
+	"github.com/c4dt/dela/serde"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/core/txn"
-	"go.dedis.ch/dela/core/txn/pool"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/mino/gossip"
-	"go.dedis.ch/dela/mino/minoch"
-	"go.dedis.ch/dela/serde"
 )
 
 func TestPool_Basic(t *testing.T) {

@@ -4,11 +4,11 @@ import (
 	"testing"
 	"testing/quick"
 
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/mino"
+	minoRouter "github.com/c4dt/dela/mino/router"
+	"github.com/c4dt/dela/mino/router/tree/types"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/mino"
-	minoRouter "go.dedis.ch/dela/mino/router"
-	"go.dedis.ch/dela/mino/router/tree/types"
 )
 
 func TestRouter_GetPacketFactory(t *testing.T) {

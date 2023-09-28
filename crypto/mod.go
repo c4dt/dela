@@ -13,15 +13,14 @@
 // provide the primitives to verify using the aggregate instead of a single one.
 //
 // Documentation Last Review: 05.10.2020
-//
 package crypto
 
 import (
 	"encoding"
 	"hash"
 
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/serde"
 )
 
 // HashFactory is an interface to produce a hash digest.

@@ -6,11 +6,11 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/c4dt/dela/cli/node"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/crypto/bls"
+	"github.com/c4dt/dela/internal/testing/fake"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/cli/node"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/crypto/bls"
-	"go.dedis.ch/dela/internal/testing/fake"
 )
 
 func TestNewSignerAction(t *testing.T) {

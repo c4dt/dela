@@ -7,7 +7,7 @@ lint:
 	# Coding style static check.
 	@go install honnef.co/go/tools/cmd/staticcheck@latest
 	@go mod tidy
-	staticcheck `go list ./... | grep -Ev "(go\.dedis\.ch/dela/internal/testing|go\.dedis\.ch/dela/mino/minogrpc/ptypes)"`
+	staticcheck `go list ./... | grep -Ev "(github.com/c4dt/dela/internal/testing|github.com/c4dt/dela/mino/minogrpc/ptypes)"`
 
 vet:
 	@echo "⚠️ Warning: the following only works with go >= 1.14" && \
@@ -19,11 +19,11 @@ vet:
 check: lint vet
 	go test ./...
 
-# https://pkg.go.dev/go.dedis.ch/dela needs to be updated on the Go proxy side
-# to get the latest master. This command refreshes the proxy with the latest
-# commit on the upstream master branch.
+# https://pkg.go.dev/github.com/c4dt/dela needs to be updated on the Go proxy side
+# to get the latest main. This command refreshes the proxy with the latest
+# commit on the upstream main branch.
 # Note: CURL must be installed
 pushdoc:
 	@echo "Requesting the proxy..."
-	@curl "https://proxy.golang.org/go.dedis.ch/dela/@v/$(shell git log origin/master -1 --format=format:%H).info"
+	@curl "https://proxy.golang.org/github.com/c4dt/dela/@v/$(shell git log origin/master -1 --format=format:%H).info"
 	@echo "\nDone."

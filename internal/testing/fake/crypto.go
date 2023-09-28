@@ -3,8 +3,8 @@ package fake
 import (
 	"hash"
 
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/serde"
 )
 
 // PublicKeyFactory is a fake implementation of a public key factory.

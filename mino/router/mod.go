@@ -2,12 +2,11 @@
 // participants.
 //
 // Documentation Last Review: 06.10.2020
-//
 package router
 
 import (
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/serde"
 )
 
 // Packet is the type of message processed by the router. It contains

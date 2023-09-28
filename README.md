@@ -4,7 +4,7 @@ This framework aims to deliver a modular approach to a public ledger implementat
 
 [![Go lint](https://github.com/dedis/dela/workflows/Go%20lint/badge.svg)](https://github.com/dedis/dela/actions?query=workflow%3A%22Go+lint%22)
 [![Go test](https://github.com/dedis/dela/workflows/Go%20test/badge.svg)](https://github.com/dedis/dela/actions?query=workflow%3A%22Go+test%22)
-[![Coverage Status](https://coveralls.io/repos/github/dedis/dela/badge.svg?branch=master)](https://coveralls.io/github/dedis/dela?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/dedis/dela/badge.svg?branch=main)](https://coveralls.io/github/dedis/dela?branch=main)
 [![Go Report Card](https://goreportcard.com/badge/github.com/dedis/dela)](https://goreportcard.com/report/github.com/dedis/dela)
 
 Browse the doc at

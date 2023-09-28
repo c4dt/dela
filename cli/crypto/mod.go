@@ -7,9 +7,9 @@ import (
 	"io"
 	"os"
 
-	"go.dedis.ch/dela/cli"
-	"go.dedis.ch/dela/cli/ucli"
-	bls "go.dedis.ch/dela/crypto/bls/command"
+	"github.com/c4dt/dela/cli"
+	"github.com/c4dt/dela/cli/ucli"
+	bls "github.com/c4dt/dela/crypto/bls/command"
 )
 
 var builder cli.Builder = ucli.NewBuilder("crypto", nil)

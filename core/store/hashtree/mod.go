@@ -4,10 +4,9 @@
 // is stored in the tree, or if it is not.
 //
 // Documentation Last Review: 08.10.2020
-//
 package hashtree
 
-import "go.dedis.ch/dela/core/store"
+import "github.com/c4dt/dela/core/store"
 
 // Path is a path along the tree to a key and its value, or none if the key is
 // not set.

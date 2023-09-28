@@ -9,8 +9,8 @@ package certs
 import (
 	"errors"
 
-	"go.dedis.ch/dela/core/store/kv"
-	"go.dedis.ch/dela/mino"
+	"github.com/c4dt/dela/core/store/kv"
+	"github.com/c4dt/dela/mino"
 	"golang.org/x/xerrors"
 )
 

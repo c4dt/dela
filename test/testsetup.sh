@@ -40,9 +40,9 @@ memcoin --config /tmp/node4 access add \
 echo -e "${GREEN}[GRANT]${NC} grant access node 1 on the chain"
 memcoin --config /tmp/node1 pool add\
     --key private.key\
-    --args go.dedis.ch/dela.ContractArg --args go.dedis.ch/dela.Access\
+    --args github.com/c4dt/dela.ContractArg --args github.com/c4dt/dela.Access\
     --args access:grant_id --args 0200000000000000000000000000000000000000000000000000000000000000\
-    --args access:grant_contract --args go.dedis.ch/dela.Value\
+    --args access:grant_contract --args github.com/c4dt/dela.Value\
     --args access:grant_command --args all\
     --args access:identity --args $(crypto bls signer read --path private.key --format BASE64_PUBKEY)\
     --args access:command --args GRANT

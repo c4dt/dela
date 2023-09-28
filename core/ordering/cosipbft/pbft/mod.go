@@ -11,26 +11,25 @@
 // proof of acceptance of the block.
 //
 // Documentation Last Review: 13.10.2020
-//
 package pbft
 
 import (
 	"context"
 	"sync"
 
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/core"
+	"github.com/c4dt/dela/core/ordering/cosipbft/authority"
+	"github.com/c4dt/dela/core/ordering/cosipbft/blockstore"
+	"github.com/c4dt/dela/core/ordering/cosipbft/types"
+	"github.com/c4dt/dela/core/store"
+	"github.com/c4dt/dela/core/store/hashtree"
+	"github.com/c4dt/dela/core/store/kv"
+	"github.com/c4dt/dela/core/validation"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/mino"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rs/zerolog"
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/core"
-	"go.dedis.ch/dela/core/ordering/cosipbft/authority"
-	"go.dedis.ch/dela/core/ordering/cosipbft/blockstore"
-	"go.dedis.ch/dela/core/ordering/cosipbft/types"
-	"go.dedis.ch/dela/core/store"
-	"go.dedis.ch/dela/core/store/hashtree"
-	"go.dedis.ch/dela/core/store/kv"
-	"go.dedis.ch/dela/core/validation"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/mino"
 	"golang.org/x/xerrors"
 )
 

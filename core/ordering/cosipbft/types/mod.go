@@ -4,13 +4,12 @@
 // when importing the serde formats.
 //
 // Documentation Last Review: 13.10.2020
-//
 package types
 
 import (
-	"go.dedis.ch/dela/core/ordering/cosipbft/authority"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/core/ordering/cosipbft/authority"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/serde"
 )
 
 // Link is the interface of a link between two blocks.

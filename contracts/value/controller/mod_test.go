@@ -3,11 +3,11 @@ package controller
 import (
 	"testing"
 
+	"github.com/c4dt/dela/cli/node"
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/core/execution/native"
+	"github.com/c4dt/dela/core/store"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/cli/node"
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/core/execution/native"
-	"go.dedis.ch/dela/core/store"
 )
 
 func TestSetCommands(t *testing.T) {

@@ -3,11 +3,11 @@ package controller
 import (
 	"testing"
 
+	"github.com/c4dt/dela/cli/node"
+	"github.com/c4dt/dela/dkg/pedersen"
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/mino"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/cli/node"
-	"go.dedis.ch/dela/dkg/pedersen"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/mino"
 	"golang.org/x/xerrors"
 )
 

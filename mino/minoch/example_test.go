@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/serde"
 )
 
 func ExampleRPC_Call() {

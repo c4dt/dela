@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 
-	"go.dedis.ch/dela/serde"
-	"go.dedis.ch/dela/serde/json"
-	"go.dedis.ch/dela/serde/registry"
-	"go.dedis.ch/dela/serde/xml"
+	"github.com/c4dt/dela/serde"
+	"github.com/c4dt/dela/serde/json"
+	"github.com/c4dt/dela/serde/registry"
+	"github.com/c4dt/dela/serde/xml"
 )
 
 func ExampleMessage_Serialize() {

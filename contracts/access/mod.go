@@ -10,7 +10,6 @@
 // comas.
 //
 // Documentation Last Review: 02.02.2021
-//
 package access
 
 import (
@@ -18,18 +17,18 @@ import (
 	"encoding/hex"
 	"strings"
 
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/core/execution"
-	"go.dedis.ch/dela/core/execution/native"
-	"go.dedis.ch/dela/core/store"
-	"go.dedis.ch/dela/crypto/bls"
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/core/execution"
+	"github.com/c4dt/dela/core/execution/native"
+	"github.com/c4dt/dela/core/store"
+	"github.com/c4dt/dela/crypto/bls"
 	"golang.org/x/xerrors"
 )
 
 const (
 	// ContractName is the name of the access contract.
-	ContractName = "go.dedis.ch/dela.Access"
+	ContractName = "github.com/c4dt/dela.Access"
 
 	// GrantIDArg is the argument's name in the transaction that contains the
 	// provided id to grant

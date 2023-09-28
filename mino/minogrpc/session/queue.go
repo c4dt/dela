@@ -6,10 +6,11 @@
 package session
 
 import (
-	"go.dedis.ch/dela/mino/router"
-	"golang.org/x/xerrors"
 	"math"
 	"sync"
+
+	"github.com/c4dt/dela/mino/router"
+	"golang.org/x/xerrors"
 )
 
 // maximum capacity of the buffer is: (2^limitExponent) * initialCapacity

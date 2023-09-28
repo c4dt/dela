@@ -1,15 +1,15 @@
-modname: go.dedis.ch/dela
+modname: github.com/c4dt/dela
 overwrite: true
 outfile: graph.dot
 includes:
-  - go.dedis.ch/dela/core*
-  - go.dedis.ch/dela/cosi*
-  - go.dedis.ch/dela/cli*
-  # - go.dedis.ch/dela/mino*
-  # - go.dedis.ch/dela/serde*
-  # - go.dedis.ch/dela/crypto*
+  - github.com/c4dt/dela/core*
+  - github.com/c4dt/dela/cosi*
+  - github.com/c4dt/dela/cli*
+  # - github.com/c4dt/dela/mino*
+  # - github.com/c4dt/dela/serde*
+  # - github.com/c4dt/dela/crypto*
 excludes:
-  - go.dedis.ch/dela/core/.*(controller|store|types|json)
+  - github.com/c4dt/dela/core/.*(controller|store|types|json)
 interfaces:
   - core/access
   - core/execution

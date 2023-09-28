@@ -5,13 +5,12 @@
 // that have fallen behind.
 //
 // Documentation Last Review: 13.10.2020
-//
 package blocksync
 
 import (
 	"context"
 
-	"go.dedis.ch/dela/mino"
+	"github.com/c4dt/dela/mino"
 )
 
 // Config is the configuration to change the behaviour of the synchronization.

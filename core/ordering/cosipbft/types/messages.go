@@ -6,12 +6,12 @@
 package types
 
 import (
-	"go.dedis.ch/dela/core/ordering/cosipbft/authority"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/crypto/common"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/serde"
-	"go.dedis.ch/dela/serde/registry"
+	"github.com/c4dt/dela/core/ordering/cosipbft/authority"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/crypto/common"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/serde"
+	"github.com/c4dt/dela/serde/registry"
 	"golang.org/x/xerrors"
 )
 

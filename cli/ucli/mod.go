@@ -5,8 +5,8 @@ package ucli
 import (
 	"fmt"
 
+	"github.com/c4dt/dela/cli"
 	urfave "github.com/urfave/cli/v2"
-	"go.dedis.ch/dela/cli"
 )
 
 // Builder implements a cli builder based on urfave/cli

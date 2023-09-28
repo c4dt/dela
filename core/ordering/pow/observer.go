@@ -1,6 +1,6 @@
 package pow
 
-import "go.dedis.ch/dela/core/ordering"
+import "github.com/c4dt/dela/core/ordering"
 
 type observer struct {
 	events chan ordering.Event

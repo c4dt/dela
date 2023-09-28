@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/c4dt/dela/internal/testing/fake"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/internal/testing/fake"
 )
 
 func TestFileLoader_LoadOrCreate(t *testing.T) {

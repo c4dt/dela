@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/c4dt/dela/crypto/bls"
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/serde"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/crypto/bls"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/serde"
 	"go.dedis.ch/kyber/v3"
 )
 

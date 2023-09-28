@@ -9,14 +9,14 @@ import (
 	"context"
 	"sync"
 
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/core"
-	"go.dedis.ch/dela/core/ordering"
-	"go.dedis.ch/dela/core/store"
-	"go.dedis.ch/dela/core/store/hashtree"
-	"go.dedis.ch/dela/core/txn/pool"
-	"go.dedis.ch/dela/core/validation"
-	"go.dedis.ch/dela/crypto"
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/core"
+	"github.com/c4dt/dela/core/ordering"
+	"github.com/c4dt/dela/core/store"
+	"github.com/c4dt/dela/core/store/hashtree"
+	"github.com/c4dt/dela/core/txn/pool"
+	"github.com/c4dt/dela/core/validation"
+	"github.com/c4dt/dela/crypto"
 	"golang.org/x/xerrors"
 )
 

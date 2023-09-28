@@ -4,10 +4,10 @@ import (
 	"context"
 	"testing"
 
+	"github.com/c4dt/dela/cosi"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/internal/testing/fake"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/cosi"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/internal/testing/fake"
 )
 
 func TestActor_Sign(t *testing.T) {

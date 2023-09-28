@@ -5,9 +5,9 @@ import (
 	"net"
 	"testing"
 
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/mino"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/mino"
 )
 
 func TestInMemoryStore_Store(t *testing.T) {

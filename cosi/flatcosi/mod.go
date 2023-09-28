@@ -3,18 +3,17 @@
 // and then aggregate them to the final one.
 //
 // Documentation Last Review: 05.10.2020
-//
 package flatcosi
 
 import (
 	"context"
 
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/cosi"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/serde"
 	"github.com/rs/zerolog"
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/cosi"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/serde"
 	"golang.org/x/xerrors"
 )
 

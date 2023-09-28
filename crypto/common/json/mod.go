@@ -1,8 +1,8 @@
 package json
 
 import (
-	"go.dedis.ch/dela/crypto/common"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/crypto/common"
+	"github.com/c4dt/dela/serde"
 	"golang.org/x/xerrors"
 )
 

@@ -7,18 +7,19 @@ package minogrpc
 
 import (
 	context "context"
+	"sync"
+
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/internal/tracing"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/mino/minogrpc/ptypes"
+	"github.com/c4dt/dela/mino/minogrpc/session"
+	"github.com/c4dt/dela/serde"
 	"github.com/rs/xid"
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/internal/tracing"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/mino/minogrpc/ptypes"
-	"go.dedis.ch/dela/mino/minogrpc/session"
-	"go.dedis.ch/dela/serde"
 	"golang.org/x/xerrors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-	"sync"
 )
 
 // RPC represents an RPC that has been registered by a client, which allows

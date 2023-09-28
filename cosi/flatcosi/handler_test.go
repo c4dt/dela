@@ -3,12 +3,12 @@ package flatcosi
 import (
 	"testing"
 
+	"github.com/c4dt/dela/cosi"
+	"github.com/c4dt/dela/crypto/bls"
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/serde"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/cosi"
-	"go.dedis.ch/dela/crypto/bls"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/serde"
 )
 
 func TestHandler_Process(t *testing.T) {

@@ -7,9 +7,9 @@ package binprefix
 import (
 	"math/big"
 
-	"go.dedis.ch/dela/core/store/kv"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/core/store/kv"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/serde"
 	"golang.org/x/xerrors"
 )
 

@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	"go.dedis.ch/dela/internal/tracing"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/mino/router/tree"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/internal/tracing"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/mino/router/tree"
+	"github.com/c4dt/dela/serde"
 )
 
 func ExampleRPC_Call() {

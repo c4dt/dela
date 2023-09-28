@@ -5,11 +5,10 @@
 // the hash as integrity validation.
 //
 // Documentation Last Review: 07.10.2020
-//
 package certs
 
 import (
-	"go.dedis.ch/dela/mino"
+	"github.com/c4dt/dela/mino"
 )
 
 // CertChain represents a list of x509 certificates formatted as ASN.1 DER data.

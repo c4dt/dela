@@ -5,10 +5,10 @@ import (
 	"io"
 	"testing"
 
+	"github.com/c4dt/dela/core/validation"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/internal/testing/fake"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/core/validation"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/internal/testing/fake"
 )
 
 func TestBlock_New(t *testing.T) {
