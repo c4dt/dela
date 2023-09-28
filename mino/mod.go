@@ -6,7 +6,6 @@
 // load to forward the messages.
 //
 // Documentation Last Review: 07.10.2020
-//
 package mino
 
 import (
@@ -14,7 +13,7 @@ import (
 	"encoding"
 	"errors"
 
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/serde"
 )
 
 // Mino is an abstraction of a overlay network. It provides primitives to send

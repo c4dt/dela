@@ -5,11 +5,11 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/core/txn"
+	"github.com/c4dt/dela/core/validation"
+	"github.com/c4dt/dela/internal/testing/fake"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/core/txn"
-	"go.dedis.ch/dela/core/validation"
-	"go.dedis.ch/dela/internal/testing/fake"
 )
 
 func TestSimpleGatherer_Len(t *testing.T) {

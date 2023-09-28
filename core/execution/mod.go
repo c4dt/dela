@@ -2,12 +2,11 @@
 // batch.
 //
 // Documentation Last Review: 08.10.2020
-//
 package execution
 
 import (
-	"go.dedis.ch/dela/core/store"
-	"go.dedis.ch/dela/core/txn"
+	"github.com/c4dt/dela/core/store"
+	"github.com/c4dt/dela/core/txn"
 )
 
 // Step is a context of execution. It allows for example a smart contract to

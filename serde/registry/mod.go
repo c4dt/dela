@@ -5,11 +5,10 @@
 // error.
 //
 // Documentation Last Review: 07.10.2020
-//
 package registry
 
 import (
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/serde"
 )
 
 // Registry is an interface to register and get format engines for a specific

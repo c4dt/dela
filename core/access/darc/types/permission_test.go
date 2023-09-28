@@ -3,9 +3,9 @@ package types
 import (
 	"testing"
 
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/internal/testing/fake"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/internal/testing/fake"
 )
 
 func init() {

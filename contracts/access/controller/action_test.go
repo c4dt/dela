@@ -5,12 +5,12 @@ import (
 	"io"
 	"testing"
 
+	"github.com/c4dt/dela/cli"
+	"github.com/c4dt/dela/cli/node"
+	"github.com/c4dt/dela/core/execution/native"
+	"github.com/c4dt/dela/crypto/bls"
+	"github.com/c4dt/dela/internal/testing/fake"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/cli"
-	"go.dedis.ch/dela/cli/node"
-	"go.dedis.ch/dela/core/execution/native"
-	"go.dedis.ch/dela/crypto/bls"
-	"go.dedis.ch/dela/internal/testing/fake"
 )
 
 func TestAddAction_Execute(t *testing.T) {

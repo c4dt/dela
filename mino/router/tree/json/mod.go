@@ -1,9 +1,9 @@
 package json
 
 import (
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/mino/router/tree/types"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/mino/router/tree/types"
+	"github.com/c4dt/dela/serde"
 	"golang.org/x/xerrors"
 )
 

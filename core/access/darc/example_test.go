@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"sync"
 
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/crypto/bls"
-	"go.dedis.ch/dela/serde/json"
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/crypto/bls"
+	"github.com/c4dt/dela/serde/json"
 )
 
 func ExampleService_Grant_alone() {

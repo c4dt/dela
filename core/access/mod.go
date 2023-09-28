@@ -1,14 +1,13 @@
 // Package access defines the interfaces for Access Rights Controls.
 //
 // Documentation Last Review: 08.10.2020
-//
 package access
 
 import (
 	"encoding"
 
-	"go.dedis.ch/dela/core/store"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/core/store"
+	"github.com/c4dt/dela/serde"
 )
 
 // Identity is an abstraction to uniquely identify a signer.
@@ -30,12 +29,12 @@ type Identity interface {
 // identifier underlying permissions. The rule defines which scope should be
 // verified so that the permissions can hold multiple of thoses.
 //
-//   -- 0xdeadbeef
-//      -- "myContract:sayHello"
-//         -- Alice
-//         -- Bob
-//      -- "myContract:sayBye"
-//         -- Bob
+//	-- 0xdeadbeef
+//	   -- "myContract:sayHello"
+//	      -- Alice
+//	      -- Bob
+//	   -- "myContract:sayBye"
+//	      -- Bob
 //
 // The example above shows two credentials for the contract "myContract" that is
 // allowing two commands "sayHello" and "sayBye". Alice and Bob can say hello,

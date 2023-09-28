@@ -3,11 +3,11 @@ package controller
 import (
 	"testing"
 
+	"github.com/c4dt/dela/cli"
+	"github.com/c4dt/dela/cli/node"
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/mino/proxy/http"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/cli"
-	"go.dedis.ch/dela/cli/node"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/mino/proxy/http"
 )
 
 func TestMinimal_SetCommands(t *testing.T) {

@@ -3,11 +3,11 @@ package types
 import (
 	"testing"
 
+	"github.com/c4dt/dela/core/ordering/cosipbft/types"
+	"github.com/c4dt/dela/core/validation/simple"
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/serde"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/core/ordering/cosipbft/types"
-	"go.dedis.ch/dela/core/validation/simple"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/serde"
 )
 
 var testCalls = &fake.Call{}

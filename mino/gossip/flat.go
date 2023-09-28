@@ -9,10 +9,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/serde"
 	"github.com/rs/zerolog"
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/serde"
 	"golang.org/x/xerrors"
 )
 

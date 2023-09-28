@@ -5,11 +5,11 @@ import (
 	"syscall"
 	"testing"
 
+	"github.com/c4dt/dela/cli"
+	"github.com/c4dt/dela/cli/ucli"
+	"github.com/c4dt/dela/internal/testing/fake"
 	"github.com/stretchr/testify/require"
 	urfave "github.com/urfave/cli/v2"
-	"go.dedis.ch/dela/cli"
-	"go.dedis.ch/dela/cli/ucli"
-	"go.dedis.ch/dela/internal/testing/fake"
 )
 
 func TestCliBuilder_SetStartFlags(t *testing.T) {

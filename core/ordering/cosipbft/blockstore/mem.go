@@ -9,11 +9,11 @@ import (
 	"context"
 	"sync"
 
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/core"
+	"github.com/c4dt/dela/core/ordering/cosipbft/types"
+	"github.com/c4dt/dela/core/store"
 	"github.com/rs/zerolog"
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/core"
-	"go.dedis.ch/dela/core/ordering/cosipbft/types"
-	"go.dedis.ch/dela/core/store"
 	"golang.org/x/xerrors"
 )
 

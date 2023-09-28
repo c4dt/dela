@@ -3,10 +3,10 @@ package json
 import (
 	"encoding/json"
 
-	"go.dedis.ch/dela/core/txn/signed"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/crypto/common"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/core/txn/signed"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/crypto/common"
+	"github.com/c4dt/dela/serde"
 	"golang.org/x/xerrors"
 )
 

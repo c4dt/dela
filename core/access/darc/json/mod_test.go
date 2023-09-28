@@ -3,10 +3,10 @@ package json
 import (
 	"testing"
 
+	"github.com/c4dt/dela/core/access/darc/types"
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/serde"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/core/access/darc/types"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/serde"
 )
 
 const testValue = `{"Expressions":{"test":{"Identities":[{}],"Matches":[[0]]}}}`

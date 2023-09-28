@@ -7,7 +7,6 @@
 // not create cycle imports when importing the serde formats.
 //
 // Documentation Last Review: 05.10.2020
-//
 package types
 
 import (
@@ -15,9 +14,9 @@ import (
 	"fmt"
 	"math/big"
 
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/serde"
-	"go.dedis.ch/dela/serde/registry"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/serde"
+	"github.com/c4dt/dela/serde/registry"
 	"golang.org/x/xerrors"
 )
 

@@ -4,12 +4,11 @@
 // when importing the serde formats.
 //
 // Documentation Last Review: 08.10.2020
-//
 package types
 
 import (
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/serde"
 )
 
 // Permission is the interface of the underlying permissions used by the

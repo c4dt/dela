@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
+	"github.com/c4dt/dela/cosi"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/crypto/bls"
+	"github.com/c4dt/dela/internal/testing/fake"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/cosi"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/crypto/bls"
-	"go.dedis.ch/dela/internal/testing/fake"
 )
 
 func TestFlat_GetSigner(t *testing.T) {

@@ -3,11 +3,11 @@ package native
 import (
 	"testing"
 
+	"github.com/c4dt/dela/core/execution"
+	"github.com/c4dt/dela/core/store"
+	"github.com/c4dt/dela/core/txn"
+	"github.com/c4dt/dela/internal/testing/fake"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/core/execution"
-	"go.dedis.ch/dela/core/store"
-	"go.dedis.ch/dela/core/txn"
-	"go.dedis.ch/dela/internal/testing/fake"
 )
 
 func TestService_Execute(t *testing.T) {

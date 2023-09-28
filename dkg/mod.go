@@ -1,7 +1,7 @@
 package dkg
 
 import (
-	"go.dedis.ch/dela/crypto"
+	"github.com/c4dt/dela/crypto"
 	"go.dedis.ch/kyber/v3"
 )
 

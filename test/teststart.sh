@@ -20,7 +20,7 @@ tmux split-window -t $s:0.%2
 tmux split-window -t $s:0.%3
 
 # session s, window 0, panes 0 to 4
-master="tmux send-keys -t $s:0.%0"
+leader="tmux send-keys -t $s:0.%0"
 node1="tmux send-keys -t $s:0.%1"
 node2="tmux send-keys -t $s:0.%2"
 node3="tmux send-keys -t $s:0.%3"
@@ -33,6 +33,6 @@ $node4 "LLVL=info memcoin --config /tmp/node4 start --listen //127.0.0.1:2004" C
 
 tmux select-pane -t 0
 
-$master "./testsetup.sh" C-m
+$leader "./testsetup.sh" C-m
 
 tmux a

@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/core/txn"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/crypto/bls"
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/serde"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/core/txn"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/crypto/bls"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/serde"
 )
 
 func init() {

@@ -9,7 +9,7 @@ package minoch
 import (
 	"sync"
 
-	"go.dedis.ch/dela/mino"
+	"github.com/c4dt/dela/mino"
 	"golang.org/x/xerrors"
 )
 

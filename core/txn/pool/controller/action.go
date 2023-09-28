@@ -8,14 +8,14 @@ package controller
 import (
 	"sync"
 
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/crypto/bls"
-	"go.dedis.ch/dela/crypto/loader"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/crypto/bls"
+	"github.com/c4dt/dela/crypto/loader"
 
-	"go.dedis.ch/dela/cli/node"
-	"go.dedis.ch/dela/core/txn"
-	"go.dedis.ch/dela/core/txn/pool"
-	"go.dedis.ch/dela/core/txn/signed"
+	"github.com/c4dt/dela/cli/node"
+	"github.com/c4dt/dela/core/txn"
+	"github.com/c4dt/dela/core/txn/pool"
+	"github.com/c4dt/dela/core/txn/signed"
 	"golang.org/x/xerrors"
 )
 

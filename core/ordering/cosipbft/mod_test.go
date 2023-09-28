@@ -8,38 +8,38 @@ import (
 	"testing"
 	"time"
 
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/core/access/darc"
+	"github.com/c4dt/dela/core/execution"
+	"github.com/c4dt/dela/core/execution/native"
+	"github.com/c4dt/dela/core/ordering"
+	"github.com/c4dt/dela/core/ordering/cosipbft/authority"
+	"github.com/c4dt/dela/core/ordering/cosipbft/blockstore"
+	"github.com/c4dt/dela/core/ordering/cosipbft/contracts/viewchange"
+	"github.com/c4dt/dela/core/ordering/cosipbft/pbft"
+	"github.com/c4dt/dela/core/ordering/cosipbft/types"
+	"github.com/c4dt/dela/core/store"
+	"github.com/c4dt/dela/core/store/hashtree/binprefix"
+	"github.com/c4dt/dela/core/store/kv"
+	"github.com/c4dt/dela/core/txn"
+	"github.com/c4dt/dela/core/txn/pool"
+	poolimpl "github.com/c4dt/dela/core/txn/pool/gossip"
+	"github.com/c4dt/dela/core/txn/pool/mem"
+	"github.com/c4dt/dela/core/txn/signed"
+	"github.com/c4dt/dela/core/validation"
+	"github.com/c4dt/dela/core/validation/simple"
+	"github.com/c4dt/dela/cosi"
+	"github.com/c4dt/dela/cosi/flatcosi"
+	"github.com/c4dt/dela/cosi/threshold"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/crypto/bls"
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/mino/gossip"
+	"github.com/c4dt/dela/mino/minoch"
+	"github.com/c4dt/dela/serde"
+	"github.com/c4dt/dela/serde/json"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/core/access/darc"
-	"go.dedis.ch/dela/core/execution"
-	"go.dedis.ch/dela/core/execution/native"
-	"go.dedis.ch/dela/core/ordering"
-	"go.dedis.ch/dela/core/ordering/cosipbft/authority"
-	"go.dedis.ch/dela/core/ordering/cosipbft/blockstore"
-	"go.dedis.ch/dela/core/ordering/cosipbft/contracts/viewchange"
-	"go.dedis.ch/dela/core/ordering/cosipbft/pbft"
-	"go.dedis.ch/dela/core/ordering/cosipbft/types"
-	"go.dedis.ch/dela/core/store"
-	"go.dedis.ch/dela/core/store/hashtree/binprefix"
-	"go.dedis.ch/dela/core/store/kv"
-	"go.dedis.ch/dela/core/txn"
-	"go.dedis.ch/dela/core/txn/pool"
-	poolimpl "go.dedis.ch/dela/core/txn/pool/gossip"
-	"go.dedis.ch/dela/core/txn/pool/mem"
-	"go.dedis.ch/dela/core/txn/signed"
-	"go.dedis.ch/dela/core/validation"
-	"go.dedis.ch/dela/core/validation/simple"
-	"go.dedis.ch/dela/cosi"
-	"go.dedis.ch/dela/cosi/flatcosi"
-	"go.dedis.ch/dela/cosi/threshold"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/crypto/bls"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/mino/gossip"
-	"go.dedis.ch/dela/mino/minoch"
-	"go.dedis.ch/dela/serde"
-	"go.dedis.ch/dela/serde/json"
 )
 
 func TestService_Scenario_Basic(t *testing.T) {
@@ -130,10 +130,10 @@ func TestService_Scenario_ViewChange(t *testing.T) {
 // propagation failed.
 //
 // Expected log warnings and errors:
-//  - timeout from the followers
-//  - block not from the leader
-//  - round failed on node 0
-//  - mismatch state viewchange != (initial|prepare)
+//   - timeout from the followers
+//   - block not from the leader
+//   - round failed on node 0
+//   - mismatch state viewchange != (initial|prepare)
 func TestService_Scenario_FinalizeFailure(t *testing.T) {
 	nodes, ro, clean := makeAuthority(t, 4)
 	defer clean()

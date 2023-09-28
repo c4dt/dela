@@ -8,11 +8,11 @@ import (
 	"sort"
 	"strings"
 
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/core/execution"
-	"go.dedis.ch/dela/core/execution/native"
-	"go.dedis.ch/dela/core/store"
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/core/execution"
+	"github.com/c4dt/dela/core/execution/native"
+	"github.com/c4dt/dela/core/store"
 	"golang.org/x/xerrors"
 )
 
@@ -27,7 +27,7 @@ type commands interface {
 
 const (
 	// ContractName is the name of the contract.
-	ContractName = "go.dedis.ch/dela.Value"
+	ContractName = "github.com/c4dt/dela.Value"
 
 	// KeyArg is the argument's name in the transaction that contains the
 	// provided key to update.

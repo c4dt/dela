@@ -6,13 +6,12 @@
 // collective signing.
 //
 // Documentation Last Review: 13.10.2020
-//
 package authority
 
 import (
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/serde"
 )
 
 // ChangeSet is the return of a diff between two authorities.

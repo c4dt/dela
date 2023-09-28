@@ -52,10 +52,10 @@ overwrite: [true|false]
 outfile: FILE_PATH.dot
 withtests: [true|false]
 includes:
-	- go.dedis.ch/dela/*
+	- github.com/c4dt/dela/*
 	- ...
 excludes:
-	- go.dedis.ch/dela/core/.*(types|json)
+	- github.com/c4dt/dela/core/.*(types|json)
 	- ...
 interfaces:
 	- core/validation
@@ -77,7 +77,7 @@ Packages and their dependencies are sorted and the graph built accordingly.
 
 Examples:
 
-./depgrah --modname "go.dedis.ch/dela" -o graph.dot -F ./
+./depgrah --modname "github.com/c4dt/dela" -o graph.dot -F ./
 ./depgrah --config internal/depgraph/dep.yml -o graph.dot -F ./
 
 The following commands can be used to generate a visual representation from the
@@ -244,7 +244,7 @@ func walkFn(config config, links map[string]bag) filepath.WalkFunc {
 
 		path = filepath.Dir(path)
 		// This is the full package path. From "mino" we want
-		// "go.dedis.ch/dela/mino"
+		// "github.com/c4dt/dela/mino"
 		packagePath := config.Modname + path
 
 		if !isIncluded(packagePath, config.Includes) ||
@@ -265,7 +265,7 @@ func walkFn(config config, links map[string]bag) filepath.WalkFunc {
 
 			// in the case the package imports a package from the same module,
 			// we want to keep only the "relative" name. From
-			// "go.dedis.ch/dela/mino/minogrpc" we want only "mino/minogrpc".
+			// "github.com/c4dt/dela/mino/minogrpc" we want only "mino/minogrpc".
 			importPath = strings.TrimPrefix(importPath, config.Modname)
 
 			if links[packagePath[len(config.Modname):]] == nil {

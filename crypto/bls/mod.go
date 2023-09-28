@@ -6,16 +6,15 @@
 // https://crypto.stanford.edu/~dabo/pubs/papers/BLSmultisig.html
 //
 // Documentation Last Review: 05.10.2020
-//
 package bls
 
 import (
 	"bytes"
 	"fmt"
 
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/serde"
-	"go.dedis.ch/dela/serde/registry"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/serde"
+	"github.com/c4dt/dela/serde/registry"
 	"go.dedis.ch/kyber/v3"
 	"go.dedis.ch/kyber/v3/pairing"
 

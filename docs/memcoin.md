@@ -39,9 +39,9 @@ memcoin --config /tmp/node3 access add \
 # private.key is relative to the location where the node has been started.
 memcoin --config /tmp/node1 pool add\
     --key private.key\
-    --args go.dedis.ch/dela.ContractArg --args go.dedis.ch/dela.Access\
+    --args github.com/c4dt/dela.ContractArg --args github.com/c4dt/dela.Access\
     --args access:grant_id --args 0200000000000000000000000000000000000000000000000000000000000000\
-    --args access:grant_contract --args go.dedis.ch/dela.Value\
+    --args access:grant_contract --args github.com/c4dt/dela.Value\
     --args access:grant_command --args all\
     --args access:identity --args $(crypto bls signer read --path private.key --format BASE64_PUBKEY)\
     --args access:command --args GRANT
@@ -49,7 +49,7 @@ memcoin --config /tmp/node1 pool add\
 # store a value on the value contract
 memcoin --config /tmp/node1 pool add\
     --key private.key\
-    --args go.dedis.ch/dela.ContractArg --args go.dedis.ch/dela.Value\
+    --args github.com/c4dt/dela.ContractArg --args github.com/c4dt/dela.Value\
     --args value:key --args "key1"\
     --args value:value --args "value1"\
     --args value:command --args WRITE
@@ -57,6 +57,6 @@ memcoin --config /tmp/node1 pool add\
 # list the values stored on the value contract
 memcoin --config /tmp/node1 pool add\
     --key private.key\
-    --args go.dedis.ch/dela.ContractArg --args go.dedis.ch/dela.Value\
+    --args github.com/c4dt/dela.ContractArg --args github.com/c4dt/dela.Value\
     --args value:command --args LIST
 ```

@@ -10,15 +10,15 @@ import (
 	"io"
 	"sync"
 
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/core/ordering/cosipbft/blockstore"
+	"github.com/c4dt/dela/core/ordering/cosipbft/blocksync/types"
+	"github.com/c4dt/dela/core/ordering/cosipbft/pbft"
+	otypes "github.com/c4dt/dela/core/ordering/cosipbft/types"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/internal/tracing"
+	"github.com/c4dt/dela/mino"
 	"github.com/rs/zerolog"
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/core/ordering/cosipbft/blockstore"
-	"go.dedis.ch/dela/core/ordering/cosipbft/blocksync/types"
-	"go.dedis.ch/dela/core/ordering/cosipbft/pbft"
-	otypes "go.dedis.ch/dela/core/ordering/cosipbft/types"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/internal/tracing"
-	"go.dedis.ch/dela/mino"
 	"golang.org/x/xerrors"
 )
 

@@ -2,19 +2,18 @@
 // of transactions sequentially.
 //
 // Documentation Last Review: 08.10.2020
-//
 package simple
 
 import (
 	"encoding/binary"
 	"fmt"
 
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/core/execution"
-	"go.dedis.ch/dela/core/store"
-	"go.dedis.ch/dela/core/txn"
-	"go.dedis.ch/dela/core/validation"
-	"go.dedis.ch/dela/crypto"
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/core/execution"
+	"github.com/c4dt/dela/core/store"
+	"github.com/c4dt/dela/core/txn"
+	"github.com/c4dt/dela/core/validation"
+	"github.com/c4dt/dela/crypto"
 	"golang.org/x/xerrors"
 )
 

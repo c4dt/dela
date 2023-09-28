@@ -3,8 +3,8 @@ package mino
 import (
 	"testing"
 
+	"github.com/c4dt/dela/serde"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/serde"
 	"golang.org/x/xerrors"
 )
 

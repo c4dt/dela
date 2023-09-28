@@ -3,10 +3,10 @@ package controller
 import (
 	"testing"
 
+	"github.com/c4dt/dela/cli"
+	"github.com/c4dt/dela/cli/node"
+	"github.com/c4dt/dela/internal/testing/fake"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/cli"
-	"go.dedis.ch/dela/cli/node"
-	"go.dedis.ch/dela/internal/testing/fake"
 )
 
 func TestMiniController_Build(t *testing.T) {

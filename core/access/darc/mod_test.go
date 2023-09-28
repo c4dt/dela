@@ -3,13 +3,13 @@ package darc
 import (
 	"testing"
 
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/core/access/darc/types"
+	"github.com/c4dt/dela/crypto/bls"
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/serde"
+	"github.com/c4dt/dela/serde/json"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/core/access/darc/types"
-	"go.dedis.ch/dela/crypto/bls"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/serde"
-	"go.dedis.ch/dela/serde/json"
 )
 
 var testCtx = json.NewContext()

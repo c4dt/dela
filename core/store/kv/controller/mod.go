@@ -1,15 +1,14 @@
 // Package controller implements a CLI controller for the key/value database.
 //
 // Documentation Last Review: 08.10.2020
-//
 package controller
 
 import (
 	"path/filepath"
 
-	"go.dedis.ch/dela/cli"
-	"go.dedis.ch/dela/cli/node"
-	"go.dedis.ch/dela/core/store/kv"
+	"github.com/c4dt/dela/cli"
+	"github.com/c4dt/dela/cli/node"
+	"github.com/c4dt/dela/core/store/kv"
 	"golang.org/x/xerrors"
 )
 

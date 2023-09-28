@@ -1,17 +1,16 @@
 // Package controller implements a controller for the access contract.
 //
 // Documentation Last Review: 02.02.2021
-//
 package controller
 
 import (
 	"path/filepath"
 
-	"go.dedis.ch/dela/cli"
-	"go.dedis.ch/dela/cli/node"
-	accessContract "go.dedis.ch/dela/contracts/access"
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/core/execution/native"
+	"github.com/c4dt/dela/cli"
+	"github.com/c4dt/dela/cli/node"
+	accessContract "github.com/c4dt/dela/contracts/access"
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/core/execution/native"
 	"golang.org/x/xerrors"
 )
 

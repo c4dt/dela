@@ -7,20 +7,22 @@
 // depth where it will write the nodes in disk. The leaf are always stored in
 // disk because of the value it holds.
 //
-//                         Interior (Root)
-//                           /        \
-//                        0 /          \ 1
-//                         /            \
-//                      Interior       Interior
-//                       /    \          /   \
-//                    0 /      \ 1    0 /     \ 1
-//                     /        \      /       \
-//                DiskNode  Interior  Empty    Interior
-//                           /   \              /    \
+//	         Interior (Root)
+//	           /        \
+//	        0 /          \ 1
+//	         /            \
+//	      Interior       Interior
+//	       /    \          /   \
+//	    0 /      \ 1    0 /     \ 1
+//	     /        \      /       \
+//	DiskNode  Interior  Empty    Interior
+//	           /   \              /    \
+//
 // -------------------------------------------------------------- Memory Depth
-//                       0 /       \ 1      0 /        \ 1
-//                        /         \        /          \
-//                    DiskNode  DiskNode  DiskNode   DiskNode
+//
+//	   0 /       \ 1      0 /        \ 1
+//	    /         \        /          \
+//	DiskNode  DiskNode  DiskNode   DiskNode
 //
 // The drawing above demonstrates an example of a tree. Here the memory depth is
 // set at 3 which means that every node after this level will be a disk node. It
@@ -29,16 +31,15 @@
 // memory depth level.
 //
 // Documentation Last Review: 08.10.2020
-//
 package binprefix
 
 import (
 	"sync"
 
-	"go.dedis.ch/dela/core/store"
-	"go.dedis.ch/dela/core/store/hashtree"
-	"go.dedis.ch/dela/core/store/kv"
-	"go.dedis.ch/dela/crypto"
+	"github.com/c4dt/dela/core/store"
+	"github.com/c4dt/dela/core/store/hashtree"
+	"github.com/c4dt/dela/core/store/kv"
+	"github.com/c4dt/dela/crypto"
 	"golang.org/x/xerrors"
 )
 

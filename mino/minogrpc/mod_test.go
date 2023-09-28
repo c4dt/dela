@@ -7,14 +7,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/internal/tracing"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/mino/minogrpc/certs"
+	"github.com/c4dt/dela/mino/minogrpc/session"
+	"github.com/c4dt/dela/mino/minogrpc/tokens"
+	"github.com/c4dt/dela/mino/router/tree"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/internal/tracing"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/mino/minogrpc/certs"
-	"go.dedis.ch/dela/mino/minogrpc/session"
-	"go.dedis.ch/dela/mino/minogrpc/tokens"
-	"go.dedis.ch/dela/mino/router/tree"
 	"google.golang.org/grpc"
 )
 

@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/cli"
-	"go.dedis.ch/dela/cli/node"
-	"go.dedis.ch/dela/dkg/pedersen"
-	"go.dedis.ch/dela/mino"
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/cli"
+	"github.com/c4dt/dela/cli/node"
+	"github.com/c4dt/dela/dkg/pedersen"
+	"github.com/c4dt/dela/mino"
 	"golang.org/x/xerrors"
 )
 

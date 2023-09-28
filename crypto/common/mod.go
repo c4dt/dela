@@ -2,14 +2,13 @@
 // use of multiple algorithms over the same communication channel.
 //
 // Documentation Last Review: 05.10.2020
-//
 package common
 
 import (
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/crypto/bls"
-	"go.dedis.ch/dela/serde"
-	"go.dedis.ch/dela/serde/registry"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/crypto/bls"
+	"github.com/c4dt/dela/serde"
+	"github.com/c4dt/dela/serde/registry"
 	"golang.org/x/xerrors"
 )
 

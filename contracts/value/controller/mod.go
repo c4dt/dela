@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"go.dedis.ch/dela/cli"
-	"go.dedis.ch/dela/cli/node"
-	"go.dedis.ch/dela/contracts/value"
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/core/execution/native"
+	"github.com/c4dt/dela/cli"
+	"github.com/c4dt/dela/cli/node"
+	"github.com/c4dt/dela/contracts/value"
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/core/execution/native"
 	"golang.org/x/xerrors"
 )
 

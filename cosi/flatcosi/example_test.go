@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"time"
 
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/crypto/bls"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/mino/minoch"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/crypto/bls"
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/mino/minoch"
+	"github.com/c4dt/dela/serde"
 )
 
 func Example() {

@@ -1,10 +1,10 @@
 package flatcosi
 
 import (
-	"go.dedis.ch/dela/cosi"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/cosi"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/serde"
 	"golang.org/x/xerrors"
 )
 

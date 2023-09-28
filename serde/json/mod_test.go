@@ -3,9 +3,9 @@ package json
 import (
 	"testing"
 
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/serde"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/serde"
 )
 
 func TestJSONEngine_GetFormat(t *testing.T) {

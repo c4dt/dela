@@ -2,17 +2,16 @@
 // manager.
 //
 // Documentation Last Review: 08.10.2020
-//
 package controller
 
 import (
-	"go.dedis.ch/dela/cli"
-	"go.dedis.ch/dela/cli/node"
-	"go.dedis.ch/dela/core/access"
-	"go.dedis.ch/dela/core/ordering"
-	"go.dedis.ch/dela/core/txn/signed"
-	"go.dedis.ch/dela/core/validation"
-	"go.dedis.ch/dela/cosi"
+	"github.com/c4dt/dela/cli"
+	"github.com/c4dt/dela/cli/node"
+	"github.com/c4dt/dela/core/access"
+	"github.com/c4dt/dela/core/ordering"
+	"github.com/c4dt/dela/core/txn/signed"
+	"github.com/c4dt/dela/core/validation"
+	"github.com/c4dt/dela/cosi"
 )
 
 // MgrController is a CLI controller that will inject a transaction manager

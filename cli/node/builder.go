@@ -13,10 +13,10 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/cli"
+	"github.com/c4dt/dela/cli/ucli"
 	urfave "github.com/urfave/cli/v2"
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/cli"
-	"go.dedis.ch/dela/cli/ucli"
 	"golang.org/x/xerrors"
 )
 

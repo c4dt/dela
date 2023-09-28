@@ -1,13 +1,12 @@
 // Package controller implements a controller for the pool
 //
 // Documentation Last Review: 02.02.2021
-//
 package controller
 
 import (
-	"go.dedis.ch/dela/cli"
-	"go.dedis.ch/dela/cli/node"
-	"go.dedis.ch/dela/core/access"
+	"github.com/c4dt/dela/cli"
+	"github.com/c4dt/dela/cli/node"
+	"github.com/c4dt/dela/core/access"
 )
 
 const (

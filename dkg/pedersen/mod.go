@@ -3,16 +3,16 @@ package pedersen
 import (
 	"time"
 
-	"go.dedis.ch/dela"
+	"github.com/c4dt/dela"
 
-	"go.dedis.ch/dela/crypto/ed25519"
+	"github.com/c4dt/dela/crypto/ed25519"
 
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/dkg"
-	"go.dedis.ch/dela/dkg/pedersen/types"
-	"go.dedis.ch/dela/internal/tracing"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/dkg"
+	"github.com/c4dt/dela/dkg/pedersen/types"
+	"github.com/c4dt/dela/internal/tracing"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/serde"
 	"go.dedis.ch/kyber/v3"
 	"go.dedis.ch/kyber/v3/share"
 	"go.dedis.ch/kyber/v3/suites"

@@ -4,11 +4,11 @@ import (
 	"math/big"
 	"testing"
 
+	"github.com/c4dt/dela/core/store/kv"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/internal/testing/fake"
+	"github.com/c4dt/dela/serde/json"
 	"github.com/stretchr/testify/require"
-	"go.dedis.ch/dela/core/store/kv"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/internal/testing/fake"
-	"go.dedis.ch/dela/serde/json"
 )
 
 var testCtx = json.NewContext()

@@ -8,19 +8,19 @@ import (
 
 	// Static registration of the JSON formats. By having them here, it ensures
 	// that an import of the JSON context engine will import the definitions.
-	_ "go.dedis.ch/dela/core/access/darc/json"
-	_ "go.dedis.ch/dela/core/ordering/cosipbft/authority/json"
-	_ "go.dedis.ch/dela/core/ordering/cosipbft/blocksync/json"
-	_ "go.dedis.ch/dela/core/ordering/cosipbft/json"
-	_ "go.dedis.ch/dela/core/txn/signed/json"
-	_ "go.dedis.ch/dela/core/validation/simple/json"
-	_ "go.dedis.ch/dela/cosi/json"
-	_ "go.dedis.ch/dela/cosi/threshold/json"
-	_ "go.dedis.ch/dela/crypto/bls/json"
-	_ "go.dedis.ch/dela/crypto/ed25519/json"
-	_ "go.dedis.ch/dela/dkg/pedersen/json"
-	_ "go.dedis.ch/dela/mino/router/tree/json"
-	"go.dedis.ch/dela/serde"
+	_ "github.com/c4dt/dela/core/access/darc/json"
+	_ "github.com/c4dt/dela/core/ordering/cosipbft/authority/json"
+	_ "github.com/c4dt/dela/core/ordering/cosipbft/blocksync/json"
+	_ "github.com/c4dt/dela/core/ordering/cosipbft/json"
+	_ "github.com/c4dt/dela/core/txn/signed/json"
+	_ "github.com/c4dt/dela/core/validation/simple/json"
+	_ "github.com/c4dt/dela/cosi/json"
+	_ "github.com/c4dt/dela/cosi/threshold/json"
+	_ "github.com/c4dt/dela/crypto/bls/json"
+	_ "github.com/c4dt/dela/crypto/ed25519/json"
+	_ "github.com/c4dt/dela/dkg/pedersen/json"
+	_ "github.com/c4dt/dela/mino/router/tree/json"
+	"github.com/c4dt/dela/serde"
 )
 
 // JSONEngine is a context engine to marshal and unmarshal in JSON format.

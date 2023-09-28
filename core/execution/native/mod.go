@@ -3,18 +3,17 @@
 // A native smart contract is written in Go and packaged with the application.
 //
 // Documentation Last Review: 08.10.2020
-//
 package native
 
 import (
-	"go.dedis.ch/dela/core/execution"
-	"go.dedis.ch/dela/core/store"
+	"github.com/c4dt/dela/core/execution"
+	"github.com/c4dt/dela/core/store"
 	"golang.org/x/xerrors"
 )
 
 const (
 	// ContractArg is the argument key in the transaction to look up a contract.
-	ContractArg = "go.dedis.ch/dela.ContractArg"
+	ContractArg = "github.com/c4dt/dela.ContractArg"
 )
 
 // Contract is the interface to implement to register a smart contract that will

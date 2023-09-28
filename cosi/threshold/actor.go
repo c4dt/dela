@@ -10,13 +10,13 @@ package threshold
 import (
 	"context"
 
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/cosi"
-	"go.dedis.ch/dela/cosi/threshold/types"
-	"go.dedis.ch/dela/crypto"
-	"go.dedis.ch/dela/internal/tracing"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/serde"
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/cosi"
+	"github.com/c4dt/dela/cosi/threshold/types"
+	"github.com/c4dt/dela/crypto"
+	"github.com/c4dt/dela/internal/tracing"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/serde"
 	"golang.org/x/xerrors"
 )
 

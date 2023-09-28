@@ -10,17 +10,16 @@
 // instance should drop the message.
 //
 // Documentation Last Review: 06.10.2020
-//
 package minoch
 
 import (
 	"fmt"
 	"sync"
 
-	"go.dedis.ch/dela"
-	"go.dedis.ch/dela/mino"
-	"go.dedis.ch/dela/serde"
-	"go.dedis.ch/dela/serde/json"
+	"github.com/c4dt/dela"
+	"github.com/c4dt/dela/mino"
+	"github.com/c4dt/dela/serde"
+	"github.com/c4dt/dela/serde/json"
 	"golang.org/x/xerrors"
 )
 
