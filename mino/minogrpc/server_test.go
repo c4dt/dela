@@ -925,7 +925,7 @@ func TestConnManager_MissingCert_Acquire(t *testing.T) {
 
 	to := session.NewAddress("fake")
 	_, err := mgr.Acquire(to)
-	require.EqualError(t, err, "failed to retrieve transport credential: certificate for 'fake' not found")
+	require.EqualError(t, err, "failed to retrieve transport credential: certificate for 'grpcs://fake' not found")
 }
 
 func TestConnManager_FailLoadOwnCert_Acquire(t *testing.T) {
@@ -1024,8 +1024,10 @@ func TestConnManager_BadTracer_Acquire(t *testing.T) {
 
 	dstAddr := dst.GetAddress()
 	_, err = mgr.Acquire(dstAddr)
+	dialAddr := strings.Split(dst.GetAddress().String(), "://")
+	require.Equal(t, 2, len(dialAddr))
 	require.EqualError(t, err, fmt.Sprintf("failed to get tracer for addr %s: %s",
-		dst.GetAddress(), fake.GetError().Error()))
+		dialAddr[1], fake.GetError().Error()))
 
 	getTracerForAddr = tracing.GetTracerForAddr
 }

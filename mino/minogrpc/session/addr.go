@@ -38,11 +38,9 @@ type Address struct {
 // NewOrchestratorAddress creates a new address which will be considered as the
 // initiator of a protocol.
 func NewOrchestratorAddress(addr mino.Address) Address {
-	return Address{
-		orchestrator:   true,
-		host:           addr.String(),
-		connectionType: addr.ConnectionType(),
-	}
+	a := NewAddress(addr.String())
+	a.orchestrator = true
+	return a
 }
 
 // NewAddress creates a new address.
@@ -53,21 +51,28 @@ func NewAddress(host string) Address {
 	}
 	u, err := url.Parse(hostSlash)
 	if err != nil {
-		return Address{host: host}
+		return Address{connectionType: mino.ACTgRPCS, host: host}
 	}
-	a, _ := NewAddressFromURL(*u)
+	a, err := NewAddressFromURL(*u)
+	if err != nil {
+		return Address{connectionType: mino.ACTgRPCS, host: host}
+	}
 	return a
 }
 
 // NewAddressFromURL creates a new address given a URL.
 func NewAddressFromURL(addr url.URL) (a Address, err error) {
-	a.host = addr.Host
-	var port string
+	if addr.Port() == "" {
+		err = xerrors.Errorf("no port given or not able to infer it from protocol")
+		return
+	}
+
 	scheme := addr.Scheme
 	// This seems to be the default when looking at tests.
 	if scheme == "" {
 		scheme = "grpcs"
 	}
+
 	switch scheme {
 	case "grpc":
 		a.connectionType = mino.ACTgRPC
@@ -75,15 +80,12 @@ func NewAddressFromURL(addr url.URL) (a Address, err error) {
 		a.connectionType = mino.ACTgRPCS
 	case "https":
 		a.connectionType = mino.ACThttps
-		port = ":443"
 	default:
 		err = xerrors.Errorf("unknown scheme '%s' in address", addr.Scheme)
 		return
 	}
-	if port == "" && !strings.Contains(a.host, ":") {
-		err = xerrors.Errorf("no port given or not able to infer it from protocol")
-	}
-	a.host += port
+
+	a.host = addr.Host
 	return
 }
 
@@ -139,11 +141,20 @@ func (a Address) MarshalText() ([]byte, error) {
 // String implements fmt.Stringer. It returns a string representation of the
 // address.
 func (a Address) String() string {
+	url := "grpcs://"
+	switch a.connectionType {
+	case mino.ACTgRPCS:
+		url += a.host
+	case mino.ACTgRPC:
+		url = "grpc://" + a.host
+	case mino.ACThttps:
+		url = "https://" + a.host
+	}
 	if a.orchestrator {
-		return "Orchestrator:" + a.host
+		return "Orchestrator:" + url
 	}
 
-	return a.host
+	return url
 }
 
 // WrapAddress is a super type of the address so that the orchestrator becomes

@@ -65,10 +65,9 @@ func TestAddress_MarshalText(t *testing.T) {
 
 func TestAddress_String(t *testing.T) {
 	addr := NewAddress("127.0.0.1:2000")
-	require.Equal(t, addr.host, addr.String())
 
 	orch := NewOrchestratorAddress(addr)
-	require.Equal(t, "Orchestrator:"+addr.host, orch.String())
+	require.Equal(t, "Orchestrator:"+addr.String(), orch.String())
 }
 
 func TestWrapAddress_Unwrap(t *testing.T) {
