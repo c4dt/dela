@@ -180,12 +180,12 @@ func TestMinogrpc_Scenario_Failures(t *testing.T) {
 
 func TestOverlayServer_Join(t *testing.T) {
 	o, err := newOverlay(&minoTemplate{
-		myAddr: session.NewAddress("127.0.0.1:0"),
-		certs:  certs.NewInMemoryStore(),
-		router: tree.NewRouter(addressFac),
-		curve:  elliptic.P521(),
-		random: rand.Reader,
-		useTLS: true,
+		myAddr:   session.NewAddress("127.0.0.1:0"),
+		certs:    certs.NewInMemoryStore(),
+		router:   tree.NewRouter(addressFac),
+		curve:    elliptic.P521(),
+		random:   rand.Reader,
+		serveTLS: true,
 	})
 	require.NoError(t, err)
 
@@ -764,11 +764,11 @@ func TestOverlay_Forward(t *testing.T) {
 
 func TestOverlay_New(t *testing.T) {
 	o, err := newOverlay(&minoTemplate{
-		myAddr: session.NewAddress("127.0.0.1:0"),
-		certs:  certs.NewInMemoryStore(),
-		curve:  elliptic.P521(),
-		random: rand.Reader,
-		useTLS: true,
+		myAddr:   session.NewAddress("127.0.0.1:0"),
+		certs:    certs.NewInMemoryStore(),
+		curve:    elliptic.P521(),
+		random:   rand.Reader,
+		serveTLS: true,
 	})
 	require.NoError(t, err)
 
@@ -779,11 +779,11 @@ func TestOverlay_New(t *testing.T) {
 
 func TestOverlay_New_Hostname(t *testing.T) {
 	o, err := newOverlay(&minoTemplate{
-		myAddr: session.NewAddress("localhost:0"),
-		certs:  certs.NewInMemoryStore(),
-		curve:  elliptic.P521(),
-		random: rand.Reader,
-		useTLS: true,
+		myAddr:   session.NewAddress("localhost:0"),
+		certs:    certs.NewInMemoryStore(),
+		curve:    elliptic.P521(),
+		random:   rand.Reader,
+		serveTLS: true,
 	})
 	require.NoError(t, err)
 
@@ -796,11 +796,11 @@ func TestOverlay_New_Wrong_Cert_Store(t *testing.T) {
 	cert, _ := fake.MakeFullCertificate(t)
 
 	_, err := newOverlay(&minoTemplate{
-		cert:   cert,
-		certs:  fakeCerts{errStore: fake.GetError()},
-		curve:  elliptic.P521(),
-		random: rand.Reader,
-		useTLS: true,
+		cert:     cert,
+		certs:    fakeCerts{errStore: fake.GetError()},
+		curve:    elliptic.P521(),
+		random:   rand.Reader,
+		serveTLS: true,
 	})
 	require.EqualError(t, err, fake.Err("failed to store cert"))
 }
@@ -833,13 +833,13 @@ func TestOverlay_Panic2_GetCertificate(t *testing.T) {
 
 func TestOverlay_Join(t *testing.T) {
 	overlay, err := newOverlay(&minoTemplate{
-		myAddr: session.NewAddress("127.0.0.1:0"),
-		certs:  certs.NewInMemoryStore(),
-		router: tree.NewRouter(addressFac),
-		fac:    addressFac,
-		curve:  elliptic.P521(),
-		random: rand.Reader,
-		useTLS: true,
+		myAddr:   session.NewAddress("127.0.0.1:0"),
+		certs:    certs.NewInMemoryStore(),
+		router:   tree.NewRouter(addressFac),
+		fac:      addressFac,
+		curve:    elliptic.P521(),
+		random:   rand.Reader,
+		serveTLS: true,
 	})
 	require.NoError(t, err)
 
@@ -850,26 +850,27 @@ func TestOverlay_Join(t *testing.T) {
 	}
 
 	overlay.certs = fakeCerts{}
-	err = overlay.Join(&url.URL{}, "", nil)
-	require.NoError(t, err)
+	hostURL, _ := url.Parse("127.0.0.1")
+	err = overlay.Join(hostURL, "", nil)
+	require.EqualError(t, err, "Invalid address: no port given or not able to infer it from protocol")
 
-	overlay.myAddr = session.NewAddress("127.0.0.1:0")
+	hostURL, _ = url.Parse("grpcs://127.0.0.1:100")
 	overlay.certs = fakeCerts{err: fake.GetError()}
-	err = overlay.Join(&url.URL{}, "", nil)
-	require.EqualError(t, err, fake.Err("couldn't fetch distant certificate"))
+	err = overlay.Join(hostURL, "", nil)
+	require.EqualError(t, err, fake.Err("error while verifying distant certificate"))
 
 	overlay.certs = fakeCerts{}
 	overlay.connMgr = fakeConnMgr{err: fake.GetError()}
-	err = overlay.Join(&url.URL{}, "", nil)
+	err = overlay.Join(hostURL, "", nil)
 	require.EqualError(t, err, fake.Err("couldn't open connection"))
 
 	overlay.connMgr = fakeConnMgr{resp: ptypes.JoinResponse{}, errConn: fake.GetError()}
-	err = overlay.Join(&url.URL{}, "", nil)
+	err = overlay.Join(hostURL, "", nil)
 	require.EqualError(t, err, fake.Err("couldn't call join"))
 }
 
 func TestMakeCertificate_WrongHostname(t *testing.T) {
-	o := overlay{}
+	o := minoTemplate{}
 	o.myAddr = session.NewAddress(":xxx")
 
 	err := o.makeCertificate()
@@ -912,7 +913,7 @@ func TestConnManager_FailLoadDistantCert_Acquire(t *testing.T) {
 	mgr := newConnManager(fake.NewAddress(0), certs.NewInMemoryStore(), true)
 	mgr.certs = fakeCerts{errLoad: fake.GetError()}
 
-	_, err := mgr.Acquire(session.Address{})
+	_, err := mgr.Acquire(session.NewAddress(""))
 	require.EqualError(t, err, fake.Err("failed to retrieve transport credential: while loading distant cert"))
 }
 
@@ -937,7 +938,7 @@ func TestConnManager_FailLoadOwnCert_Acquire(t *testing.T) {
 		counter: fake.NewCounter(1),
 	}
 
-	_, err := mgr.Acquire(session.Address{})
+	_, err := mgr.Acquire(session.NewAddress(""))
 	require.EqualError(t, err, fake.Err("failed to retrieve transport credential: while loading own cert"))
 }
 

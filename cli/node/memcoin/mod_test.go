@@ -17,7 +17,10 @@ import (
 )
 
 func TestMemcoin_Main(t *testing.T) {
+	oldArgs := os.Args
+	os.Args = []string{"memcoin"}
 	main()
+	os.Args = oldArgs
 }
 
 // This test creates a chain with initially 3 nodes. It then adds node 4 and 5
@@ -61,7 +64,7 @@ func TestMemcoin_Scenario_SetupAndTransactions(t *testing.T) {
 	shareCert(t, node3, node1, "//127.0.0.1:2111")
 	shareCert(t, node5, node1, "//127.0.0.1:2111")
 
-	// Setup the chain with nodes 1 and 2.
+	// Set up the chain with nodes 1 and 2.
 	args := append(append(
 		append(
 			[]string{os.Args[0], "--config", node1, "ordering", "setup"},
