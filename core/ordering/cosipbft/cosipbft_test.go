@@ -238,7 +238,7 @@ func TestService_New(t *testing.T) {
 	}
 
 	genesis := blockstore.NewGenesisStore()
-	genesis.Set(types.Genesis{})
+	require.NoError(t, genesis.Set(types.Genesis{}))
 
 	opts := []ServiceOption{
 		WithHashFactory(fake.NewHashFactory(&fake.Hash{})),
