@@ -43,6 +43,7 @@ import (
 	"go.dedis.ch/dela/core/ordering/cosipbft/blockstore"
 	"go.dedis.ch/dela/core/ordering/cosipbft/blocksync"
 	"go.dedis.ch/dela/core/ordering/cosipbft/contracts/viewchange"
+	"go.dedis.ch/dela/core/ordering/cosipbft/fastsync"
 	"go.dedis.ch/dela/core/ordering/cosipbft/pbft"
 	"go.dedis.ch/dela/core/ordering/cosipbft/types"
 	"go.dedis.ch/dela/core/store"
@@ -80,6 +81,9 @@ const (
 	// RoundMaxWait is the maximum amount for the backoff.
 	RoundMaxWait = 5 * time.Minute
 
+	// DefaultFastSyncMessageSize defines when a fast sync message will be split.
+	DefaultFastSyncMessageSize = 1e6
+
 	rpcName = "cosipbft"
 )
 
@@ -115,9 +119,10 @@ type Service struct {
 }
 
 type serviceTemplate struct {
-	hashFac crypto.HashFactory
-	blocks  blockstore.BlockStore
-	genesis blockstore.GenesisStore
+	hashFac  crypto.HashFactory
+	blocks   blockstore.BlockStore
+	genesis  blockstore.GenesisStore
+	fastSync bool
 }
 
 // ServiceOption is the type of option to set some fields of the service.
@@ -141,6 +146,13 @@ func WithBlockStore(store blockstore.BlockStore) ServiceOption {
 func WithHashFactory(fac crypto.HashFactory) ServiceOption {
 	return func(tmpl *serviceTemplate) {
 		tmpl.hashFac = fac
+	}
+}
+
+// WithFastSync enables the new syncing algorithm in the cosipbft module.
+func WithFastSync() ServiceOption {
+	return func(tmpl *serviceTemplate) {
+		tmpl.fastSync = true
 	}
 }
 
@@ -190,6 +202,7 @@ func NewServiceStruct(param ServiceParam, opts ...ServiceOption) (*Service, erro
 	proc.tree = blockstore.NewTreeCache(param.Tree)
 	proc.access = param.Access
 	proc.logger = dela.Logger.With().Str("addr", param.Mino.GetAddress().String()).Logger()
+	proc.fastsync = tmpl.fastSync
 
 	pcparam := pbft.StateMachineParam{
 		Logger:          proc.logger,
@@ -220,10 +233,11 @@ func NewServiceStruct(param ServiceParam, opts ...ServiceOption) (*Service, erro
 		ChainFactory:    chainFac,
 		VerifierFactory: param.Cosi.GetVerifierFactory(),
 	}
-
-	bs := blocksync.NewSynchronizer(syncparam)
-
-	proc.sync = bs
+	if proc.fastsync {
+		proc.fsync = fastsync.NewSynchronizer(syncparam)
+	} else {
+		proc.bsync = blocksync.NewSynchronizer(syncparam)
+	}
 
 	fac := types.NewMessageFactory(
 		types.NewGenesisFactory(proc.rosterFac),
@@ -275,6 +289,20 @@ func NewServiceStart(s *Service) {
 	go s.watchBlocks()
 
 	if s.genesis.Exists() {
+		if s.fastsync {
+			ctx, done := context.WithCancel(context.Background())
+			roster, err := s.readRoster(s.tree.Get())
+			if err != nil {
+				panic("couldn't get roster of latest block: " + err.Error())
+			}
+			err = s.fsync.Sync(ctx, roster,
+				fastsync.Config{SplitMessageSize: DefaultFastSyncMessageSize})
+			if err != nil {
+				s.logger.Warn().Msgf("while syncing with other nodes: %+v", err)
+			}
+			done()
+		}
+
 		// If the genesis already exists, the service can start right away to
 		// participate in the chain.
 		close(s.started)
@@ -541,17 +569,21 @@ func (s *Service) doLeaderRound(
 
 	s.logger.Debug().Uint64("index", s.blocks.Len()).Msg("round has started")
 
-	// Send a synchronization to the roster so that they can learn about the
-	// latest block of the chain.
-	err := s.sync.Sync(ctx, roster,
-		blocksync.Config{MinHard: threshold.ByzantineThreshold(roster.Len())})
-	if err != nil {
-		return xerrors.Errorf("sync failed: %v", err)
+	// When using blocksync, the updates are sent before every new block, which
+	// uses a lot of bandwidth if there are more than just a few blocks.
+	if !s.fastsync {
+		// Send a synchronization to the roster so that they can learn about the
+		// latest block of the chain.
+		err := s.bsync.Sync(ctx, roster,
+			blocksync.Config{MinHard: threshold.ByzantineThreshold(roster.Len())})
+		if err != nil {
+			return xerrors.Errorf("sync failed: %v", err)
+		}
 	}
 
 	s.logger.Debug().Uint64("index", s.blocks.Len()).Msg("pbft has started")
 
-	err = s.doPBFT(ctx)
+	err := s.doPBFT(ctx)
 	if err != nil {
 		return xerrors.Errorf("pbft failed: %v", err)
 	}

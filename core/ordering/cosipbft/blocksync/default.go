@@ -296,8 +296,10 @@ func (h *handler) Stream(out mino.Sender, in mino.Receiver) error {
 	return h.ack(out, orch)
 }
 
-func (h *handler) waitAnnounce(ctx context.Context,
-	in mino.Receiver) (*types.SyncMessage, mino.Address, error) {
+func (h *handler) waitAnnounce(
+	ctx context.Context,
+	in mino.Receiver,
+) (*types.SyncMessage, mino.Address, error) {
 
 	for {
 		orch, msg, err := in.Recv(ctx)
@@ -326,7 +328,7 @@ func (h *handler) ack(out mino.Sender, orch mino.Address) error {
 }
 
 func iter2arr(iter mino.AddressIterator) []mino.Address {
-	addrs := []mino.Address{}
+	var addrs []mino.Address
 	for iter.HasNext() {
 		addrs = append(addrs, iter.GetNext())
 	}

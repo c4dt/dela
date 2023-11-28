@@ -176,7 +176,7 @@ func (m miniController) OnStart(flags cli.Flags, inj node.Injector) error {
 	}
 
 	srvc, err := cosipbft.NewService(param, cosipbft.WithGenesisStore(genstore),
-		cosipbft.WithBlockStore(blocks))
+		cosipbft.WithBlockStore(blocks), cosipbft.WithFastSync())
 	if err != nil {
 		return xerrors.Errorf("service: %v", err)
 	}

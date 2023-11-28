@@ -104,8 +104,10 @@ func (n *DiskNode) Delete(key *big.Int, bucket kv.Bucket) (TreeNode, error) {
 // Prepare implements binprefix.TreeNode. It loads the node and calculates its
 // hash. The subtree might be loaded in-memory if deeper hashes have not been
 // computed yet.
-func (n *DiskNode) Prepare(nonce []byte, prefix *big.Int,
-	bucket kv.Bucket, fac crypto.HashFactory) ([]byte, error) {
+func (n *DiskNode) Prepare(
+	nonce []byte, prefix *big.Int,
+	bucket kv.Bucket, fac crypto.HashFactory,
+) ([]byte, error) {
 
 	if len(n.hash) > 0 {
 		// Hash is already calculated so we can skip and return.
@@ -178,7 +180,6 @@ func (n *DiskNode) store(index *big.Int, node TreeNode, b kv.Bucket) error {
 	}
 
 	key := n.prepareKey(index)
-
 	err = b.Set(key, data)
 	if err != nil {
 		return xerrors.Errorf("failed to set key: %v", err)

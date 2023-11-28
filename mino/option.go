@@ -113,7 +113,7 @@ func ListFilter(indices []int) FilterUpdater {
 // RandomFilter chooses 'count' random elements.
 func RandomFilter(count int) FilterUpdater {
 	return func(filters *Filter) {
-		if len(filters.Indices) >= count {
+		if len(filters.Indices) < count {
 			return
 		}
 		rand.Shuffle(len(filters.Indices),
