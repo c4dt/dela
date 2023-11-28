@@ -5,6 +5,7 @@
 package mino
 
 import (
+	"math/rand"
 	"sort"
 )
 
@@ -68,6 +69,19 @@ func IndexFilter(index int) FilterUpdater {
 	}
 }
 
+// RejectFilter removes the given index
+func RejectFilter(index int) FilterUpdater {
+	return func(filters *Filter) {
+		arr := filters.Indices
+		i := sort.IntSlice(arr).Search(index)
+		// do nothing if the element is not there
+		if i == len(arr) || arr[i] != index {
+			return
+		}
+		filters.Indices = append(filters.Indices[0:i], filters.Indices[i+1:]...)
+	}
+}
+
 // RangeFilter is a filter to include a range of indices.
 func RangeFilter(start, end int) FilterUpdater {
 	return func(filters *Filter) {
@@ -93,5 +107,19 @@ func RangeFilter(start, end int) FilterUpdater {
 func ListFilter(indices []int) FilterUpdater {
 	return func(filters *Filter) {
 		filters.Indices = indices
+	}
+}
+
+// RandomFilter chooses 'count' random elements.
+func RandomFilter(count int) FilterUpdater {
+	return func(filters *Filter) {
+		if len(filters.Indices) >= count {
+			return
+		}
+		rand.Shuffle(len(filters.Indices),
+			func(i, j int) {
+				filters.Indices[i], filters.Indices[j] = filters.Indices[j], filters.Indices[i]
+			})
+		filters.Indices = filters.Indices[:count]
 	}
 }
