@@ -166,7 +166,8 @@ func NewService(param ServiceParam, opts ...ServiceOption) (*Service, error) {
 	return s, nil
 }
 
-// NewServiceStruct returns the service struct without actually starting the service.
+// NewServiceStruct returns the service struct without actually starting the
+// service.
 // This is useful for testing purposes.
 func NewServiceStruct(param ServiceParam, opts ...ServiceOption) (*Service, error) {
 	tmpl := serviceTemplate{
@@ -264,8 +265,10 @@ func NewServiceStruct(param ServiceParam, opts ...ServiceOption) (*Service, erro
 // NewServiceStart runs the necessary go-routines to start the service
 func NewServiceStart(s *Service) {
 	go func() {
-		if err := s.main(); err != nil {
-			panic("While running the service: " + err.Error())
+		err := s.main()
+		if err != nil {
+			s.logger.Err(err).Msg("While running main")
+			close(s.closing)
 		}
 	}()
 
