@@ -74,9 +74,9 @@ func (ns *Service) Set(name string, contract Contract) {
 func (ns *Service) Execute(snap store.Snapshot, step execution.Step) (execution.Result, error) {
 	name := string(step.Current.GetArg(ContractArg))
 
+	fmt.Printf("List of contracts: %+v\n", ns.contracts)
 	contract := ns.contracts[name]
 	if contract == nil {
-		fmt.Printf("List of contracts: %+v", ns.contracts)
 		return execution.Result{}, xerrors.Errorf("unknown contract '%s'", name)
 	}
 
