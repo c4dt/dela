@@ -294,10 +294,16 @@ func NewServiceStart(s *Service) {
 			if err != nil {
 				panic("couldn't get roster of latest block: " + err.Error())
 			}
-			err = s.fsync.Sync(ctx, roster,
-				fastsync.Config{SplitMessageSize: DefaultFastSyncMessageSize})
-			if err != nil {
-				s.logger.Warn().Msgf("while syncing with other nodes: %+v", err)
+			// Loop to try to sync
+			for {
+				err := s.fsync.Sync(ctx, roster,
+					fastsync.Config{SplitMessageSize: DefaultFastSyncMessageSize})
+				if err == nil {
+					break
+				}
+				s.logger.Warn().Msgf("while syncing with other nodes - trying again in 10s: %+v",
+					err)
+				time.Sleep(10 * time.Second)
 			}
 			done()
 		}
