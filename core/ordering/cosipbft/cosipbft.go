@@ -289,29 +289,12 @@ func NewServiceStart(s *Service) {
 
 	if s.genesis.Exists() {
 		if s.syncMethod() == syncMethodFast {
-			time.Sleep(10 * time.Second)
-			ctx, done := context.WithCancel(context.Background())
-			roster, err := s.readRoster(s.tree.Get())
-			if err != nil {
-				panic("couldn't get roster of latest block: " + err.Error())
-			}
-			// Loop to try to sync
-			for {
-				err := s.fsync.Sync(ctx, roster,
-					fastsync.Config{SplitMessageSize: DefaultFastSyncMessageSize})
-				if err == nil {
-					break
-				}
-				s.logger.Warn().Msgf("while syncing with other nodes - trying again in 10s: %+v",
-					err)
-				time.Sleep(10 * time.Second)
-			}
-			done()
+			s.fastCatchup()
+		} else {
+			// If the genesis already exists, the service can start right away to
+			// participate in the chain.
+			close(s.started)
 		}
-
-		// If the genesis already exists, the service can start right away to
-		// participate in the chain.
-		close(s.started)
 	}
 }
 
@@ -415,6 +398,30 @@ func (s *Service) Close() error {
 	<-s.closed
 
 	return nil
+}
+
+func (s *Service) fastCatchup() {
+	s.logger.Warn().Msgf("Waiting for startup")
+	time.Sleep(10 * time.Second)
+	s.logger.Warn().Msgf("Hopefully all is started up")
+	ctx, done := context.WithCancel(context.Background())
+	roster, err := s.readRoster(s.tree.Get())
+	if err != nil {
+		panic("couldn't get roster of latest block: " + err.Error())
+	}
+	// Loop to try to sync
+	for {
+		err := s.fsync.Sync(ctx, roster,
+			fastsync.Config{SplitMessageSize: DefaultFastSyncMessageSize})
+		if err == nil {
+			break
+		}
+		s.logger.Warn().Msgf("while syncing with other nodes - trying again in 10s: %+v",
+			err)
+		time.Sleep(10 * time.Second)
+	}
+	done()
+	close(s.started)
 }
 
 func (s *Service) watchBlocks() {
