@@ -6,8 +6,6 @@
 package native
 
 import (
-	"fmt"
-
 	"go.dedis.ch/dela/core/execution"
 	"go.dedis.ch/dela/core/store"
 	"golang.org/x/xerrors"
@@ -74,7 +72,6 @@ func (ns *Service) Set(name string, contract Contract) {
 func (ns *Service) Execute(snap store.Snapshot, step execution.Step) (execution.Result, error) {
 	name := string(step.Current.GetArg(ContractArg))
 
-	fmt.Printf("List of contracts: %+v\n", ns.contracts)
 	contract := ns.contracts[name]
 	if contract == nil {
 		return execution.Result{}, xerrors.Errorf("unknown contract '%s'", name)
