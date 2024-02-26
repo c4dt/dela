@@ -289,6 +289,7 @@ func NewServiceStart(s *Service) {
 
 	if s.genesis.Exists() {
 		if s.syncMethod() == syncMethodFast {
+			time.Sleep(10 * time.Second)
 			ctx, done := context.WithCancel(context.Background())
 			roster, err := s.readRoster(s.tree.Get())
 			if err != nil {
