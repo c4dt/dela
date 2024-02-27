@@ -59,8 +59,6 @@ func (p *Pool) AddFilter(filter pool.Filter) {
 // Add implements pool.Pool. It adds the transaction to the pool and gossips it
 // to other participants.
 func (p *Pool) Add(tx txn.Transaction) error {
-	p.logger.Warn().Msgf("Adding transaction %+v\n", tx.GetNonce())
-
 	err := p.gatherer.Add(tx)
 	if err != nil {
 		return xerrors.Errorf("store failed: %v", err)
@@ -76,8 +74,6 @@ func (p *Pool) Add(tx txn.Transaction) error {
 
 // Remove implements pool.Pool. It removes the transaction from the pool.
 func (p *Pool) Remove(tx txn.Transaction) error {
-	p.logger.Warn().Msgf("Removing transaction %+v\n", tx.GetNonce())
-
 	err := p.gatherer.Remove(tx)
 	if err != nil {
 		return xerrors.Errorf("store failed: %v", err)

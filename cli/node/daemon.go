@@ -101,7 +101,7 @@ type socketDaemon struct {
 func (d *socketDaemon) Listen() error {
 	_, err := os.Stat(d.socketpath)
 	if err == nil {
-		fmt.Println("Cleaning existing socket file")
+		d.logger.Warn().Msg("Cleaning existing socket file")
 		err := os.Remove(d.socketpath)
 		if err != nil {
 			return xerrors.Errorf("couldn't clear tangling socketpath: %v", err)
