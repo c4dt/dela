@@ -306,6 +306,8 @@ func (mgr *TransactionManager) Make(args ...txn.Arg) (txn.Transaction, error) {
 
 	opts = append(opts, WithHashFactory(mgr.hashFac))
 
+	dela.Logger.Warn().Msgf("TransMang.Make - nonce is %d\n", mgr.nonce)
+
 	tx, err := NewTransaction(mgr.nonce, mgr.signer.GetPublicKey(), opts...)
 	if err != nil {
 		return nil, xerrors.Errorf("failed to create tx: %v", err)
@@ -317,6 +319,7 @@ func (mgr *TransactionManager) Make(args ...txn.Arg) (txn.Transaction, error) {
 	}
 
 	mgr.nonce++
+	dela.Logger.Warn().Msgf("TransMang.Make - increased nonce to %d\n", mgr.nonce)
 
 	return tx, nil
 }
