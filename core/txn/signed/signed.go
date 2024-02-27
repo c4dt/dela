@@ -9,7 +9,9 @@ package signed
 
 import (
 	"encoding/binary"
+	"fmt"
 	"io"
+	"runtime/debug"
 	"sort"
 
 	"go.dedis.ch/dela"
@@ -334,6 +336,7 @@ func (mgr *TransactionManager) Sync() error {
 
 	mgr.nonce = nonce
 
+	fmt.Printf("Stack: %s\n", string(debug.Stack()))
 	dela.Logger.Debug().Uint64("nonce", nonce).Msg("manager synchronized")
 
 	return nil
