@@ -25,7 +25,7 @@ import (
 )
 
 // initDkgFirst message helping the developer to verify whether setup did occur
-const initDkgFirst = "you must first initialize DKG. Did you call setup() first?"
+const initDkgFirst = "you must first initialize the DKG. Did you call setup() first? #"
 
 // failedStreamCreation message indicating a stream creation failure
 const failedStreamCreation = "failed to create stream: %v"
@@ -47,7 +47,7 @@ var (
 	// associated with the `dkg-decrypt` protocol.
 	protocolNameDecrypt = "dkg-decrypt"
 	// protocolNameReencrypt denotes the value of the protocol span tag
-	//// associated with the `dkg-reencrypt` protocol.
+	// // associated with the `dkg-reencrypt` protocol.
 	protocolNameReencrypt = "dkg-reencrypt"
 	// ProtocolNameResharing denotes the value of the protocol span tag
 	// associated with the `dkg-resharing` protocol.
@@ -214,7 +214,7 @@ func (a *Actor) GetPublicKey() (kyber.Point, error) {
 func (a *Actor) Encrypt(msg []byte) (kyber.Point, []kyber.Point, error) {
 
 	if !a.startRes.Done() {
-		return nil, nil, xerrors.Errorf(initDkgFirst)
+		return nil, nil, xerrors.Errorf(initDkgFirst + "3")
 	}
 
 	pubK, err := a.GetPublicKey()
@@ -258,7 +258,7 @@ func (a *Actor) Encrypt(msg []byte) (kyber.Point, []kyber.Point, error) {
 func (a *Actor) Decrypt(K kyber.Point, Cs []kyber.Point) ([]byte, error) {
 
 	if !a.startRes.Done() {
-		return nil, xerrors.Errorf(initDkgFirst)
+		return nil, xerrors.Errorf(initDkgFirst + "4")
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), decryptTimeout)
@@ -332,12 +332,13 @@ func (a *Actor) Decrypt(K kyber.Point, Cs []kyber.Point) ([]byte, error) {
 // this person.
 //
 // See https://arxiv.org/pdf/2205.08529.pdf / section 5.4 Protocol / step 1
-func (a *Actor) VerifiableEncrypt(message []byte, GBar kyber.Point) (types.Ciphertext,
-	[]byte, error) {
+func (a *Actor) VerifiableEncrypt(message []byte, GBar kyber.Point) (
+	types.Ciphertext,
+	[]byte, error,
+) {
 
 	if !a.startRes.Done() {
-		return types.Ciphertext{}, nil, xerrors.Errorf("you must first initialize " +
-			"DKG. Did you call setup() first?")
+		return types.Ciphertext{}, nil, xerrors.Errorf(initDkgFirst + "5")
 	}
 
 	// Embed the message (or as much of it as will fit) into a curve point.
@@ -391,7 +392,7 @@ func (a *Actor) VerifiableEncrypt(message []byte, GBar kyber.Point) (types.Ciphe
 func (a *Actor) VerifiableDecrypt(ciphertexts []types.Ciphertext) ([][]byte, error) {
 
 	if !a.startRes.Done() {
-		return nil, xerrors.Errorf(initDkgFirst)
+		return nil, xerrors.Errorf(initDkgFirst + "6")
 	}
 
 	players := mino.NewAddresses(a.startRes.getParticipants()...)
@@ -480,8 +481,10 @@ func (a *Actor) VerifiableDecrypt(ciphertexts []types.Ciphertext) ([][]byte, err
 	return decryptedMessage, nil
 }
 
-func newWorker(numParticipants int, decryptedMessage [][]byte,
-	responses []types.VerifiableDecryptReply, ciphertexts []types.Ciphertext) worker {
+func newWorker(
+	numParticipants int, decryptedMessage [][]byte,
+	responses []types.VerifiableDecryptReply, ciphertexts []types.Ciphertext,
+) worker {
 
 	return worker{
 		numParticipants:  numParticipants,
@@ -535,7 +538,7 @@ func (w worker) work(jobIndex int) error {
 // participants.
 func (a *Actor) Reshare(coAuth crypto.CollectiveAuthority, thresholdNew int) error {
 	if !a.startRes.Done() {
-		return xerrors.Errorf(initDkgFirst)
+		return xerrors.Errorf(initDkgFirst + "7")
 	}
 
 	addrsNew := make([]mino.Address, 0, coAuth.Len())

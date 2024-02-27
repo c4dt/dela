@@ -27,7 +27,7 @@ type reencryptStatus struct {
 // Reencrypt implements dkg.Actor.
 func (a *Actor) Reencrypt(K kyber.Point, pubk kyber.Point) (XhatEnc kyber.Point, err error) {
 	if !a.startRes.Done() {
-		return nil, xerrors.Errorf(initDkgFirst)
+		return nil, xerrors.Errorf(initDkgFirst + "8")
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), decryptTimeout)
@@ -79,7 +79,8 @@ func (a *Actor) Reencrypt(K kyber.Point, pubk kyber.Point) (XhatEnc kyber.Point,
 		if err == nil {
 			dela.Logger.Debug().Msgf("Reencryption Uis: %v", status.Uis)
 
-			XhatEnc, err := share.RecoverCommit(suites.MustFind("Ed25519"), status.Uis, status.threshold, status.nbnodes)
+			XhatEnc, err := share.RecoverCommit(suites.MustFind("Ed25519"), status.Uis,
+				status.threshold, status.nbnodes)
 			if err != nil {
 				return nil, xerrors.Errorf("Reencryption failed: %v", err)
 			}
