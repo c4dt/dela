@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"go.dedis.ch/dela"
 	"go.dedis.ch/dela/core/access"
 	"go.dedis.ch/dela/core/txn"
 	"go.dedis.ch/dela/core/validation"
@@ -135,6 +136,7 @@ func (g *simpleGatherer) Remove(tx txn.Transaction) error {
 // Wait implements pool.Gatherer. It waits for enough transactions before
 // returning the list, or it returns nil if the context ends.
 func (g *simpleGatherer) Wait(ctx context.Context, cfg Config) []txn.Transaction {
+	dela.Logger.Warn().Msgf("Pool waiting for messages: %d\n", cfg.Min)
 	ch := make(chan []txn.Transaction, 1)
 
 	g.Lock()
@@ -143,6 +145,7 @@ func (g *simpleGatherer) Wait(ctx context.Context, cfg Config) []txn.Transaction
 		txs := g.makeArray()
 		g.Unlock()
 
+		dela.Logger.Warn().Msgf("Got %d messages directly\n", len(txs))
 		return txs
 	}
 
@@ -156,6 +159,7 @@ func (g *simpleGatherer) Wait(ctx context.Context, cfg Config) []txn.Transaction
 
 	select {
 	case txs := <-ch:
+		dela.Logger.Warn().Msgf("Got %d messages after waiting\n", len(txs))
 		return txs
 	case <-ctx.Done():
 		return nil
