@@ -25,7 +25,7 @@ import (
 )
 
 // initDkgFirst message helping the developer to verify whether setup did occur
-const initDkgFirst = "you must first initialize the DKG. Did you call setup() first? #"
+const initDkgFirst = "you must first initialize the DKG. Did you call setup() first?"
 
 // failedStreamCreation message indicating a stream creation failure
 const failedStreamCreation = "failed to create stream: %v"
@@ -47,7 +47,7 @@ var (
 	// associated with the `dkg-decrypt` protocol.
 	protocolNameDecrypt = "dkg-decrypt"
 	// protocolNameReencrypt denotes the value of the protocol span tag
-	// // associated with the `dkg-reencrypt` protocol.
+	// associated with the `dkg-reencrypt` protocol.
 	protocolNameReencrypt = "dkg-reencrypt"
 	// ProtocolNameResharing denotes the value of the protocol span tag
 	// associated with the `dkg-resharing` protocol.
@@ -214,7 +214,7 @@ func (a *Actor) GetPublicKey() (kyber.Point, error) {
 func (a *Actor) Encrypt(msg []byte) (kyber.Point, []kyber.Point, error) {
 
 	if !a.startRes.Done() {
-		return nil, nil, xerrors.Errorf(initDkgFirst + "3")
+		return nil, nil, xerrors.Errorf(initDkgFirst)
 	}
 
 	pubK, err := a.GetPublicKey()
@@ -258,7 +258,7 @@ func (a *Actor) Encrypt(msg []byte) (kyber.Point, []kyber.Point, error) {
 func (a *Actor) Decrypt(K kyber.Point, Cs []kyber.Point) ([]byte, error) {
 
 	if !a.startRes.Done() {
-		return nil, xerrors.Errorf(initDkgFirst + "4")
+		return nil, xerrors.Errorf(initDkgFirst)
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), decryptTimeout)
@@ -338,7 +338,7 @@ func (a *Actor) VerifiableEncrypt(message []byte, GBar kyber.Point) (
 ) {
 
 	if !a.startRes.Done() {
-		return types.Ciphertext{}, nil, xerrors.Errorf(initDkgFirst + "5")
+		return types.Ciphertext{}, nil, xerrors.Errorf(initDkgFirst)
 	}
 
 	// Embed the message (or as much of it as will fit) into a curve point.
@@ -392,7 +392,7 @@ func (a *Actor) VerifiableEncrypt(message []byte, GBar kyber.Point) (
 func (a *Actor) VerifiableDecrypt(ciphertexts []types.Ciphertext) ([][]byte, error) {
 
 	if !a.startRes.Done() {
-		return nil, xerrors.Errorf(initDkgFirst + "6")
+		return nil, xerrors.Errorf(initDkgFirst)
 	}
 
 	players := mino.NewAddresses(a.startRes.getParticipants()...)
@@ -538,7 +538,7 @@ func (w worker) work(jobIndex int) error {
 // participants.
 func (a *Actor) Reshare(coAuth crypto.CollectiveAuthority, thresholdNew int) error {
 	if !a.startRes.Done() {
-		return xerrors.Errorf(initDkgFirst + "7")
+		return xerrors.Errorf(initDkgFirst)
 	}
 
 	addrsNew := make([]mino.Address, 0, coAuth.Len())
