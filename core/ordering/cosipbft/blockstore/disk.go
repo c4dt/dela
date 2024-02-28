@@ -88,7 +88,9 @@ func (s *InDisk) Load() error {
 			s.last = link
 			s.indices[link.GetBlock().GetHash()] = link.GetBlock().GetIndex()
 
-			dela.Logger.Info().Msgf("Loaded %d blocks", s.length)
+			if s.length%100 == 0 {
+				dela.Logger.Info().Msgf("Loaded %d blocks", s.length)
+			}
 			return nil
 		})
 
