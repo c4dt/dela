@@ -288,16 +288,6 @@ func NewServiceStart(s *Service) {
 	go s.watchBlocks()
 
 	if s.genesis.Exists() {
-		s.logger.Info().Msg("Waiting for blocks to load")
-		for {
-			blocks := s.blocks.Len()
-			time.Sleep(10 * time.Second)
-			s.logger.Info().Msgf("Blocks changed from %d to %d", blocks, s.blocks.Len())
-			if blocks == s.blocks.Len() {
-				break
-			}
-		}
-
 		// If the genesis already exists, and all blocks are loaded,
 		// the service can start right away to participate in the chain.
 		close(s.started)
