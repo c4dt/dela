@@ -293,7 +293,15 @@ func NewServiceStart(s *Service) {
 		close(s.started)
 		if s.syncMethod() == syncMethodFast {
 			go func() {
-				time.Sleep(10 * time.Second)
+				s.logger.Info().Msg("Waiting for blocks to load")
+				for {
+					blocks := s.blocks.Len()
+					time.Sleep(10 * time.Second)
+					s.logger.Info().Msgf("Blocks changed from %d to %d", blocks, s.blocks.Len())
+					if blocks == s.blocks.Len() {
+						break
+					}
+				}
 				roster, err := s.getCurrentRoster()
 				if err != nil {
 					s.logger.Err(err).Msg("Couldn't get roster")
