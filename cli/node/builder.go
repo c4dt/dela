@@ -175,12 +175,14 @@ func (b *CLIBuilder) Build() cli.Application {
 }
 
 func (b *CLIBuilder) start(flags cli.Flags) error {
+	dela.Logger.Info().Msg("Builder.start - 1")
 	if b.enableSignal {
 		signal.Notify(b.sigs, syscall.SIGINT, syscall.SIGTERM)
 
 		defer signal.Stop(b.sigs)
 	}
 
+	dela.Logger.Info().Msg("Builder.start - 2")
 	dir := flags.Path("config")
 	if dir != "" {
 		err := os.MkdirAll(dir, 0700)
@@ -189,18 +191,23 @@ func (b *CLIBuilder) start(flags cli.Flags) error {
 		}
 	}
 
+	dela.Logger.Info().Msg("Builder.start - 3")
 	daemon, err := b.daemonFactory.DaemonFromContext(flags)
 	if err != nil {
 		return xerrors.Errorf("couldn't make daemon: %v", err)
 	}
 
+	dela.Logger.Info().Msg("Builder.start - 4")
 	for _, controller := range b.inits {
+		dela.Logger.Info().Msgf("Starting controller %+v", controller)
 		err = controller.OnStart(flags, b.injector)
 		if err != nil {
 			return xerrors.Errorf("couldn't run the controller: %v", err)
 		}
+		dela.Logger.Info().Msgf("Done with controller %+v", controller)
 	}
 
+	dela.Logger.Info().Msg("Builder.start - 5")
 	// Daemon is started after the controllers so that everything has started
 	// when the daemon is available.
 	err = daemon.Listen()
@@ -210,8 +217,10 @@ func (b *CLIBuilder) start(flags cli.Flags) error {
 
 	defer daemon.Close()
 
+	dela.Logger.Info().Msg("Builder.start - 6")
 	<-b.sigs
 	signal.Stop(b.sigs)
+	dela.Logger.Info().Msg("Builder.start - 7")
 
 	// Controllers are stopped in reverse order so that high level components
 	// are stopped before lower level ones (i.e. stop a service before the
@@ -222,6 +231,7 @@ func (b *CLIBuilder) start(flags cli.Flags) error {
 			return xerrors.Errorf("couldn't stop controller: %v", err)
 		}
 	}
+	dela.Logger.Info().Msg("Builder.start - 8")
 
 	dela.Logger.Trace().Msg("daemon has been stopped")
 
