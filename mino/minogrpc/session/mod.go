@@ -18,6 +18,7 @@ package session
 
 import (
 	"context"
+	"errors"
 	"io"
 	"os"
 	"sync"
@@ -397,7 +398,7 @@ func (s *session) sendTo(
 		// eventually close.
 		s.log.Warn().Err(err).Msg("parent is closing")
 
-		code := status.Code(xerrors.Unwrap(err))
+		code := status.Code(errors.Unwrap(err))
 
 		errs <- xerrors.Errorf("session %v is closing: %v", s.me, code)
 
