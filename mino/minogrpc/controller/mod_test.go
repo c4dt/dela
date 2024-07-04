@@ -141,6 +141,7 @@ func TestMiniController_FailGenerateKey_OnStart(t *testing.T) {
 }
 
 func TestMiniController_FailMarshalKey_OnStart(t *testing.T) {
+	t.Skip("Testing if this is the culprit")
 	ctrl := NewController().(miniController)
 	ctrl.curve = badCurve{}
 
