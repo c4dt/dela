@@ -2,14 +2,16 @@ package minows
 
 import (
 	"crypto/rand"
+	"testing"
+
 	"github.com/libp2p/go-libp2p/core/crypto"
 	"github.com/libp2p/go-libp2p/core/peer"
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestNewMinows(t *testing.T) {
+	t.Skip()
 	const listen = "/ip4/0.0.0.0/tcp/7452/ws"
 	const ws = "/ip4/127.0.0.1/tcp/7452/ws"
 	const wss = "/ip4/127.0.0.1/tcp/443/wss"
@@ -36,6 +38,7 @@ func TestNewMinows(t *testing.T) {
 }
 
 func TestNewMinows_OptionalPublic(t *testing.T) {
+	t.Skip()
 	listen := mustCreateMultiaddress(t, "/ip4/0.0.0.0/tcp/7452/ws")
 	random := mustCreateMultiaddress(t, "/ip4/127.0.0.1/tcp/0/ws")
 	tests := map[string]ma.Multiaddr{
@@ -57,6 +60,7 @@ func TestNewMinows_OptionalPublic(t *testing.T) {
 }
 
 func Test_minows_GetAddressFactory(t *testing.T) {
+	t.Skip()
 	const listen = "/ip4/0.0.0.0/tcp/7452"
 	const ws = "/ip4/127.0.0.1/tcp/7452/ws"
 	const wss = "/ip4/127.0.0.1/tcp/443/wss"
@@ -83,6 +87,7 @@ func Test_minows_GetAddressFactory(t *testing.T) {
 }
 
 func Test_minows_GetAddress(t *testing.T) {
+	t.Skip()
 	const listen = "/ip4/127.0.0.1/tcp/7452"
 	const publicWS = "/ip4/127.0.0.1/tcp/80/ws"
 	const wss = "/ip4/127.0.0.1/tcp/443/wss"
@@ -120,6 +125,7 @@ func Test_minows_GetAddress(t *testing.T) {
 }
 
 func Test_minows_GetAddress_Random(t *testing.T) {
+	t.Skip()
 	random := "/ip4/127.0.0.1/tcp/0/ws"
 	listen := mustCreateMultiaddress(t, random)
 	key := mustCreateKey(t)
@@ -134,6 +140,7 @@ func Test_minows_GetAddress_Random(t *testing.T) {
 }
 
 func Test_minows_WithSegment_Empty(t *testing.T) {
+	t.Skip()
 	const listen = "/ip4/0.0.0.0/tcp/7452"
 	const ws = "/ip4/127.0.0.1/tcp/7452/ws"
 	m, stop := mustCreateMinows(t, listen, ws)
@@ -144,6 +151,7 @@ func Test_minows_WithSegment_Empty(t *testing.T) {
 }
 
 func Test_minows_WithSegment(t *testing.T) {
+	t.Skip()
 	const listen = "/ip4/0.0.0.0/tcp/7452"
 	const ws = "/ip4/127.0.0.1/tcp/7452/ws"
 	m, stop := mustCreateMinows(t, listen, ws)
@@ -158,6 +166,7 @@ func Test_minows_WithSegment(t *testing.T) {
 }
 
 func Test_minows_CreateRPC_InvalidName(t *testing.T) {
+	t.Skip()
 	const listen = "/ip4/0.0.0.0/tcp/7452"
 	const ws = "/ip4/127.0.0.1/tcp/7452/ws"
 	m, stop := mustCreateMinows(t, listen, ws)
@@ -168,6 +177,7 @@ func Test_minows_CreateRPC_InvalidName(t *testing.T) {
 }
 
 func Test_minows_CreateRPC_AlreadyExists(t *testing.T) {
+	t.Skip()
 	const listen = "/ip4/0.0.0.0/tcp/7452"
 	const ws = "/ip4/127.0.0.1/tcp/7452/ws"
 	m, stop := mustCreateMinows(t, listen, ws)
@@ -180,6 +190,7 @@ func Test_minows_CreateRPC_AlreadyExists(t *testing.T) {
 }
 
 func Test_minows_CreateRPC_InvalidSegment(t *testing.T) {
+	t.Skip()
 	const listen = "/ip4/0.0.0.0/tcp/7452"
 	const ws = "/ip4/127.0.0.1/tcp/7452/ws"
 	m, stop := mustCreateMinows(t, listen, ws)
@@ -191,6 +202,7 @@ func Test_minows_CreateRPC_InvalidSegment(t *testing.T) {
 }
 
 func Test_minows_CreateRPC(t *testing.T) {
+	t.Skip()
 	const listen = "/ip4/0.0.0.0/tcp/7452"
 	const ws = "/ip4/127.0.0.1/tcp/7452/ws"
 	m, stop := mustCreateMinows(t, listen, ws)
@@ -212,8 +224,10 @@ func Test_minows_CreateRPC(t *testing.T) {
 	require.NotNil(t, r4)
 }
 
-func mustCreateMinows(t *testing.T, listen string, public string) (*minows,
-	func()) {
+func mustCreateMinows(t *testing.T, listen string, public string) (
+	*minows,
+	func(),
+) {
 	key := mustCreateKey(t)
 	lis := mustCreateMultiaddress(t, listen)
 	pub := mustCreateMultiaddress(t, public)

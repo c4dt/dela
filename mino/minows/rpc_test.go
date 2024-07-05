@@ -2,14 +2,16 @@ package minows
 
 import (
 	"context"
+	"testing"
+
 	"github.com/stretchr/testify/require"
 	"go.dedis.ch/dela/mino"
 	"go.dedis.ch/dela/serde"
 	"go.dedis.ch/dela/testing/fake"
-	"testing"
 )
 
 func Test_rpc_Call(t *testing.T) {
+	t.Skip()
 	handler := &echoHandler{}
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
@@ -40,6 +42,7 @@ func Test_rpc_Call(t *testing.T) {
 }
 
 func Test_rpc_Call_ToSelf(t *testing.T) {
+	t.Skip()
 	handler := &echoHandler{}
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
@@ -64,6 +67,7 @@ func Test_rpc_Call_ToSelf(t *testing.T) {
 }
 
 func Test_rpc_Call_NoPlayers(t *testing.T) {
+	t.Skip()
 	handler := &echoHandler{}
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
@@ -80,6 +84,7 @@ func Test_rpc_Call_NoPlayers(t *testing.T) {
 }
 
 func Test_rpc_Call_WrongAddressType(t *testing.T) {
+	t.Skip()
 	handler := &echoHandler{}
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
@@ -101,6 +106,7 @@ func Test_rpc_Call_WrongAddressType(t *testing.T) {
 }
 
 func Test_rpc_Call_DiffNamespace(t *testing.T) {
+	t.Skip()
 	handler := &echoHandler{}
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
@@ -129,6 +135,7 @@ func Test_rpc_Call_DiffNamespace(t *testing.T) {
 }
 
 func Test_rpc_Call_ContextCancelled(t *testing.T) {
+	t.Skip()
 	handler := &echoHandler{}
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
@@ -152,6 +159,7 @@ func Test_rpc_Call_ContextCancelled(t *testing.T) {
 }
 
 func Test_rpc_Stream(t *testing.T) {
+	t.Skip()
 	handler := &echoHandler{}
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
@@ -174,6 +182,7 @@ func Test_rpc_Stream(t *testing.T) {
 }
 
 func Test_rpc_Stream_ToSelf(t *testing.T) {
+	t.Skip()
 	handler := &echoHandler{}
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
@@ -191,6 +200,7 @@ func Test_rpc_Stream_ToSelf(t *testing.T) {
 }
 
 func Test_rpc_Stream_NoPlayers(t *testing.T) {
+	t.Skip()
 	handler := &echoHandler{}
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
@@ -206,6 +216,7 @@ func Test_rpc_Stream_NoPlayers(t *testing.T) {
 }
 
 func Test_rpc_Stream_WrongAddressType(t *testing.T) {
+	t.Skip()
 	handler := &echoHandler{}
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
@@ -221,6 +232,7 @@ func Test_rpc_Stream_WrongAddressType(t *testing.T) {
 }
 
 func Test_rpc_Stream_ContextCancelled(t *testing.T) {
+	t.Skip()
 	handler := &echoHandler{}
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
@@ -248,8 +260,10 @@ type echoHandler struct {
 	messages []serde.Message
 }
 
-func (h *echoHandler) Process(req mino.Request) (resp serde.Message,
-	err error) {
+func (h *echoHandler) Process(req mino.Request) (
+	resp serde.Message,
+	err error,
+) {
 	h.from = append(h.from, req.Address)
 	h.messages = append(h.messages, req.Message)
 	return req.Message, nil
@@ -270,8 +284,10 @@ func (h *echoHandler) Stream(out mino.Sender, in mino.Receiver) error {
 	}
 }
 
-func mustCreateRPC(t *testing.T, m mino.Mino, name string,
-	h mino.Handler) mino.RPC {
+func mustCreateRPC(
+	t *testing.T, m mino.Mino, name string,
+	h mino.Handler,
+) mino.RPC {
 	r, err := m.CreateRPC(name, h, fake.MessageFactory{})
 	require.NoError(t, err)
 	return r

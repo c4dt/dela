@@ -1,13 +1,14 @@
 package minows
 
 import (
+	"testing"
+	"time"
+
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"go.dedis.ch/dela/cli"
 	"go.dedis.ch/dela/cli/node"
 	"go.dedis.ch/dela/testing/fake"
-	"testing"
-	"time"
 )
 
 func TestController_OnStart(t *testing.T) {
@@ -78,7 +79,8 @@ func mustCreateController(t *testing.T, inj node.Injector) (node.Initializer, fu
 }
 
 func setUp(t *testing.T, listen string, public string) (
-	cli.Flags, node.Injector, node.Initializer, func()) {
+	cli.Flags, node.Injector, node.Initializer, func(),
+) {
 	flags := new(mockFlags)
 	flags.On("String", "listen").Return(listen)
 	flags.On("String", "public").Return(public)
