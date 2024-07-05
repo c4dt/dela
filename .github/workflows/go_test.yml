@@ -40,7 +40,7 @@ jobs:
       run: make coverage
 
     - name: Sonarcloud scan
-      if: matrix.platform == 'ubuntu-latest'
+      if: matrix.platform == 'ubuntu-latest' && github.repository == 'dedis/dela'
       uses: sonarsource/sonarcloud-github-action@master
       with:
         args: >
@@ -53,7 +53,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     - name: Send coverage
-      if: matrix.platform == 'ubuntu-latest'
+      if: matrix.platform == 'ubuntu-latest' && github.repository == 'dedis/dela'
       uses: shogo82148/actions-goveralls@v1
       with:
         path-to-profile: profile.cov
