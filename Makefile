@@ -14,7 +14,7 @@ generate: tidy
 	go generate ./...
 
 lint: tidy
-	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
 	golangci-lint run
 
 tests:
