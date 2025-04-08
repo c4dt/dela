@@ -5,7 +5,7 @@ all: lint test
 	@echo "Done with the standard checks"
 
 tidy:
-	go mod tidy -go=1.23.8
+	@go mod tidy -go="1.23.8"
 
 generate: tidy
 	go get -u google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.5
@@ -14,7 +14,6 @@ generate: tidy
 	go generate ./...
 
 lint: tidy
-	@clear
 	@echo "Running golangci-lint"
 	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
 	golangci-lint run
