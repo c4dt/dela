@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"net"
-	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -16,10 +15,7 @@ import (
 )
 
 func TestSocketClient_Send(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "dela")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	out := new(bytes.Buffer)
 
@@ -31,7 +27,7 @@ func TestSocketClient_Send(t *testing.T) {
 
 	listen(t, client.socketpath)
 
-	err = client.Send([]byte("deadbeef"))
+	err := client.Send([]byte("deadbeef"))
 	require.NoError(t, err)
 	require.Equal(t, "deadbeef\n", out.String())
 }
@@ -71,10 +67,7 @@ func TestSocketClient_BadInConn_Send(t *testing.T) {
 }
 
 func TestSocketDaemon_Listen(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "dela")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	fset := make(FlagSet)
 	fset["1"] = 1
@@ -129,10 +122,7 @@ func TestSocketDaemon_Listen(t *testing.T) {
 }
 
 func TestSocketDaemon_ConnectivityTest_Listen(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "dela")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	daemon := &socketDaemon{
 		socketpath:  filepath.Join(dir, "daemon.sock"),
@@ -142,7 +132,7 @@ func TestSocketDaemon_ConnectivityTest_Listen(t *testing.T) {
 		listenFn:    net.Listen,
 	}
 
-	err = daemon.Listen()
+	err := daemon.Listen()
 	require.NoError(t, err)
 
 	defer daemon.Close()

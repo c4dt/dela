@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"io"
 	"net/http"
-	"os"
 	"testing"
 	"time"
 
@@ -13,15 +12,15 @@ import (
 )
 
 func TestInit(t *testing.T) {
-	os.Setenv("PROXY_LOG", "warn")
+	t.Setenv("PROXY_LOG", "warn")
 	setLogLevel()
 	require.Equal(t, defaultLevel, zerolog.WarnLevel)
 
-	os.Setenv("PROXY_LOG", "no")
+	t.Setenv("PROXY_LOG", "no")
 	setLogLevel()
 	require.Equal(t, defaultLevel, zerolog.Disabled)
 
-	os.Setenv("PROXY_LOG", "info")
+	t.Setenv("PROXY_LOG", "info")
 	setLogLevel()
 	require.Equal(t, defaultLevel, zerolog.InfoLevel)
 }

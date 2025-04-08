@@ -1,7 +1,6 @@
 package kv
 
 import (
-	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -10,13 +9,8 @@ import (
 	"golang.org/x/xerrors"
 )
 
-const delaTestDir = "dela-core-kv"
-
 func TestBoltDB_UpdateAndView(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	db, err := New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
@@ -51,10 +45,7 @@ func TestBoltDB_UpdateAndView(t *testing.T) {
 }
 
 func TestBoltDB_Close(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	db, err := New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
@@ -65,10 +56,7 @@ func TestBoltDB_Close(t *testing.T) {
 }
 
 func TestBoltTx_GetBucket(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	db, err := New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
@@ -89,10 +77,7 @@ func TestBoltTx_GetBucket(t *testing.T) {
 }
 
 func TestBoltBucket_Get_Set_Delete(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	db, err := New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
@@ -121,10 +106,7 @@ func TestBoltBucket_Get_Set_Delete(t *testing.T) {
 }
 
 func TestBoltBucket_ForEach(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	db, err := New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
@@ -149,10 +131,7 @@ func TestBoltBucket_ForEach(t *testing.T) {
 }
 
 func TestBoltBucket_Scan(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	db, err := New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)

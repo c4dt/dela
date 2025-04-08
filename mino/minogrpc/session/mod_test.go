@@ -23,13 +23,13 @@ import (
 
 func TestSessionNew(t *testing.T) {
 	curr := os.Getenv(traffic.EnvVariable)
-	defer os.Setenv(traffic.EnvVariable, curr)
+	defer t.Setenv(traffic.EnvVariable, curr)
 
-	os.Setenv(traffic.EnvVariable, "log")
+	t.Setenv(traffic.EnvVariable, "log")
 	sess := NewSession(nil, fake.NewAddress(999), nil, nil, fake.NewContext(), nil)
 	require.NotNil(t, sess.(*session).traffic)
 
-	os.Setenv(traffic.EnvVariable, "print")
+	t.Setenv(traffic.EnvVariable, "print")
 	sess = NewSession(nil, fake.NewAddress(999), nil, nil, fake.NewContext(), nil)
 	require.NotNil(t, sess.(*session).traffic)
 

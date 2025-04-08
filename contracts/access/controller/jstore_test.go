@@ -10,14 +10,8 @@ import (
 	"go.dedis.ch/dela/testing/fake"
 )
 
-// constant holding the temporary dela directory name
-const delaTestDir = "dela-test-"
-
 func TestJstore_New(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	path := filepath.Join(dir, "store.json")
 	store, err := newJstore(path)
@@ -39,10 +33,8 @@ func TestJstore_New(t *testing.T) {
 }
 
 func TestJstore_Set_Get_Delete(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
+	dir := t.TempDir()
 
-	defer os.RemoveAll(dir)
 	path := filepath.Join(dir, "store.json")
 	store, err := newJstore(path)
 	require.NoError(t, err)
@@ -70,10 +62,8 @@ func TestJstore_Set_Get_Delete(t *testing.T) {
 }
 
 func TestJstore_SaveFile(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
+	dir := t.TempDir()
 
-	defer os.RemoveAll(dir)
 	path := filepath.Join(dir, "store.json")
 	store, err := newJstore(path)
 	require.NoError(t, err)
@@ -94,10 +84,7 @@ func TestJstore_SaveFile(t *testing.T) {
 }
 
 func TestJstore_Scenario(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	path := filepath.Join(dir, "store.json")
 	store, err := newJstore(path)

@@ -22,8 +22,7 @@ func TestMinimal_SetCommands(t *testing.T) {
 }
 
 func TestMinimal_OnStart(t *testing.T) {
-	flags, dir, clean := makeFlags(t)
-	defer clean()
+	flags, dir := makeFlags(t)
 
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
@@ -47,8 +46,7 @@ func TestMinimal_MissingMino_OnStart(t *testing.T) {
 }
 
 func TestMinimal_FailLoadKey_OnStart(t *testing.T) {
-	flags, _, clean := makeFlags(t)
-	defer clean()
+	flags, _ := makeFlags(t)
 
 	m := NewController().(miniController)
 
@@ -64,8 +62,7 @@ func TestMinimal_FailLoadKey_OnStart(t *testing.T) {
 }
 
 func TestMinimal_MissingDB_OnStart(t *testing.T) {
-	flags, _, clean := makeFlags(t)
-	defer clean()
+	flags, _ := makeFlags(t)
 
 	m := NewController().(miniController)
 
@@ -77,8 +74,7 @@ func TestMinimal_MissingDB_OnStart(t *testing.T) {
 }
 
 func TestMinimal_MalformedKey_OnStart(t *testing.T) {
-	flags, dir, clean := makeFlags(t)
-	defer clean()
+	flags, dir := makeFlags(t)
 
 	m := NewController().(miniController)
 
@@ -97,13 +93,10 @@ func TestMinimal_MalformedKey_OnStart(t *testing.T) {
 }
 
 func TestMinimal_OnStop(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "dela-test-")
-	require.NoError(t, err)
+	dir := t.TempDir()
 
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
 
 	m := NewController()
 
@@ -142,14 +135,13 @@ func TestMinimal_OnStop(t *testing.T) {
 // -----------------------------------------------------------------------------
 // Utility functions
 
-func makeFlags(t *testing.T) (cli.Flags, string, func()) {
-	dir, err := os.MkdirTemp(os.TempDir(), "dela-")
-	require.NoError(t, err)
+func makeFlags(t *testing.T) (cli.Flags, string) {
+	dir := t.TempDir()
 
 	fset := make(node.FlagSet)
 	fset["config"] = dir
 
-	return fset, dir, func() { os.RemoveAll(dir) }
+	return fset, dir
 }
 
 func badFn() encoding.BinaryMarshaler {

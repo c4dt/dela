@@ -80,13 +80,10 @@ func TestLoadSignerAction(t *testing.T) {
 }
 
 func TestSaveToFile(t *testing.T) {
-	path, err := os.MkdirTemp("", "dela-test-")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(path)
+	path := t.TempDir()
 
 	file := filepath.Join(path, "test")
-	err = saveToFile(file, false, []byte{1})
+	err := saveToFile(file, false, []byte{1})
 	require.NoError(t, err)
 
 	res, err := os.ReadFile(file)

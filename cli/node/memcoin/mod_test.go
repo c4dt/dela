@@ -23,10 +23,7 @@ import (
 // be able to communicate, but the chain should proceed because of the
 // threshold.
 func TestMemcoin_Scenario_SetupAndTransactions(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "memcoin1")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	sigs := make(chan os.Signal)
 	wg := sync.WaitGroup{}
@@ -68,7 +65,7 @@ func TestMemcoin_Scenario_SetupAndTransactions(t *testing.T) {
 		getExport(t, node2)...),
 		getExport(t, node3)...)
 
-	err = run(args)
+	err := run(args)
 	require.NoError(t, err)
 
 	// Add node 4 to the current chain. This node is not reachable from the
@@ -136,10 +133,7 @@ func TestMemcoin_Scenario_SetupAndTransactions(t *testing.T) {
 // restart. It basically tests if the components are correctly loaded from the
 // persisten storage.
 func TestMemcoin_Scenario_RestartNode(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "memcoin2")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	node1 := filepath.Join(dir, "node1")
 	node2 := filepath.Join(dir, "node2")
@@ -174,7 +168,7 @@ func TestMemcoin_Scenario_RestartNode(t *testing.T) {
 		getExport(t, node1)...,
 	)
 
-	err = run(args)
+	err := run(args)
 	require.EqualError(t, err,
 		"command error: transaction refused: duplicate in roster: grpcs://127.0.0.1:2210")
 }

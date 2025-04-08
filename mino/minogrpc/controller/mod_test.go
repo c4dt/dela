@@ -27,10 +27,7 @@ func TestMiniController_Build(t *testing.T) {
 }
 
 func TestMiniController_OnStart(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "minogrpc")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
@@ -77,10 +74,7 @@ func TestMiniController_InvalidAddr_OnStart(t *testing.T) {
 }
 
 func TestMiniController_OverlayFailed_OnStart(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "minogrpc")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
@@ -158,10 +152,7 @@ func TestMiniController_FailMarshalKey_OnStart(t *testing.T) {
 }
 
 func TestMiniController_FailParseKey_OnStart(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "dela")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	ctrl := NewController().(miniController)
 
@@ -182,10 +173,7 @@ func TestMiniController_FailParseKey_OnStart(t *testing.T) {
 }
 
 func TestMiniController_LoadCertChain_OnStart(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "minogrpc")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
@@ -253,10 +241,7 @@ func TestMiniController_FailedTCPResolve_OnStart(t *testing.T) {
 }
 
 func TestMiniController_FailedPublicParse_OnStart(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "minogrpc")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
@@ -277,10 +262,7 @@ func TestMiniController_FailedPublicParse_OnStart(t *testing.T) {
 }
 
 func TestMiniController_OnStop(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "minogrpc")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
@@ -318,10 +300,7 @@ func TestMiniController_FailStopMino_OnStop(t *testing.T) {
 }
 
 func TestGetKey_Pem(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "minogrpc")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
+	dir := t.TempDir()
 
 	ctrl := NewController()
 
@@ -337,7 +316,7 @@ y4MT5nPHp28W9xpgvZuU/0v5xuNerxs=
 -----END EC PRIVATE KEY-----
 `)
 
-	err = os.WriteFile(keyPath, ECKey, 0755)
+	err := os.WriteFile(keyPath, ECKey, 0755)
 	require.NoError(t, err)
 
 	_, err = ctrl.(miniController).getKey(fakeContext{path: map[string]string{"config": dir}})
