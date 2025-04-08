@@ -38,7 +38,7 @@ func NewAddress(index int) Address {
 
 // NewBadAddress returns a fake address that returns an error when appropriate.
 func NewBadAddress() Address {
-	return Address{err: fakeErr}
+	return Address{err: errFake}
 }
 
 // Equal implements mino.Address.
@@ -306,7 +306,7 @@ func NewBlockingReceiver() *Receiver {
 
 // NewBadReceiver returns a new receiver that returns an error.
 func NewBadReceiver(msg ...ReceiverMessage) *Receiver {
-	return &Receiver{Msgs: msg, err: fakeErr}
+	return &Receiver{Msgs: msg, err: errFake}
 }
 
 // Recv implements mino.Receiver.
@@ -344,7 +344,7 @@ type Sender struct {
 
 // NewBadSender returns a sender that always returns an error.
 func NewBadSender() Sender {
-	return Sender{err: fakeErr}
+	return Sender{err: errFake}
 }
 
 // Send implements mino.Sender.
@@ -390,7 +390,7 @@ func NewStreamRPC(r *Receiver, s Sender) *RPC {
 // NewBadRPC returns a fake rpc that returns an error when appropriate.
 func NewBadRPC() *RPC {
 	rpc := &RPC{
-		err: fakeErr,
+		err: errFake,
 	}
 	rpc.Reset()
 	return rpc
@@ -412,8 +412,10 @@ func (rpc *RPC) Done() {
 }
 
 // Call implements mino.RPC.
-func (rpc *RPC) Call(ctx context.Context,
-	m serde.Message, p mino.Players) (<-chan mino.Response, error) {
+func (rpc *RPC) Call(
+	ctx context.Context,
+	m serde.Message, p mino.Players,
+) (<-chan mino.Response, error) {
 
 	rpc.Calls.Add(ctx, m, p)
 
@@ -443,7 +445,7 @@ type Mino struct {
 
 // NewBadMino returns a Mino instance that returns an error when appropriate.
 func NewBadMino() Mino {
-	return Mino{err: fakeErr}
+	return Mino{err: errFake}
 }
 
 // GetAddress implements mino.Mino.
@@ -540,8 +542,10 @@ func MakeCertificateChain(t *testing.T) []byte {
 	return chain.Bytes()
 }
 
-func genCert(t *testing.T, template, parent *x509.Certificate,
-	publicKey *ecdsa.PublicKey, privateKey *ecdsa.PrivateKey) *x509.Certificate {
+func genCert(
+	t *testing.T, template, parent *x509.Certificate,
+	publicKey *ecdsa.PublicKey, privateKey *ecdsa.PrivateKey,
+) *x509.Certificate {
 
 	certBytes, err := x509.CreateCertificate(rand.Reader, template, parent, publicKey, privateKey)
 	require.NoError(t, err)
@@ -573,8 +577,10 @@ func makeRootCertificate(t *testing.T) (*x509.Certificate, *ecdsa.PrivateKey) {
 	return rootCert, priv
 }
 
-func makeIntermediaryCertificate(t *testing.T, rootCert *x509.Certificate,
-	rootKey *ecdsa.PrivateKey) (*x509.Certificate, *ecdsa.PrivateKey) {
+func makeIntermediaryCertificate(
+	t *testing.T, rootCert *x509.Certificate,
+	rootKey *ecdsa.PrivateKey,
+) (*x509.Certificate, *ecdsa.PrivateKey) {
 
 	priv, err := ecdsa.GenerateKey(elliptic.P521(), rand.Reader)
 	require.NoError(t, err)
@@ -597,8 +603,10 @@ func makeIntermediaryCertificate(t *testing.T, rootCert *x509.Certificate,
 	return intermediary, priv
 }
 
-func makeServerCertificate(t *testing.T, intermediaryCert *x509.Certificate,
-	intermediaryKey *ecdsa.PrivateKey) (*x509.Certificate, *ecdsa.PrivateKey) {
+func makeServerCertificate(
+	t *testing.T, intermediaryCert *x509.Certificate,
+	intermediaryKey *ecdsa.PrivateKey,
+) (*x509.Certificate, *ecdsa.PrivateKey) {
 
 	priv, err := ecdsa.GenerateKey(elliptic.P521(), rand.Reader)
 	require.NoError(t, err)

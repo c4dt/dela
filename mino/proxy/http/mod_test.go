@@ -38,6 +38,8 @@ func TestHTTP_Listen(t *testing.T) {
 	res, err := http.Get("http://127.0.0.1:2010/fake")
 	require.NoError(t, err)
 
+	defer res.Body.Close()
+
 	output, err := io.ReadAll(res.Body)
 	require.NoError(t, err)
 

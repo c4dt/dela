@@ -14,6 +14,8 @@ generate: tidy
 	go generate ./...
 
 lint: tidy
+	@clear
+	@echo "Running golangci-lint"
 	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.64.8
 	golangci-lint run
 

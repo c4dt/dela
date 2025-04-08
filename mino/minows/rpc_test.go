@@ -2,12 +2,13 @@ package minows
 
 import (
 	"context"
+	"sync"
+	"testing"
+
 	"github.com/stretchr/testify/require"
 	"go.dedis.ch/dela/mino"
 	"go.dedis.ch/dela/serde"
 	"go.dedis.ch/dela/testing/fake"
-	"sync"
-	"testing"
 )
 
 func Test_rpc_Call(t *testing.T) {
@@ -15,12 +16,12 @@ func Test_rpc_Call(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	const addrPlayer = "/ip4/127.0.0.1/tcp/6002/ws"
 	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
 	defer stop()
-	mustCreateRPC(t, player, "test", handler)
+	mustCreateRPC(t, player, handler)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -45,7 +46,7 @@ func Test_rpc_Call_ToSelf(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -69,7 +70,7 @@ func Test_rpc_Call_NoPlayers(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -85,12 +86,12 @@ func Test_rpc_Call_WrongAddressType(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	const addrPlayer = "/ip4/127.0.0.1/tcp/6002/ws"
 	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
 	defer stop()
-	mustCreateRPC(t, player, "test", handler)
+	mustCreateRPC(t, player, handler)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -106,12 +107,12 @@ func Test_rpc_Call_DiffNamespace(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	const addrPlayer = "/ip4/127.0.0.1/tcp/6002/ws"
 	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
 	defer stop()
-	mustCreateRPC(t, player.WithSegment("segment"), "test", handler)
+	mustCreateRPC(t, player.WithSegment("segment"), handler)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -134,12 +135,12 @@ func Test_rpc_Call_ContextCancelled(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	const addrPlayer = "/ip4/127.0.0.1/tcp/6002/ws"
 	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
 	defer stop()
-	mustCreateRPC(t, player, "test", handler)
+	mustCreateRPC(t, player, handler)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	req := fake.Message{}
@@ -157,12 +158,12 @@ func Test_rpc_Stream(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	const addrPlayer = "/ip4/127.0.0.1/tcp/6002/ws"
 	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
 	defer stop()
-	mustCreateRPC(t, player, "test", handler)
+	mustCreateRPC(t, player, handler)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -179,7 +180,7 @@ func Test_rpc_Stream_ToSelf(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -196,7 +197,7 @@ func Test_rpc_Stream_NoPlayers(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -211,7 +212,7 @@ func Test_rpc_Stream_WrongAddressType(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -226,11 +227,11 @@ func Test_rpc_Stream_ContextCancelled(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 	const addrPlayer = "/ip4/127.0.0.1/tcp/6002/ws"
 	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
 	defer stop()
-	mustCreateRPC(t, player, "test", handler)
+	mustCreateRPC(t, player, handler)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	players := mino.NewAddresses(player.GetAddress())
@@ -255,8 +256,10 @@ func newEchoHandler() *echoHandler {
 	return &echoHandler{msgCounter: make(chan struct{}, 100)}
 }
 
-func (h *echoHandler) Process(req mino.Request) (resp serde.Message,
-	err error) {
+func (h *echoHandler) Process(req mino.Request) (
+	resp serde.Message,
+	err error,
+) {
 	h.from = append(h.from, req.Address)
 	h.messages = append(h.messages, req.Message)
 	return req.Message, nil
@@ -286,9 +289,8 @@ func (h *echoHandler) wait(count int) {
 	}
 }
 
-func mustCreateRPC(t *testing.T, m mino.Mino, name string,
-	h mino.Handler) mino.RPC {
-	r, err := m.CreateRPC(name, h, fake.MessageFactory{})
+func mustCreateRPC(t *testing.T, m mino.Mino, h mino.Handler) mino.RPC {
+	r, err := m.CreateRPC("test", h, fake.MessageFactory{})
 	require.NoError(t, err)
 	return r
 }

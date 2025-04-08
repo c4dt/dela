@@ -151,9 +151,10 @@ func (s *Service) createBlock(ctx context.Context) error {
 	// Wait for at least one transaction before creating a block.
 	txs := s.pool.Gather(ctx, pool.Config{Min: 1})
 
-	if ctx.Err() != nil {
+	err := ctx.Err()
+	if err != nil {
 		// Context is closed so we don't proceed in the block creation.
-		return nil
+		return xerrors.Errorf("Context closed: don't create the block: %v", err)
 	}
 
 	latestEpoch := s.epochs[len(s.epochs)-1]

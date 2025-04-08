@@ -52,7 +52,7 @@ func TestMemcoin_Scenario_SetupAndTransactions(t *testing.T) {
 		wg.Wait()
 	}()
 
-	require.True(t, waitDaemon(t, []string{node1, node2, node3}), "daemon failed to start")
+	require.True(t, waitDaemon([]string{node1, node2, node3}), "daemon failed to start")
 
 	// Share the certificates.
 	shareCert(t, node2, node1, "//127.0.0.1:2111")
@@ -164,7 +164,7 @@ func TestMemcoin_Scenario_RestartNode(t *testing.T) {
 		wg.Wait()
 	}()
 
-	require.True(t, waitDaemon(t, []string{node1, node2}), "daemon failed to start")
+	require.True(t, waitDaemon([]string{node1, node2}), "daemon failed to start")
 
 	args := append([]string{
 		os.Args[0],
@@ -210,7 +210,7 @@ func setupChain(t *testing.T, nodes []string, ports []uint16) {
 		wg.Wait()
 	}()
 
-	waitDaemon(t, nodes)
+	waitDaemon(nodes)
 
 	shareCert(t, nodes[1], nodes[0], fmt.Sprintf("//127.0.0.1:%d", ports[0]))
 
@@ -224,7 +224,7 @@ func setupChain(t *testing.T, nodes []string, ports []uint16) {
 	require.NoError(t, err)
 }
 
-func waitDaemon(t *testing.T, daemons []string) bool {
+func waitDaemon(daemons []string) bool {
 	num := 50
 
 	for _, daemon := range daemons {
