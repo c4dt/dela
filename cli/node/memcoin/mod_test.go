@@ -16,6 +16,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"go.dedis.ch/kyber/v3/pairing/bn256"
+	"golang.org/x/net/nettest"
 )
 
 // This test creates a chain with initially 3 nodes. It then adds node 4 and 5
@@ -23,17 +24,20 @@ import (
 // be able to communicate, but the chain should proceed because of the
 // threshold.
 func TestMemcoin_Scenario_SetupAndTransactions(t *testing.T) {
-	dir := t.TempDir()
-
 	sigs := make(chan os.Signal)
 	wg := sync.WaitGroup{}
 	wg.Add(5)
 
-	node1 := filepath.Join(dir, "node1")
-	node2 := filepath.Join(dir, "node2")
-	node3 := filepath.Join(dir, "node3")
-	node4 := filepath.Join(dir, "node4")
-	node5 := filepath.Join(dir, "node5")
+	node1, err := nettest.LocalPath()
+	require.NoError(t, err)
+	node2, err := nettest.LocalPath()
+	require.NoError(t, err)
+	node3, err := nettest.LocalPath()
+	require.NoError(t, err)
+	node4, err := nettest.LocalPath()
+	require.NoError(t, err)
+	node5, err := nettest.LocalPath()
+	require.NoError(t, err)
 
 	cfg := config{Channel: sigs, Writer: io.Discard}
 
@@ -65,7 +69,7 @@ func TestMemcoin_Scenario_SetupAndTransactions(t *testing.T) {
 		getExport(t, node2)...),
 		getExport(t, node3)...)
 
-	err := run(args)
+	err = run(args)
 	require.NoError(t, err)
 
 	// Add node 4 to the current chain. This node is not reachable from the
@@ -133,10 +137,11 @@ func TestMemcoin_Scenario_SetupAndTransactions(t *testing.T) {
 // restart. It basically tests if the components are correctly loaded from the
 // persisten storage.
 func TestMemcoin_Scenario_RestartNode(t *testing.T) {
-	dir := t.TempDir()
+	node1, err := nettest.LocalPath()
+	require.NoError(t, err)
 
-	node1 := filepath.Join(dir, "node1")
-	node2 := filepath.Join(dir, "node2")
+	node2, err := nettest.LocalPath()
+	require.NoError(t, err)
 
 	// Setup the chain and closes the node.
 	setupChain(t, []string{node1, node2}, []uint16{2210, 2211})
@@ -168,7 +173,7 @@ func TestMemcoin_Scenario_RestartNode(t *testing.T) {
 		getExport(t, node1)...,
 	)
 
-	err := run(args)
+	err = run(args)
 	require.EqualError(t, err,
 		"command error: transaction refused: duplicate in roster: grpcs://127.0.0.1:2210")
 }
