@@ -57,7 +57,6 @@ func TestCachedGenesis_Exists(t *testing.T) {
 
 func TestGenesisDiskStore_Load(t *testing.T) {
 	dir := t.TempDir()
-
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
 
@@ -84,6 +83,9 @@ func TestGenesisDiskStore_Load(t *testing.T) {
 	store.fac = fake.MessageFactory{}
 	err = store.Load()
 	require.EqualError(t, err, "unsupported message 'fake.Message'")
+
+	err = db.Close()
+	require.NoError(t, err)
 }
 
 func TestGenesisDiskStore_Set(t *testing.T) {
@@ -91,6 +93,8 @@ func TestGenesisDiskStore_Set(t *testing.T) {
 
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
+
+	defer db.Close()
 
 	store := NewGenesisDiskStore(db, makeFac())
 

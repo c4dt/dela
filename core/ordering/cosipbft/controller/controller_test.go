@@ -27,6 +27,8 @@ func TestMinimal_OnStart(t *testing.T) {
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
 
+	defer db.Close()
+
 	m := NewController().(miniController)
 
 	inj := node.NewInjector()
@@ -97,6 +99,8 @@ func TestMinimal_OnStop(t *testing.T) {
 
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
+
+	defer db.Close()
 
 	m := NewController()
 

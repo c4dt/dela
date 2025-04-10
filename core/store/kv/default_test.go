@@ -15,6 +15,8 @@ func TestBoltDB_UpdateAndView(t *testing.T) {
 	db, err := New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
 
+	defer db.Close()
+
 	ch := make(chan struct{})
 	err = db.Update(func(txn WritableTx) error {
 		txn.OnCommit(func() { close(ch) })
@@ -61,6 +63,8 @@ func TestBoltTx_GetBucket(t *testing.T) {
 	db, err := New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
 
+	defer db.Close()
+
 	err = db.Update(func(tx WritableTx) error {
 		require.Nil(t, tx.GetBucket([]byte("unknown")))
 
@@ -81,6 +85,8 @@ func TestBoltBucket_Get_Set_Delete(t *testing.T) {
 
 	db, err := New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
+
+	defer db.Close()
 
 	err = db.Update(func(txn WritableTx) error {
 		b, err := txn.GetBucketOrCreate([]byte("bucket"))
@@ -111,6 +117,8 @@ func TestBoltBucket_ForEach(t *testing.T) {
 	db, err := New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
 
+	defer db.Close()
+
 	err = db.Update(func(txn WritableTx) error {
 		b, err := txn.GetBucketOrCreate([]byte("test"))
 		require.NoError(t, err)
@@ -135,6 +143,8 @@ func TestBoltBucket_Scan(t *testing.T) {
 
 	db, err := New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
+
+	defer db.Close()
 
 	err = db.Update(func(txn WritableTx) error {
 		b, err := txn.GetBucketOrCreate([]byte("bucket"))

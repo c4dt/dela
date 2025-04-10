@@ -32,6 +32,8 @@ func TestMiniController_OnStart(t *testing.T) {
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
 
+	defer db.Close()
+
 	ctrl := NewController().(miniController)
 
 	injector := node.NewInjector()
@@ -78,6 +80,8 @@ func TestMiniController_OverlayFailed_OnStart(t *testing.T) {
 
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
+
+	defer db.Close()
 
 	ctrl := NewController().(miniController)
 
@@ -178,6 +182,8 @@ func TestMiniController_LoadCertChain_OnStart(t *testing.T) {
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
 
+	defer db.Close()
+
 	ctrl := NewController().(miniController)
 
 	injector := node.NewInjector()
@@ -246,6 +252,8 @@ func TestMiniController_FailedPublicParse_OnStart(t *testing.T) {
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
 
+	defer db.Close()
+
 	ctrl := NewController().(miniController)
 
 	injector := node.NewInjector()
@@ -266,6 +274,8 @@ func TestMiniController_OnStop(t *testing.T) {
 
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
+
+	defer db.Close()
 
 	ctrl := NewController()
 
