@@ -17,8 +17,8 @@ import (
 )
 
 func TestMerkleTree_IntegrationTest(t *testing.T) {
-	db := makeDB(t)
-	defer db.Close()
+	db, clean := makeDB(t)
+	defer clean()
 
 	tree := NewMerkleTree(db, Nonce{})
 	tree.tree.memDepth = 5
@@ -98,8 +98,8 @@ func TestMerkleTree_Random_IntegrationTest(t *testing.T) {
 	f := func(nonce Nonce, n uint8, mem uint8) bool {
 		t.Logf("Step nonce:%x n:%d mem:%d", nonce, n, mem%32)
 
-		db := makeDB(t)
-		defer db.Close()
+		db, clean := makeDB(t)
+		defer clean()
 
 		tree := NewMerkleTree(db, nonce)
 		tree.tree.memDepth = int(mem) % 32
@@ -316,13 +316,17 @@ func TestWritableMerkleTree_Delete(t *testing.T) {
 // -----------------------------------------------------------------------------
 // Utility functions
 
-func makeDB(t *testing.T) kv.DB {
+func makeDB(t *testing.T) (kv.DB, func()) {
 	dir := t.TempDir()
 
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
 
-	return db
+	clean := func() {
+		db.Close()
+	}
+
+	return db, clean
 }
 
 type badTx struct {

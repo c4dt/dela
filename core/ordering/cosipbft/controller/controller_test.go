@@ -24,10 +24,8 @@ func TestMinimal_SetCommands(t *testing.T) {
 func TestMinimal_OnStart(t *testing.T) {
 	flags, dir := makeFlags(t)
 
-	db, err := kv.New(filepath.Join(dir, "test.db"))
-	require.NoError(t, err)
-
-	defer db.Close()
+	db, clean := makeDB(t, dir)
+	defer clean()
 
 	m := NewController().(miniController)
 
@@ -35,7 +33,7 @@ func TestMinimal_OnStart(t *testing.T) {
 	inj.Inject(fake.Mino{})
 	inj.Inject(db)
 
-	err = m.OnStart(flags, inj)
+	err := m.OnStart(flags, inj)
 	require.NoError(t, err)
 }
 
@@ -96,11 +94,8 @@ func TestMinimal_MalformedKey_OnStart(t *testing.T) {
 
 func TestMinimal_OnStop(t *testing.T) {
 	dir := t.TempDir()
-
-	db, err := kv.New(filepath.Join(dir, "test.db"))
-	require.NoError(t, err)
-
-	defer db.Close()
+	db, clean := makeDB(t, dir)
+	defer clean()
 
 	m := NewController()
 
@@ -111,7 +106,7 @@ func TestMinimal_OnStop(t *testing.T) {
 	inj.Inject(fake.Mino{})
 	inj.Inject(db)
 
-	err = m.OnStart(fset, inj)
+	err := m.OnStart(fset, inj)
 	require.NoError(t, err)
 
 	err = m.OnStop(inj)
@@ -138,6 +133,16 @@ func TestMinimal_OnStop(t *testing.T) {
 
 // -----------------------------------------------------------------------------
 // Utility functions
+func makeDB(t *testing.T, dir string) (kv.DB, func()) {
+	db, err := kv.New(filepath.Join(dir, "test.db"))
+	require.NoError(t, err)
+
+	clean := func() {
+		db.Close()
+	}
+
+	return db, clean
+}
 
 func makeFlags(t *testing.T) (cli.Flags, string) {
 	dir := t.TempDir()

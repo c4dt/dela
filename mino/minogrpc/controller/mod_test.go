@@ -28,11 +28,8 @@ func TestMiniController_Build(t *testing.T) {
 
 func TestMiniController_OnStart(t *testing.T) {
 	dir := t.TempDir()
-
-	db, err := kv.New(filepath.Join(dir, "test.db"))
-	require.NoError(t, err)
-
-	defer db.Close()
+	db, clean := makeDB(t, dir)
+	defer clean()
 
 	ctrl := NewController().(miniController)
 
@@ -42,7 +39,7 @@ func TestMiniController_OnStart(t *testing.T) {
 	str := map[string]string{"routing": "flat"}
 	paths := map[string]string{"config": dir}
 
-	err = ctrl.OnStart(fakeContext{path: paths, str: str}, injector)
+	err := ctrl.OnStart(fakeContext{path: paths, str: str}, injector)
 	require.NoError(t, err)
 
 	str = map[string]string{"routing": "tree"}
@@ -77,11 +74,8 @@ func TestMiniController_InvalidAddr_OnStart(t *testing.T) {
 
 func TestMiniController_OverlayFailed_OnStart(t *testing.T) {
 	dir := t.TempDir()
-
-	db, err := kv.New(filepath.Join(dir, "test.db"))
-	require.NoError(t, err)
-
-	defer db.Close()
+	db, clean := makeDB(t, dir)
+	defer clean()
 
 	ctrl := NewController().(miniController)
 
@@ -124,7 +118,6 @@ func TestMiniController_UnknownRouting_OnStart(t *testing.T) {
 }
 
 func TestMiniController_FailGenerateKey_OnStart(t *testing.T) {
-	t.Skip("Doesn't work on main neither")
 	ctrl := NewController().(miniController)
 	ctrl.random = badReader{}
 
@@ -179,10 +172,8 @@ func TestMiniController_FailParseKey_OnStart(t *testing.T) {
 func TestMiniController_LoadCertChain_OnStart(t *testing.T) {
 	dir := t.TempDir()
 
-	db, err := kv.New(filepath.Join(dir, "test.db"))
-	require.NoError(t, err)
-
-	defer db.Close()
+	db, clean := makeDB(t, dir)
+	defer clean()
 
 	ctrl := NewController().(miniController)
 
@@ -193,7 +184,7 @@ func TestMiniController_LoadCertChain_OnStart(t *testing.T) {
 	certPath := filepath.Join(dir, "cert.pem")
 	paths := map[string]string{"config": dir, "certChain": certPath}
 
-	err = ctrl.OnStart(fakeContext{path: paths, str: str}, injector)
+	err := ctrl.OnStart(fakeContext{path: paths, str: str}, injector)
 	require.True(t, strings.HasPrefix(err.Error(), "failed to get cert option: "+
 		"failed to load certificate:"), err)
 
@@ -248,11 +239,8 @@ func TestMiniController_FailedTCPResolve_OnStart(t *testing.T) {
 
 func TestMiniController_FailedPublicParse_OnStart(t *testing.T) {
 	dir := t.TempDir()
-
-	db, err := kv.New(filepath.Join(dir, "test.db"))
-	require.NoError(t, err)
-
-	defer db.Close()
+	db, clean := makeDB(t, dir)
+	defer clean()
 
 	ctrl := NewController().(miniController)
 
@@ -265,17 +253,14 @@ func TestMiniController_FailedPublicParse_OnStart(t *testing.T) {
 	str := map[string]string{"listen": "tcp://1.2.3.4:0", "public": ":xxx", "routing": "flat"}
 	paths := map[string]string{"config": dir}
 
-	err = ctrl.OnStart(fakeContext{path: paths, str: str}, injector)
+	err := ctrl.OnStart(fakeContext{path: paths, str: str}, injector)
 	require.EqualError(t, err, `failed to parse public: parse ":xxx": missing protocol scheme`)
 }
 
 func TestMiniController_OnStop(t *testing.T) {
 	dir := t.TempDir()
-
-	db, err := kv.New(filepath.Join(dir, "test.db"))
-	require.NoError(t, err)
-
-	defer db.Close()
+	db, clean := makeDB(t, dir)
+	defer clean()
 
 	ctrl := NewController()
 
@@ -285,7 +270,7 @@ func TestMiniController_OnStop(t *testing.T) {
 	str := map[string]string{"routing": "flat"}
 	paths := map[string]string{"config": dir}
 
-	err = ctrl.OnStart(fakeContext{path: paths, str: str}, injector)
+	err := ctrl.OnStart(fakeContext{path: paths, str: str}, injector)
 	require.NoError(t, err)
 
 	err = ctrl.OnStop(injector)
@@ -361,6 +346,16 @@ UpY5smzho+wOGQ==
 
 // -----------------------------------------------------------------------------
 // Utility functions
+func makeDB(t *testing.T, dir string) (kv.DB, func()) {
+	db, err := kv.New(filepath.Join(dir, "test.db"))
+	require.NoError(t, err)
+
+	clean := func() {
+		db.Close()
+	}
+
+	return db, clean
+}
 
 type fakeCommandBuilder struct {
 	call *fake.Call
