@@ -18,6 +18,7 @@ import (
 
 func TestMerkleTree_IntegrationTest(t *testing.T) {
 	db := makeDB(t)
+	defer db.Close()
 
 	tree := NewMerkleTree(db, Nonce{})
 	tree.tree.memDepth = 5
@@ -98,6 +99,7 @@ func TestMerkleTree_Random_IntegrationTest(t *testing.T) {
 		t.Logf("Step nonce:%x n:%d mem:%d", nonce, n, mem%32)
 
 		db := makeDB(t)
+		defer db.Close()
 
 		tree := NewMerkleTree(db, nonce)
 		tree.tree.memDepth = int(mem) % 32
