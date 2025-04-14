@@ -1,14 +1,14 @@
 .PHONY: all tidy generate lint test coverage pushdoc
 
 # Default "make" target to check locally that everything is ok, BEFORE pushing remotely
-all: lint test
+all: generate lint test
 	@echo "Done with the standard checks"
 
 tidy:
 	@go mod tidy -go="1.23.8"
 
 generate: tidy
-	go get -u google.golang.org/protobuf/cmd/protoc-gen-go@v1.5.1
+	go get -u google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.5
 	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.5.1
 	go get -u google.golang.org/genproto/googleapis/rpc
 	go generate ./...
