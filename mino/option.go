@@ -5,6 +5,8 @@
 package mino
 
 import (
+	secureRand "crypto/rand"
+	"encoding/binary"
 	"math/rand"
 	"sort"
 )
@@ -114,8 +116,9 @@ func ListFilter(indices []int) FilterUpdater {
 // of Indices to 'count'.
 // If there are less than 'count' elements, only the shuffling takes place.
 func RandomFilter(count int) FilterUpdater {
+	r := rand.New(cryptoRandSource{})
 	return func(filters *Filter) {
-		rand.Shuffle(len(filters.Indices),
+		r.Shuffle(len(filters.Indices),
 			func(i, j int) {
 				filters.Indices[i], filters.Indices[j] = filters.Indices[j], filters.Indices[i]
 			})
@@ -124,3 +127,19 @@ func RandomFilter(count int) FilterUpdater {
 		}
 	}
 }
+
+type cryptoRandSource struct{}
+
+func (_ cryptoRandSource) Int63() int64 {
+	var b [8]byte
+	_, err := secureRand.Read(b[:])
+
+	if err != nil {
+		panic(err)
+	}
+
+	// mask off sign bit to ensure positive number
+	return int64(binary.LittleEndian.Uint64(b[:]) & (1<<63 - 1))
+}
+
+func (_ cryptoRandSource) Seed(_ int64) {}

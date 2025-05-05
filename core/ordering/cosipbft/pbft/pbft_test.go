@@ -2,7 +2,6 @@ package pbft
 
 import (
 	"context"
-	"os"
 	"path/filepath"
 	"testing"
 
@@ -97,8 +96,8 @@ func TestStateMachine_GetCommit(t *testing.T) {
 }
 
 func TestStateMachine_Prepare(t *testing.T) {
-	tree, db, clean := makeTree(t)
-	defer clean()
+	tree, db := makeTree(t)
+	defer db.Close()
 
 	ro := authority.FromAuthority(fake.NewAuthority(3, fake.NewSigner))
 
@@ -148,8 +147,8 @@ func TestStateMachine_WhileViewChange_Prepare(t *testing.T) {
 }
 
 func TestStateMachine_WrongLeader_Prepare(t *testing.T) {
-	tree, _, clean := makeTree(t)
-	defer clean()
+	tree, db := makeTree(t)
+	defer db.Close()
 
 	sm := &pbftsm{
 		state:      InitialState,
@@ -164,8 +163,8 @@ func TestStateMachine_WrongLeader_Prepare(t *testing.T) {
 }
 
 func TestStateMachine_FailedValidation_Prepare(t *testing.T) {
-	tree, db, clean := makeTree(t)
-	defer clean()
+	tree, db := makeTree(t)
+	defer db.Close()
 
 	sm := &pbftsm{
 		state:      InitialState,
@@ -182,8 +181,8 @@ func TestStateMachine_FailedValidation_Prepare(t *testing.T) {
 }
 
 func TestStateMachine_MismatchTreeRoot_Prepare(t *testing.T) {
-	tree, db, clean := makeTree(t)
-	defer clean()
+	tree, db := makeTree(t)
+	defer db.Close()
 
 	sm := &pbftsm{
 		state:      InitialState,
@@ -202,8 +201,8 @@ func TestStateMachine_MismatchTreeRoot_Prepare(t *testing.T) {
 }
 
 func TestStateMachine_MissingGenesis_Prepare(t *testing.T) {
-	tree, db, clean := makeTree(t)
-	defer clean()
+	tree, db := makeTree(t)
+	defer db.Close()
 
 	sm := &pbftsm{
 		state:      InitialState,
@@ -226,8 +225,8 @@ func TestStateMachine_MissingGenesis_Prepare(t *testing.T) {
 }
 
 func TestStateMachine_FailReadCurrentRoster_Prepare(t *testing.T) {
-	tree, db, clean := makeTree(t)
-	defer clean()
+	tree, db := makeTree(t)
+	defer db.Close()
 
 	sm := &pbftsm{
 		state:      InitialState,
@@ -252,8 +251,8 @@ func TestStateMachine_FailReadCurrentRoster_Prepare(t *testing.T) {
 }
 
 func TestStateMachine_FailReadRosterInStageTree_Prepare(t *testing.T) {
-	tree, db, clean := makeTree(t)
-	defer clean()
+	tree, db := makeTree(t)
+	defer db.Close()
 
 	counter := fake.NewCounter(1)
 
@@ -290,8 +289,8 @@ func TestStateMachine_FailReadRosterInStageTree_Prepare(t *testing.T) {
 }
 
 func TestStateMachine_FailCreateLink_Prepare(t *testing.T) {
-	tree, db, clean := makeTree(t)
-	defer clean()
+	tree, db := makeTree(t)
+	defer db.Close()
 
 	sm := &pbftsm{
 		state:      InitialState,
@@ -394,8 +393,8 @@ func TestStateMachine_FailReadCurrentRoster_Commit(t *testing.T) {
 }
 
 func TestStateMachine_Finalize(t *testing.T) {
-	tree, db, clean := makeTree(t)
-	defer clean()
+	tree, db := makeTree(t)
+	defer db.Close()
 
 	ro := authority.FromAuthority(fake.NewAuthority(3, fake.NewSigner))
 
@@ -503,8 +502,8 @@ func TestStateMachine_BadBlockStore_Finalize(t *testing.T) {
 }
 
 func TestStateMachine_FailCommitTree_Finalize(t *testing.T) {
-	tree, db, clean := makeTree(t)
-	defer clean()
+	tree, db := makeTree(t)
+	defer db.Close()
 
 	sm := &pbftsm{
 		state:       CommitState,
@@ -527,8 +526,8 @@ func TestStateMachine_FailCommitTree_Finalize(t *testing.T) {
 }
 
 func TestStateMachine_FailCreateLink_Finalize(t *testing.T) {
-	tree, db, clean := makeTree(t)
-	defer clean()
+	tree, db := makeTree(t)
+	defer db.Close()
 
 	sm := &pbftsm{
 		state:       CommitState,
@@ -553,8 +552,8 @@ func TestStateMachine_FailCreateLink_Finalize(t *testing.T) {
 }
 
 func TestStateMachine_FailStoreBlock_Finalize(t *testing.T) {
-	tree, db, clean := makeTree(t)
-	defer clean()
+	tree, db := makeTree(t)
+	defer db.Close()
 
 	sm := &pbftsm{
 		state:       CommitState,
@@ -744,8 +743,8 @@ func TestStateMachine_Expire(t *testing.T) {
 }
 
 func TestStateMachine_CatchUp(t *testing.T) {
-	tree, db, clean := makeTree(t)
-	defer clean()
+	tree, db := makeTree(t)
+	defer db.Close()
 
 	ro := authority.FromAuthority(fake.NewAuthority(3, fake.NewSigner))
 
@@ -818,8 +817,8 @@ func TestStateMachine_CatchUp(t *testing.T) {
 // checks that the tentative leader is set in case the tentative round is equal
 // to the proposed block.
 func TestStateMachine_CatchUp_Tentative_Leader_Accept(t *testing.T) {
-	tree, db, clean := makeTree(t)
-	defer clean()
+	tree, db := makeTree(t)
+	defer db.Close()
 
 	ro := authority.FromAuthority(fake.NewAuthority(3, fake.NewSigner))
 
@@ -886,9 +885,8 @@ func TestStateMachine_Watch(t *testing.T) {
 // -----------------------------------------------------------------------------
 // Utility functions
 
-func makeTree(t *testing.T) (hashtree.Tree, kv.DB, func()) {
-	dir, err := os.MkdirTemp(os.TempDir(), "pbft")
-	require.NoError(t, err)
+func makeTree(t *testing.T) (hashtree.Tree, kv.DB) {
+	dir := t.TempDir()
 
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
@@ -897,7 +895,7 @@ func makeTree(t *testing.T) (hashtree.Tree, kv.DB, func()) {
 	stage, err := tree.Stage(func(store.Snapshot) error { return nil })
 	require.NoError(t, err)
 
-	return stage, db, func() { os.RemoveAll(dir) }
+	return stage, db
 }
 
 func makeLink(t *testing.T) types.BlockLink {

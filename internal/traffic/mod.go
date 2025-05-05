@@ -153,6 +153,8 @@ func (t *Traffic) Save(path string, withSend, withRcv bool) error {
 		return xerrors.Errorf("file: %v", err)
 	}
 
+	defer f.Close()
+
 	GenerateItemsGraphviz(f, withSend, withRcv, t)
 	return nil
 }
@@ -307,7 +309,9 @@ func GenerateItemsGraphviz(out io.Writer, withSend, withRcv bool, traffics ...*T
 
 	fmt.Fprintf(out, "digraph network_activity {\n")
 	fmt.Fprintf(out, "labelloc=\"t\";")
-	fmt.Fprintf(out, "label = <Network Diagram of %d nodes <font point-size='10'><br/>(generated %s)</font>>;", len(traffics), time.Now().Format("2 Jan 06 - 15:04:05"))
+	fmt.Fprintf(out,
+		"label = <Network Diagram of %d nodes <font point-size='10'><br/>(generated %s)</font>>;",
+		len(traffics), time.Now().Format("2 Jan 06 - 15:04:05"))
 	fmt.Fprintf(out, "graph [fontname = \"helvetica\"];")
 	fmt.Fprintf(out, "graph [fontname = \"helvetica\"];")
 	fmt.Fprintf(out, "node [fontname = \"helvetica\"];")
@@ -357,7 +361,9 @@ func GenerateEventGraphviz(out io.Writer, traffics ...*Traffic) {
 
 	fmt.Fprintf(out, "digraph network_activity {\n")
 	fmt.Fprintf(out, "labelloc=\"t\";")
-	fmt.Fprintf(out, "label = <Network Diagram of %d nodes <font point-size='10'><br/>(generated %s)</font>>;", len(traffics), time.Now().Format("2 Jan 06 - 15:04:05"))
+	fmt.Fprintf(out,
+		"label = <Network Diagram of %d nodes <font point-size='10'><br/>(generated %s)</font>>;",
+		len(traffics), time.Now().Format("2 Jan 06 - 15:04:05"))
 	fmt.Fprintf(out, "graph [fontname = \"helvetica\"];")
 	fmt.Fprintf(out, "graph [fontname = \"helvetica\"];")
 	fmt.Fprintf(out, "node [fontname = \"helvetica\"];")

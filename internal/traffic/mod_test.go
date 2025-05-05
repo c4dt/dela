@@ -50,7 +50,7 @@ func TestTraffic_Integration(t *testing.T) {
 `
 	require.Equal(t, expected, buffer.String())
 
-	file := filepath.Join(os.TempDir(), "minogrpc-test-traffic")
+	file := filepath.Join(t.TempDir(), "traffic.dot")
 
 	err := traffic.Save(file, true, true)
 	require.NoError(t, err)
@@ -63,16 +63,13 @@ func TestTraffic_Integration(t *testing.T) {
 }
 
 func TestSaveItems(t *testing.T) {
-	path, err := os.MkdirTemp("", "go-test-save-items")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(path)
+	path := t.TempDir()
 
 	if runtime.GOOS == "windows" {
 		return
 	}
 
-	err = os.Chmod(path, 0000)
+	err := os.Chmod(path, 0000)
 	require.NoError(t, err)
 
 	err = SaveItems(path+"/items.dot", true, true)
@@ -80,16 +77,13 @@ func TestSaveItems(t *testing.T) {
 }
 
 func TestSaveEvents(t *testing.T) {
-	path, err := os.MkdirTemp("", "go-test-save-events")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(path)
+	path := t.TempDir()
 
 	if runtime.GOOS == "windows" {
 		return
 	}
 
-	err = os.Chmod(path, 0000)
+	err := os.Chmod(path, 0000)
 	require.NoError(t, err)
 
 	err = SaveEvents(path + "/events.dot")
@@ -99,16 +93,13 @@ func TestSaveEvents(t *testing.T) {
 func TestTraffic_Save(t *testing.T) {
 	traffic := NewTraffic(fake.NewAddress(0), io.Discard)
 
-	path, err := os.MkdirTemp("", "go-test-traffic-save")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(path)
+	path := t.TempDir()
 
 	if runtime.GOOS == "windows" {
 		return
 	}
 
-	err = os.Chmod(path, 0000)
+	err := os.Chmod(path, 0000)
 	require.NoError(t, err)
 
 	err = traffic.Save(path+"/traffic.dot", false, false)

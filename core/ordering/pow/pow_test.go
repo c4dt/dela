@@ -2,7 +2,6 @@ package pow
 
 import (
 	"context"
-	"os"
 	"path/filepath"
 	"testing"
 
@@ -126,8 +125,7 @@ func TestService_GetProof(t *testing.T) {
 const testContractName = "abc"
 
 func makeTree(t *testing.T) (hashtree.Tree, func()) {
-	dir, err := os.MkdirTemp(os.TempDir(), "dela-pow")
-	require.NoError(t, err)
+	dir := t.TempDir()
 
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
@@ -135,7 +133,7 @@ func makeTree(t *testing.T) (hashtree.Tree, func()) {
 	tree := tree.NewMerkleTree(db, tree.Nonce{})
 	tree.Stage(func(store.Snapshot) error { return nil })
 
-	return tree, func() { os.RemoveAll(dir) }
+	return tree, func() { db.Close() }
 }
 
 func makeTx(t *testing.T, nonce uint64, signer crypto.Signer) txn.Transaction {

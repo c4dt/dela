@@ -53,7 +53,7 @@ func getTest[T require.TestingT](numNode, numTx int, kind string) func(t T) {
 		dir, err := os.MkdirTemp(os.TempDir(), "dela-integration-test")
 		require.NoError(t, err)
 
-		timeout := time.Second * 10 // transaction inclusion timeout
+		timeout := time.Second * 1 // transaction inclusion timeout
 
 		defer os.RemoveAll(dir)
 

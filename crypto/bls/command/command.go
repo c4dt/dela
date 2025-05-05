@@ -25,12 +25,12 @@ func (i Initializer) SetCommands(provider cli.Provider) {
 		saveFile:  saveToFile,
 	}
 
-	cmd := provider.SetCommand("bls")
-	signer := cmd.SetSubCommand("signer")
+	blsCmd := provider.SetCommand("bls")
+	signer := blsCmd.SetSubCommand("signer")
 
-	new := signer.SetSubCommand("new")
-	new.SetDescription("create a new bls signer")
-	new.SetFlags(cli.StringFlag{
+	newCmd := signer.SetSubCommand("new")
+	newCmd.SetDescription("create a new bls signer")
+	newCmd.SetFlags(cli.StringFlag{
 		Name:     "save",
 		Usage:    "if provided, save the signer to that file",
 		Required: false,
@@ -39,11 +39,11 @@ func (i Initializer) SetCommands(provider cli.Provider) {
 		Usage:    "in the case it saves the signer, will overwrite if needed",
 		Required: false,
 	})
-	new.SetAction(action.newSignerAction)
+	newCmd.SetAction(action.newSignerAction)
 
-	read := signer.SetSubCommand("read")
-	read.SetDescription("read a signer")
-	read.SetFlags(cli.StringFlag{
+	readCmd := signer.SetSubCommand("read")
+	readCmd.SetDescription("read a signer")
+	readCmd.SetFlags(cli.StringFlag{
 		Name:     "path",
 		Usage:    "path to the signer's file",
 		Required: true,
@@ -53,5 +53,5 @@ func (i Initializer) SetCommands(provider cli.Provider) {
 		Value:    "PUBKEY",
 		Required: false,
 	})
-	read.SetAction(action.loadSignerAction)
+	readCmd.SetAction(action.loadSignerAction)
 }

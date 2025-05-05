@@ -16,6 +16,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"go.dedis.ch/kyber/v3/pairing/bn256"
+	"golang.org/x/net/nettest"
 )
 
 // This test creates a chain with initially 3 nodes. It then adds node 4 and 5
@@ -23,20 +24,20 @@ import (
 // be able to communicate, but the chain should proceed because of the
 // threshold.
 func TestMemcoin_Scenario_SetupAndTransactions(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "memcoin1")
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
-
 	sigs := make(chan os.Signal)
 	wg := sync.WaitGroup{}
 	wg.Add(5)
 
-	node1 := filepath.Join(dir, "node1")
-	node2 := filepath.Join(dir, "node2")
-	node3 := filepath.Join(dir, "node3")
-	node4 := filepath.Join(dir, "node4")
-	node5 := filepath.Join(dir, "node5")
+	node1, err := nettest.LocalPath()
+	require.NoError(t, err)
+	node2, err := nettest.LocalPath()
+	require.NoError(t, err)
+	node3, err := nettest.LocalPath()
+	require.NoError(t, err)
+	node4, err := nettest.LocalPath()
+	require.NoError(t, err)
+	node5, err := nettest.LocalPath()
+	require.NoError(t, err)
 
 	cfg := config{Channel: sigs, Writer: io.Discard}
 
@@ -52,7 +53,7 @@ func TestMemcoin_Scenario_SetupAndTransactions(t *testing.T) {
 		wg.Wait()
 	}()
 
-	require.True(t, waitDaemon(t, []string{node1, node2, node3}), "daemon failed to start")
+	require.True(t, waitDaemon([]string{node1, node2, node3}), "daemon failed to start")
 
 	// Share the certificates.
 	shareCert(t, node2, node1, "//127.0.0.1:2111")
@@ -136,13 +137,11 @@ func TestMemcoin_Scenario_SetupAndTransactions(t *testing.T) {
 // restart. It basically tests if the components are correctly loaded from the
 // persisten storage.
 func TestMemcoin_Scenario_RestartNode(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "memcoin2")
+	node1, err := nettest.LocalPath()
 	require.NoError(t, err)
 
-	defer os.RemoveAll(dir)
-
-	node1 := filepath.Join(dir, "node1")
-	node2 := filepath.Join(dir, "node2")
+	node2, err := nettest.LocalPath()
+	require.NoError(t, err)
 
 	// Setup the chain and closes the node.
 	setupChain(t, []string{node1, node2}, []uint16{2210, 2211})
@@ -164,7 +163,7 @@ func TestMemcoin_Scenario_RestartNode(t *testing.T) {
 		wg.Wait()
 	}()
 
-	require.True(t, waitDaemon(t, []string{node1, node2}), "daemon failed to start")
+	require.True(t, waitDaemon([]string{node1, node2}), "daemon failed to start")
 
 	args := append([]string{
 		os.Args[0],
@@ -210,7 +209,7 @@ func setupChain(t *testing.T, nodes []string, ports []uint16) {
 		wg.Wait()
 	}()
 
-	waitDaemon(t, nodes)
+	waitDaemon(nodes)
 
 	shareCert(t, nodes[1], nodes[0], fmt.Sprintf("//127.0.0.1:%d", ports[0]))
 
@@ -224,7 +223,7 @@ func setupChain(t *testing.T, nodes []string, ports []uint16) {
 	require.NoError(t, err)
 }
 
-func waitDaemon(t *testing.T, daemons []string) bool {
+func waitDaemon(daemons []string) bool {
 	num := 50
 
 	for _, daemon := range daemons {

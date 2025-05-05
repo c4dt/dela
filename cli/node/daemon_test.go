@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"net"
-	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -12,19 +11,18 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.dedis.ch/dela/cli"
 	"go.dedis.ch/dela/testing/fake"
+	"golang.org/x/net/nettest"
 	"golang.org/x/xerrors"
 )
 
 func TestSocketClient_Send(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "dela")
+	f, err := nettest.LocalPath()
 	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
 
 	out := new(bytes.Buffer)
 
 	client := socketClient{
-		socketpath: filepath.Join(dir, "daemon.sock"),
+		socketpath: f,
 		out:        out,
 		dialFn:     net.DialTimeout,
 	}
@@ -71,10 +69,8 @@ func TestSocketClient_BadInConn_Send(t *testing.T) {
 }
 
 func TestSocketDaemon_Listen(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "dela")
+	f, err := nettest.LocalPath()
 	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
 
 	fset := make(FlagSet)
 	fset["1"] = 1
@@ -85,11 +81,11 @@ func TestSocketDaemon_Listen(t *testing.T) {
 	actions := &actionMap{}
 	actions.Set(fakeAction{
 		intFlags: map[string]int{"1": 1},
-	}) // id 0
+	})                                            // id 0
 	actions.Set(fakeAction{err: fake.GetError()}) // id 1
 
 	daemon := &socketDaemon{
-		socketpath:  filepath.Join(dir, "daemon.sock"),
+		socketpath:  f,
 		actions:     actions,
 		closing:     make(chan struct{}),
 		readTimeout: 50 * time.Millisecond,
@@ -129,16 +125,14 @@ func TestSocketDaemon_Listen(t *testing.T) {
 }
 
 func TestSocketDaemon_ConnectivityTest_Listen(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), "dela")
+	f, err := nettest.LocalPath()
 	require.NoError(t, err)
 
-	defer os.RemoveAll(dir)
-
 	daemon := &socketDaemon{
-		socketpath:  filepath.Join(dir, "daemon.sock"),
+		socketpath:  f,
 		actions:     &actionMap{},
 		closing:     make(chan struct{}),
-		readTimeout: 50 * time.Millisecond,
+		readTimeout: 100 * time.Millisecond,
 		listenFn:    net.Listen,
 	}
 

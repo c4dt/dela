@@ -247,7 +247,7 @@ func (f msgFormat) Decode(ctx serde.Context, data []byte) (serde.Message, error)
 		return deal, nil
 
 	case m.Reshare != nil:
-		return f.decodeReshare(ctx, m.Reshare)
+		return f.decodeReshare(m.Reshare)
 
 	case m.Response != nil:
 		resp := types.NewResponse(
@@ -399,8 +399,10 @@ func encodeStartResharing(msg types.StartResharing) (Message, error) {
 	return Message{StartResharing: &resharingRequest}, nil
 }
 
-func (f msgFormat) decodeStartResharing(ctx serde.Context,
-	msg *StartResharing) (serde.Message, error) {
+func (f msgFormat) decodeStartResharing(
+	ctx serde.Context,
+	msg *StartResharing,
+) (serde.Message, error) {
 
 	factory := ctx.GetFactory(types.AddrKey{})
 
@@ -476,8 +478,7 @@ func encodeReshare(msg types.Reshare) (Message, error) {
 	return Message{Reshare: &dr}, nil
 }
 
-func (f msgFormat) decodeReshare(ctx serde.Context,
-	msg *Reshare) (serde.Message, error) {
+func (f msgFormat) decodeReshare(msg *Reshare) (serde.Message, error) {
 
 	deal := types.NewDeal(
 		msg.Deal.Index,
@@ -518,7 +519,7 @@ func encodeStartDone(msg types.StartDone) (Message, error) {
 	return Message{StartDone: &ack}, nil
 }
 
-func (f msgFormat) decodeStartDone(ctx serde.Context, msg *StartDone) (serde.Message, error) {
+func (f msgFormat) decodeStartDone(_ serde.Context, msg *StartDone) (serde.Message, error) {
 	point := f.suite.Point()
 	err := point.UnmarshalBinary(msg.PublicKey)
 	if err != nil {
@@ -549,7 +550,10 @@ func encodeDecryptRequest(msg types.DecryptRequest) (Message, error) {
 	return Message{DecryptRequest: &req}, nil
 }
 
-func (f msgFormat) decodeDecryptRequest(ctx serde.Context, msg *DecryptRequest) (serde.Message, error) {
+func (f msgFormat) decodeDecryptRequest(_ serde.Context, msg *DecryptRequest) (
+	serde.Message,
+	error,
+) {
 	k := f.suite.Point()
 	err := k.UnmarshalBinary(msg.K)
 	if err != nil {
@@ -674,8 +678,10 @@ func encodeVerifiableDecryptRequest(msg types.VerifiableDecryptRequest) (Message
 	return Message{VerifiableDecryptRequest: &req}, nil
 }
 
-func (f msgFormat) decodeVerifiableDecryptRequest(ctx serde.Context,
-	msg *VerifiableDecryptRequest) (serde.Message, error) {
+func (f msgFormat) decodeVerifiableDecryptRequest(
+	_ serde.Context,
+	msg *VerifiableDecryptRequest,
+) (serde.Message, error) {
 
 	ciphertexts := msg.Ciphertexts
 	decodedCiphertexts := []types.Ciphertext{}
@@ -747,7 +753,7 @@ func encodeDecryptReply(msg types.DecryptReply) (Message, error) {
 	return Message{DecryptReply: &resp}, nil
 }
 
-func (f msgFormat) decodeDecryptReply(ctx serde.Context, msg *DecryptReply) (serde.Message, error) {
+func (f msgFormat) decodeDecryptReply(_ serde.Context, msg *DecryptReply) (serde.Message, error) {
 	v := f.suite.Point()
 	err := v.UnmarshalBinary(msg.V)
 	if err != nil {
@@ -807,8 +813,10 @@ func encodeVerifiableDecryptReply(msg types.VerifiableDecryptReply) (Message, er
 	return Message{VerifiableDecryptReply: &req}, nil
 }
 
-func (f msgFormat) decodeVerifiableDecryptReply(ctx serde.Context,
-	msg *VerifiableDecryptReply) (serde.Message, error) {
+func (f msgFormat) decodeVerifiableDecryptReply(
+	_ serde.Context,
+	msg *VerifiableDecryptReply,
+) (serde.Message, error) {
 
 	sps := msg.Sp
 	decodedSps := []types.ShareAndProof{}
@@ -861,7 +869,10 @@ func (f msgFormat) decodeVerifiableDecryptReply(ctx serde.Context,
 	return resp, nil
 }
 
-func (f msgFormat) decodeReencryptRequest(ctx serde.Context, request *ReencryptRequest) (serde.Message, error) {
+func (f msgFormat) decodeReencryptRequest(
+	_ serde.Context,
+	request *ReencryptRequest,
+) (serde.Message, error) {
 	k := f.suite.Point()
 	err := k.UnmarshalBinary(request.K)
 	if err != nil {
@@ -882,7 +893,10 @@ func (f msgFormat) decodeReencryptRequest(ctx serde.Context, request *ReencryptR
 	return resp, nil
 }
 
-func (f msgFormat) decodeReencryptReply(ctx serde.Context, reply *ReencryptReply) (serde.Message, error) {
+func (f msgFormat) decodeReencryptReply(_ serde.Context, reply *ReencryptReply) (
+	serde.Message,
+	error,
+) {
 	pubk := f.suite.Point()
 	err := pubk.UnmarshalBinary(reply.PubK)
 	if err != nil {
@@ -897,7 +911,7 @@ func (f msgFormat) decodeReencryptReply(ctx serde.Context, reply *ReencryptReply
 		return nil, xerrors.Errorf("couldn't unmarshal UiV: %v", err)
 	}
 
-	ui := &share.PubShare{i, v}
+	ui := &share.PubShare{I: i, V: v}
 
 	ei := f.suite.Scalar()
 	err = ei.UnmarshalBinary(reply.Ei)

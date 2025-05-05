@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"crypto/rand"
 	"fmt"
-	"os"
 	"path/filepath"
 	"testing"
 	"testing/quick"
@@ -318,13 +317,16 @@ func TestWritableMerkleTree_Delete(t *testing.T) {
 // Utility functions
 
 func makeDB(t *testing.T) (kv.DB, func()) {
-	dir, err := os.MkdirTemp(os.TempDir(), "dela-pow")
-	require.NoError(t, err)
+	dir := t.TempDir()
 
 	db, err := kv.New(filepath.Join(dir, "test.db"))
 	require.NoError(t, err)
 
-	return db, func() { os.RemoveAll(dir) }
+	clean := func() {
+		db.Close()
+	}
+
+	return db, clean
 }
 
 type badTx struct {
