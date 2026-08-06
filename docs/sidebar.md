@@ -6,5 +6,4 @@
 - **Code**
 - [Guideline](guideline.md)
 - **Instructions**
-- [Memcoin](memcoin.md)
 - [Manual tests](manual_tests.md)
