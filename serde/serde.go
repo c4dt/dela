@@ -20,9 +20,6 @@ type Format string
 const (
 	// FormatJSON is the identifier for JSON formats.
 	FormatJSON Format = "JSON"
-
-	// FormatXML is the identifier for XML formats.
-	FormatXML Format = "XML"
 )
 
 // Message is the interface that a message must implement.
