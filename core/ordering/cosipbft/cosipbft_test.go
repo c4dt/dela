@@ -1064,8 +1064,7 @@ func makeAuthorityTimeout(t *testing.T, n int, mult int, opts ...ServiceOption) 
 		c := threshold.NewThreshold(m, signer)
 		c.SetThreshold(threshold.ByzantineThreshold)
 
-		dir, err := os.MkdirTemp(os.TempDir(), "cosipbft")
-		require.NoError(t, err)
+		dir := t.TempDir()
 
 		db, err := kv.New(filepath.Join(dir, "test.db"))
 		require.NoError(t, err)

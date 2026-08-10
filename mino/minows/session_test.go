@@ -20,17 +20,17 @@ func Test_session_Send(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	const addrPlayer1 = "/ip4/127.0.0.1/tcp/6002/ws"
 	player1, stop := mustCreateMinows(t, addrPlayer1, addrPlayer1)
 	defer stop()
-	mustCreateRPC(t, player1, "test", handler)
+	mustCreateRPC(t, player1, handler)
 
 	const addrPlayer2 = "/ip4/127.0.0.1/tcp/6003/ws"
 	player2, stop := mustCreateMinows(t, addrPlayer2, addrPlayer2)
 	defer stop()
-	mustCreateRPC(t, player2, "test", handler)
+	mustCreateRPC(t, player2, handler)
 
 	s, _, stop := mustStream(t, r, player1, player2)
 	defer stop()
@@ -46,10 +46,14 @@ func Test_session_Send(t *testing.T) {
 	require.False(t, open)
 
 	handler.wait(3)
-	require.Equal(t, []mino.Address{s.(*messageHandler).myAddr,
-		s.(*messageHandler).myAddr, s.(*messageHandler).myAddr}, handler.from)
-	require.Equal(t, []serde.Message{fake.Message{},
-		fake.Message{}, fake.Message{}}, handler.messages)
+	require.Equal(t, []mino.Address{
+		s.(*messageHandler).myAddr,
+		s.(*messageHandler).myAddr, s.(*messageHandler).myAddr,
+	}, handler.from)
+	require.Equal(t, []serde.Message{
+		fake.Message{},
+		fake.Message{}, fake.Message{},
+	}, handler.messages)
 }
 
 func Test_session_Send_ToSelf(t *testing.T) {
@@ -57,12 +61,12 @@ func Test_session_Send_ToSelf(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	const addrPlayer1 = "/ip4/127.0.0.1/tcp/6002/ws"
 	player1, stop := mustCreateMinows(t, addrPlayer1, addrPlayer1)
 	defer stop()
-	mustCreateRPC(t, player1, "test", handler)
+	mustCreateRPC(t, player1, handler)
 
 	s, _, stop := mustStream(t, r, initiator, player1)
 	defer stop()
@@ -78,10 +82,14 @@ func Test_session_Send_ToSelf(t *testing.T) {
 	require.False(t, open)
 
 	handler.wait(3)
-	require.Equal(t, []mino.Address{s.(*messageHandler).myAddr,
-		s.(*messageHandler).myAddr, s.(*messageHandler).myAddr}, handler.from)
-	require.Equal(t, []serde.Message{fake.Message{},
-		fake.Message{}, fake.Message{}}, handler.messages)
+	require.Equal(t, []mino.Address{
+		s.(*messageHandler).myAddr,
+		s.(*messageHandler).myAddr, s.(*messageHandler).myAddr,
+	}, handler.from)
+	require.Equal(t, []serde.Message{
+		fake.Message{},
+		fake.Message{}, fake.Message{},
+	}, handler.messages)
 	require.NotEqual(t, s.(*messageHandler).myAddr, initiator.GetAddress())
 }
 
@@ -90,12 +98,12 @@ func Test_session_Send_WrongAddressType(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	const addrPlayer = "/ip4/127.0.0.1/tcp/6002/ws"
 	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
 	defer stop()
-	mustCreateRPC(t, player, "test", handler)
+	mustCreateRPC(t, player, handler)
 
 	s, _, stop := mustStream(t, r, player)
 	defer stop()
@@ -109,12 +117,12 @@ func Test_session_Send_AddressNotPlayer(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	const addrPlayer = "/ip4/127.0.0.1/tcp/6002/ws"
 	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
 	defer stop()
-	mustCreateRPC(t, player, "test", handler)
+	mustCreateRPC(t, player, handler)
 
 	s, _, stop := mustStream(t, r, player)
 	defer stop()
@@ -130,12 +138,12 @@ func Test_session_Send_SessionEnded(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	rpc := mustCreateRPC(t, initiator, "test", handler)
+	rpc := mustCreateRPC(t, initiator, handler)
 
 	const addrPlayer = "/ip4/127.0.0.1/tcp/6002/ws"
 	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
 	defer stop()
-	mustCreateRPC(t, player, "test", handler)
+	mustCreateRPC(t, player, handler)
 
 	s, _, stop := mustStream(t, rpc, initiator, player)
 	stop()
@@ -157,17 +165,17 @@ func Test_session_Recv(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	const addrPlayer1 = "/ip4/127.0.0.1/tcp/6002/ws"
 	player1, stop := mustCreateMinows(t, addrPlayer1, addrPlayer1)
 	defer stop()
-	mustCreateRPC(t, player1, "test", handler)
+	mustCreateRPC(t, player1, handler)
 
 	const addrPlayer2 = "/ip4/127.0.0.1/tcp/6003/ws"
 	player2, stop := mustCreateMinows(t, addrPlayer2, addrPlayer2)
 	defer stop()
-	mustCreateRPC(t, player2, "test", handler)
+	mustCreateRPC(t, player2, handler)
 
 	sender, receiver, stop := mustStream(t, r, player1, player2)
 	defer stop()
@@ -206,12 +214,12 @@ func Test_session_Recv_FromSelf(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	rpc := mustCreateRPC(t, initiator, "test", handler)
+	rpc := mustCreateRPC(t, initiator, handler)
 
 	const addrPlayer1 = "/ip4/127.0.0.1/tcp/6002/ws"
 	player1, stop := mustCreateMinows(t, addrPlayer1, addrPlayer1)
 	defer stop()
-	mustCreateRPC(t, player1, "test", handler)
+	mustCreateRPC(t, player1, handler)
 
 	s, r, stop := mustStream(t, rpc, initiator, player1)
 	defer stop()
@@ -243,8 +251,10 @@ func Test_session_Recv_FromSelf(t *testing.T) {
 	require.Equal(t, fake.Message{}, msg)
 
 	require.NotEqual(t, from1, from2)
-	require.Equal(t, []mino.Address{s.(*messageHandler).myAddr,
-		s.(*messageHandler).myAddr, s.(*messageHandler).myAddr}, handler.from)
+	require.Equal(t, []mino.Address{
+		s.(*messageHandler).myAddr,
+		s.(*messageHandler).myAddr, s.(*messageHandler).myAddr,
+	}, handler.from)
 	require.NotEqual(t, s.(*messageHandler).myAddr, initiator.GetAddress())
 }
 
@@ -256,12 +266,12 @@ func Test_session_Recv_SessionEnded(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	rpc := mustCreateRPC(t, initiator, "test", handler)
+	rpc := mustCreateRPC(t, initiator, handler)
 
 	const addrPlayer = "/ip4/127.0.0.1/tcp/6002/ws"
 	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
 	defer stop()
-	mustCreateRPC(t, player, "test", handler)
+	mustCreateRPC(t, player, handler)
 
 	s, r, end := mustStream(t, rpc, initiator, player)
 
@@ -282,12 +292,12 @@ func Test_session_Recv_ContextCancelled(t *testing.T) {
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
 	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
 	defer stop()
-	r := mustCreateRPC(t, initiator, "test", handler)
+	r := mustCreateRPC(t, initiator, handler)
 
 	const addrPlayer = "/ip4/127.0.0.1/tcp/6002/ws"
 	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
 	defer stop()
-	mustCreateRPC(t, player, "test", handler)
+	mustCreateRPC(t, player, handler)
 
 	_, receiver, stop := mustStream(t, r, player)
 	defer stop()
@@ -303,8 +313,10 @@ func setTimeout() (context.Context, context.CancelFunc) {
 	return ctx, cancel
 }
 
-func mustStream(t *testing.T, rpc mino.RPC,
-	minos ...mino.Mino) (mino.Sender, mino.Receiver, func()) {
+func mustStream(
+	t *testing.T, rpc mino.RPC,
+	minos ...mino.Mino,
+) (mino.Sender, mino.Receiver, func()) {
 	ctx, cancel := context.WithCancel(context.Background())
 	var addrs []mino.Address
 	for _, m := range minos {

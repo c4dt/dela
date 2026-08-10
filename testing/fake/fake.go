@@ -19,21 +19,21 @@ func init() {
 	random := make([]byte, 4)
 	rand.Read(random)
 
-	fakeErr = xerrors.Errorf("fake error (%x)", random)
+	errFake = xerrors.Errorf("fake error (%x)", random)
 }
 
-// fakeErr is initialized with a random value so that the test suite cannot rely
+// errFake is initialized with a random value so that the test suite cannot rely
 // on a fixed value.
-var fakeErr error
+var errFake error
 
 // GetError returns the fake error.
 func GetError() error {
-	return fakeErr
+	return errFake
 }
 
 // Err returns the expected format of an error returned by a fake component.
 func Err(msg string) string {
-	return fmt.Sprintf("%s: %v", msg, fakeErr)
+	return fmt.Sprintf("%s: %v", msg, errFake)
 }
 
 // Call is a tool to keep track of a function calls.

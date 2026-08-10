@@ -3,16 +3,17 @@ package minows
 import (
 	"context"
 	"encoding/gob"
+	"io"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/rs/zerolog"
 	"go.dedis.ch/dela/mino"
 	"go.dedis.ch/dela/serde"
 	"golang.org/x/xerrors"
-	"io"
-	"strings"
-	"sync"
-	"time"
 )
 
 var ErrWrongAddressType = xerrors.New("wrong address type")
@@ -98,12 +99,21 @@ func (m messageHandler) loop(ctx context.Context) {
 	}()
 }
 
-func (m messageHandler) passMessages(ctx context.Context, stream network.Stream, wg *sync.WaitGroup) {
+func (m messageHandler) passMessages(
+	ctx context.Context,
+	stream network.Stream,
+	wg *sync.WaitGroup,
+) {
 	defer wg.Done()
 	decoder := gob.NewDecoder(stream)
 	for {
 		pkt, err := m.listen(decoder)
 		if err != nil {
+			connError, isConnError := err.(*network.ConnError)
+			if isConnError && !connError.Remote && connError.ErrorCode == 0 {
+				m.logger.Error().Err(err).Msg("stream has been closed locally")
+				return
+			}
 			if strings.Contains(err.Error(), network.ErrReset.Error()) {
 				return
 			}

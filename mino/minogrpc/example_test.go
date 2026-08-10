@@ -102,13 +102,14 @@ func ExampleRPC_Stream() {
 	// Output: B Hello World!
 }
 
-func ExampleRPC_OpentracingDemo() {
+func ExampleRPC_Stream_withOpenTracing() {
 	N := 20
 	minos := make([]*Minogrpc, N)
 	rpcs := make([]mino.RPC, N)
 
 	for i := 0; i < N; i++ {
-		m, err := NewMinogrpc(ParseAddress("127.0.0.1", 0), nil, tree.NewRouter(NewAddressFactory()))
+		m, err := NewMinogrpc(ParseAddress("127.0.0.1", 0), nil,
+			tree.NewRouter(NewAddressFactory()))
 		if err != nil {
 			panic(fmt.Sprintf("overlay %d failed: %s", i, err.Error()))
 		}

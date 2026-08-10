@@ -28,9 +28,9 @@ func NewSnapshot() *InMemorySnapshot {
 func NewBadSnapshot() *InMemorySnapshot {
 	return &InMemorySnapshot{
 		values:    make(map[string][]byte),
-		ErrRead:   fakeErr,
-		ErrWrite:  fakeErr,
-		ErrDelete: fakeErr,
+		ErrRead:   errFake,
+		ErrWrite:  errFake,
+		ErrDelete: errFake,
 	}
 }
 
@@ -89,7 +89,7 @@ func NewInMemoryDB() *InMemoryDB {
 // transactions, and when closing the database.
 func NewBadDB() *InMemoryDB {
 	db := NewInMemoryDB()
-	db.err = fakeErr
+	db.err = errFake
 
 	return db
 }
@@ -97,7 +97,7 @@ func NewBadDB() *InMemoryDB {
 // NewBadViewDB returns a new database that fails to open view transactions.
 func NewBadViewDB() *InMemoryDB {
 	db := NewInMemoryDB()
-	db.errView = fakeErr
+	db.errView = errFake
 
 	return db
 }
@@ -180,7 +180,7 @@ func NewBucket() *Bucket {
 // NewBadWriteBucket returns a new empty bucket that fails to write.
 func NewBadWriteBucket() *Bucket {
 	b := NewBucket()
-	b.errSet = fakeErr
+	b.errSet = errFake
 
 	return b
 }
@@ -188,7 +188,7 @@ func NewBadWriteBucket() *Bucket {
 // NewBadDeleteBucket returns a new empty bucket that fails to delete.
 func NewBadDeleteBucket() *Bucket {
 	b := NewBucket()
-	b.errDelete = fakeErr
+	b.errDelete = errFake
 
 	return b
 }
@@ -196,7 +196,7 @@ func NewBadDeleteBucket() *Bucket {
 // NewBadForeachBucket returns a new empty bucket that fails to iterate
 func NewBadForeachBucket() *Bucket {
 	b := NewBucket()
-	b.errForeach = fakeErr
+	b.errForeach = errFake
 
 	return b
 }

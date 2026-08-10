@@ -59,7 +59,7 @@ type MessageFactory struct {
 
 // NewBadMessageFactory returns a new message factory that returns an error.
 func NewBadMessageFactory() MessageFactory {
-	return MessageFactory{err: fakeErr}
+	return MessageFactory{err: errFake}
 }
 
 // Deserialize implements serde.Factory.
@@ -78,7 +78,7 @@ type Format struct {
 
 // NewBadFormat returns a new format engine that always return an error.
 func NewBadFormat() Format {
-	return Format{err: fakeErr}
+	return Format{err: errFake}
 }
 
 // Encode implements serde.FormatEngine.
@@ -143,7 +143,7 @@ func NewContextWithFormat(f serde.Format) serde.Context {
 func NewBadContext() serde.Context {
 	return serde.NewContext(ContextEngine{
 		format: BadFormat,
-		err:    fakeErr,
+		err:    errFake,
 	})
 }
 
@@ -153,7 +153,7 @@ func NewBadContextWithDelay(delay int) serde.Context {
 	return serde.NewContext(ContextEngine{
 		Count:  &Counter{Value: delay},
 		format: BadFormat,
-		err:    fakeErr,
+		err:    errFake,
 	})
 }
 
