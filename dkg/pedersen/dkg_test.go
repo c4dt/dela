@@ -40,7 +40,7 @@ func TestDKGInstance_HandleStartFail(t *testing.T) {
 		log:      log,
 	}
 
-	err := s.handleMessage(context.TODO(), types.Start{}, fake.NewAddress(0), nil)
+	err := s.handleMessage(t.Context(), types.Start{}, fake.NewAddress(0), nil)
 	require.NoError(t, err)
 
 	time.Sleep(time.Millisecond * 100)
@@ -57,7 +57,7 @@ func TestDKGInstance_HandleStartResharingFail(t *testing.T) {
 		log:      log,
 	}
 
-	err := s.handleMessage(context.TODO(), types.StartResharing{}, fake.NewAddress(0), nil)
+	err := s.handleMessage(t.Context(), types.StartResharing{}, fake.NewAddress(0), nil)
 	require.NoError(t, err)
 
 	time.Sleep(time.Millisecond * 100)
@@ -70,7 +70,7 @@ func TestDKGInstance_HandleDealFail(t *testing.T) {
 		startRes: &state{dkgState: 0xaa},
 	}
 
-	err := s.handleMessage(context.TODO(), types.Deal{}, fake.NewAddress(0), nil)
+	err := s.handleMessage(t.Context(), types.Deal{}, fake.NewAddress(0), nil)
 	require.EqualError(t, err, "bad state: unexpected state: "+
 		"UNKNOWN != one of [Initial Sharing Certified Resharing]")
 }
@@ -80,7 +80,7 @@ func TestDKGInstance_HandleReshareFail(t *testing.T) {
 		startRes: &state{dkgState: 0xaa},
 	}
 
-	err := s.handleMessage(context.TODO(), types.Reshare{}, fake.NewAddress(0), nil)
+	err := s.handleMessage(t.Context(), types.Reshare{}, fake.NewAddress(0), nil)
 	require.EqualError(t, err, "bad state: unexpected state: "+
 		"UNKNOWN != one of [Initial Certified Resharing]")
 }
@@ -90,7 +90,7 @@ func TestDKGInstance_HandleResponseFail(t *testing.T) {
 		startRes: &state{dkgState: 0xaa},
 	}
 
-	err := s.handleMessage(context.TODO(), types.Response{}, fake.NewAddress(0), nil)
+	err := s.handleMessage(t.Context(), types.Response{}, fake.NewAddress(0), nil)
 	require.EqualError(t, err, "bad state: unexpected state: "+
 		"UNKNOWN != one of [Initial Sharing Certified Resharing]")
 }
@@ -100,7 +100,7 @@ func TestDKGInstance_HandleDecryptRequestFail(t *testing.T) {
 		startRes: &state{dkgState: 0xaa},
 	}
 
-	err := s.handleMessage(context.TODO(), types.DecryptRequest{},
+	err := s.handleMessage(t.Context(), types.DecryptRequest{},
 		fake.NewAddress(0), nil)
 
 	require.EqualError(t, err, "bad state: unexpected state: UNKNOWN != one of [Certified]")
@@ -111,7 +111,7 @@ func TestDKGInstance_HandleVerifiableDecryptRequestFail(t *testing.T) {
 		startRes: &state{dkgState: 0xaa},
 	}
 
-	err := s.handleMessage(context.TODO(), types.VerifiableDecryptRequest{},
+	err := s.handleMessage(t.Context(), types.VerifiableDecryptRequest{},
 		fake.NewAddress(0), nil)
 
 	require.EqualError(t, err, "bad state: unexpected state: UNKNOWN != one of [Certified]")
@@ -122,7 +122,7 @@ func TestDKGInstance_HandleReencryptRequestFail(t *testing.T) {
 		startRes: &state{dkgState: 0xaa},
 	}
 
-	err := s.handleMessage(context.TODO(), types.ReencryptRequest{},
+	err := s.handleMessage(t.Context(), types.ReencryptRequest{},
 		fake.NewAddress(0), nil)
 
 	require.EqualError(t, err, "bad state: unexpected state: UNKNOWN != one of [Certified]")
@@ -133,7 +133,7 @@ func TestDKGInstance_HandleUnknown(t *testing.T) {
 		startRes: &state{dkgState: 0xaa},
 	}
 
-	err := s.handleMessage(context.TODO(), fake.Message{}, fake.NewAddress(0), nil)
+	err := s.handleMessage(t.Context(), fake.Message{}, fake.NewAddress(0), nil)
 
 	require.EqualError(t, err, "expected Start message, decrypt request or "+
 		"Deal as first message, got: fake.Message")
@@ -144,7 +144,7 @@ func TestDKGInstance_StartFailNewDKG(t *testing.T) {
 		startRes: &state{},
 	}
 
-	err := s.start(context.TODO(), types.Start{}, channel.Timed[types.Deal]{},
+	err := s.start(t.Context(), types.Start{}, channel.Timed[types.Deal]{},
 		channel.Timed[types.Response]{}, nil, nil)
 
 	require.EqualError(t, err, "failed to create new DKG: dkg: can't run with empty node list")
@@ -162,7 +162,7 @@ func TestDKGInstance_StartFailDeal(t *testing.T) {
 	start := types.NewStart(0, []mino.Address{fake.NewAddress(0)}, []kyber.Point{})
 	from := fake.NewAddress(0)
 
-	err := s.start(context.Background(), start, channel.Timed[types.Deal]{},
+	err := s.start(t.Context(), start, channel.Timed[types.Deal]{},
 		channel.Timed[types.Response]{}, from, fake.Sender{})
 
 	require.EqualError(t, err, "there should be as many participants as pubKey: 1 != 0")
@@ -180,7 +180,7 @@ func TestDKGInstance_StartFailDeal(t *testing.T) {
 			suite.Point(),
 		})
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(t.Context(), time.Second)
 	defer cancel()
 
 	err = s.start(ctx, start, channel.Timed[types.Deal]{},
@@ -196,7 +196,7 @@ func TestDKGInstance_doDKG_DealFail(t *testing.T) {
 		dkg: fakeDKGService{dealsErr: fake.GetError()},
 	}
 
-	err := s.doDKG(context.TODO(), channel.Timed[types.Deal]{},
+	err := s.doDKG(t.Context(), channel.Timed[types.Deal]{},
 		channel.Timed[types.Response]{}, nil, nil)
 
 	require.EqualError(t, err, fake.Err("failed to deal: failed to compute the deals"))
@@ -212,7 +212,7 @@ func TestDKGInstance_doDKG_RespondFail(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	err := s.doDKG(ctx, channel.Timed[types.Deal]{},
@@ -228,7 +228,7 @@ func TestDKGInstance_doDKG_CertifyFail(t *testing.T) {
 		startRes: &state{},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	err := s.doDKG(ctx, channel.Timed[types.Deal]{},
@@ -249,7 +249,7 @@ func TestDKGInstance_doDKG_SwitchFail(t *testing.T) {
 		},
 	}
 
-	err := s.doDKG(context.Background(), channel.Timed[types.Deal]{},
+	err := s.doDKG(t.Context(), channel.Timed[types.Deal]{},
 		channel.Timed[types.Response]{}, nil, nil)
 
 	require.EqualError(t, err, "failed to switch state: certified state must "+
@@ -268,7 +268,7 @@ func TestDKGInstance_doDKG_FinalizeFail(t *testing.T) {
 		},
 	}
 
-	err := s.doDKG(context.Background(), channel.Timed[types.Deal]{},
+	err := s.doDKG(t.Context(), channel.Timed[types.Deal]{},
 		channel.Timed[types.Response]{}, nil, nil)
 
 	require.EqualError(t, err, fake.Err("failed to finalize: failed to get distr key"))
@@ -290,7 +290,7 @@ func TestDKGInstance_deal_SendFail(t *testing.T) {
 		log: log,
 	}
 
-	err := s.deal(context.Background(), fake.NewBadSender())
+	err := s.deal(t.Context(), fake.NewBadSender())
 	require.NoError(t, err)
 
 	require.Regexp(t, "failed to send deal", out.String())
@@ -312,7 +312,7 @@ func TestDKGInstance_deal_ctxFail(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	err = s.deal(ctx, blockingSender{})
@@ -332,7 +332,7 @@ func TestDKGInstance_respond_handleFail(t *testing.T) {
 	deals := channel.WithExpiration[types.Deal](1)
 	deals.Send(types.Deal{})
 
-	err := s.respond(context.Background(), deals, fake.NewBadSender())
+	err := s.respond(t.Context(), deals, fake.NewBadSender())
 	require.EqualError(t, err, fake.Err("failed to handle received deal: failed to process deal"))
 }
 
@@ -343,7 +343,7 @@ func TestDKGInstance_respond_ctxFail(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	err := s.respond(ctx, channel.WithExpiration[types.Deal](1), nil)
@@ -360,7 +360,7 @@ func TestDKGInstance_certifyProcessFail(t *testing.T) {
 	resps := channel.WithExpiration[types.Response](1)
 	resps.Send(types.NewResponse(0, types.NewDealerResponse(0, false, nil, nil)))
 
-	err := s.certify(context.Background(), resps, 1)
+	err := s.certify(t.Context(), resps, 1)
 	require.EqualError(t, err, fake.Err("failed to process response"))
 }
 
@@ -374,7 +374,7 @@ func TestDKGInstance_certifyCertifyFail(t *testing.T) {
 	resps := channel.WithExpiration[types.Response](1)
 	resps.Send(types.NewResponse(0, types.NewDealerResponse(0, false, nil, nil)))
 
-	err := s.certify(context.Background(), resps, 1)
+	err := s.certify(t.Context(), resps, 1)
 	require.EqualError(t, err, "node is not certified")
 }
 
@@ -408,7 +408,7 @@ func TestDKGInstance_certifyOK(t *testing.T) {
 	responses.Send(msg)
 
 	s.dkg = dkg
-	err = s.certify(context.Background(), responses, 1)
+	err = s.certify(t.Context(), responses, 1)
 	require.NoError(t, err)
 }
 
@@ -418,7 +418,7 @@ func TestDKGInstance_certify_ctxFail(t *testing.T) {
 			participants: []mino.Address{fake.NewAddress(0), fake.NewAddress(1)},
 		},
 	}
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	err := s.certify(ctx, channel.WithExpiration[types.Response](1), 1)
@@ -435,7 +435,7 @@ func TestDKGInstance_finalize_sendFail(t *testing.T) {
 		startRes: &state{},
 	}
 
-	err := s.finalize(context.Background(), nil, fake.NewBadSender())
+	err := s.finalize(t.Context(), nil, fake.NewBadSender())
 	require.EqualError(t, err, fake.Err("got an error while sending pub key"))
 }
 
@@ -453,7 +453,7 @@ func TestDKGInstance_finalize_ctxFail(t *testing.T) {
 		log:      log,
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	err := s.finalize(ctx, nil, blockingSender{})
@@ -470,7 +470,7 @@ func TestDKGInstance_finalizeReshare_sistKeyFail(t *testing.T) {
 		startRes: &state{},
 	}
 
-	err := s.finalizeReshare(context.TODO(), commonNode, nil, nil)
+	err := s.finalizeReshare(t.Context(), commonNode, nil, nil)
 	require.EqualError(t, err, fake.Err("failed to get distr key"))
 }
 
@@ -482,7 +482,7 @@ func TestDKGInstance_finalizeReshare_sendFail(t *testing.T) {
 		startRes: &state{},
 	}
 
-	err := s.finalizeReshare(context.Background(), commonNode, fake.NewBadSender(), nil)
+	err := s.finalizeReshare(t.Context(), commonNode, fake.NewBadSender(), nil)
 	require.EqualError(t, err, fake.Err("got an error while sending pub key"))
 }
 
@@ -498,7 +498,7 @@ func TestDKGInstance_finalizeReshare_ctxFail(t *testing.T) {
 		log:      log,
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	err := s.finalizeReshare(ctx, commonNode, blockingSender{}, nil)
@@ -514,7 +514,7 @@ func TestDKGInstance_reshare_lenFail(t *testing.T) {
 
 	msg := types.NewStartResharing(0, 0, make([]mino.Address, 1), nil, nil, nil)
 
-	err := s.reshare(context.TODO(), nil, nil, msg,
+	err := s.reshare(t.Context(), nil, nil, msg,
 		channel.Timed[types.Reshare]{}, channel.Timed[types.Response]{})
 
 	require.EqualError(t, err, "there should be as many participants as pubKey: 1 != 0")
@@ -532,7 +532,7 @@ func TestDKGInstance_reshare_doDKGFail(t *testing.T) {
 
 	msg := types.NewStartResharing(0, 0, nil, nil, nil, nil)
 
-	err := s.reshare(context.TODO(), nil, nil, msg,
+	err := s.reshare(t.Context(), nil, nil, msg,
 		channel.Timed[types.Reshare]{}, channel.Timed[types.Response]{})
 
 	require.EqualError(t, err, "failed to switch state: resharing state must "+
@@ -549,7 +549,7 @@ func TestDKGInstance_doReshare_oldNode_getDistKeyFail(t *testing.T) {
 		},
 	}
 
-	err := s.doReshare(context.TODO(), types.StartResharing{}, nil, nil,
+	err := s.doReshare(t.Context(), types.StartResharing{}, nil, nil,
 		channel.Timed[types.Reshare]{}, channel.Timed[types.Response]{})
 
 	require.EqualError(t, err, fake.Err("old node failed to create"))
@@ -563,7 +563,7 @@ func TestDKGInstance_doReshare_oldNode_NewDistKeyFail(t *testing.T) {
 		dkg: fakeDKGService{},
 	}
 
-	err := s.doReshare(context.TODO(), types.StartResharing{}, nil, nil,
+	err := s.doReshare(t.Context(), types.StartResharing{}, nil, nil,
 		channel.Timed[types.Reshare]{}, channel.Timed[types.Response]{})
 
 	require.EqualError(t, err, "old node failed to compute the new dkg: dkg: "+
@@ -626,7 +626,7 @@ func TestDKGInstance_doReshare_oldNode_sendDealFail(t *testing.T) {
 	}, []mino.Address{fake.NewAddress(0)},
 		[]kyber.Point{pubKey1, pubKey2}, nil)
 
-	err = s.doReshare(context.Background(), msg, fake.NewAddress(0),
+	err = s.doReshare(t.Context(), msg, fake.NewAddress(0),
 		fake.NewBadSender(), channel.Timed[types.Reshare]{}, channel.Timed[types.Response]{})
 
 	require.EqualError(t, err, fake.Err("old node failed to send deals: "+
@@ -650,7 +650,7 @@ func TestDKGInstance_doReshare_commonNode_getDistKeyFail(t *testing.T) {
 	msg := types.NewStartResharing(2, 2, []mino.Address{me, fake.NewAddress(1)},
 		[]mino.Address{me}, nil, nil)
 
-	err := s.doReshare(context.TODO(), msg, nil, nil,
+	err := s.doReshare(t.Context(), msg, nil, nil,
 		channel.Timed[types.Reshare]{}, channel.Timed[types.Response]{})
 	require.EqualError(t, err, fake.Err("common node failed to create"))
 }
@@ -670,7 +670,7 @@ func TestDKGInstance_doReshare_commonNode_NewDistKeyFail(t *testing.T) {
 	msg := types.NewStartResharing(2, 2, []mino.Address{me, fake.NewAddress(1)},
 		[]mino.Address{me}, nil, nil)
 
-	err := s.doReshare(context.TODO(), msg, nil, nil,
+	err := s.doReshare(t.Context(), msg, nil, nil,
 		channel.Timed[types.Reshare]{}, channel.Timed[types.Response]{})
 	require.EqualError(t, err, "common node failed to compute the new dkg: "+
 		"dkg: can't run with empty node list")
@@ -731,7 +731,7 @@ func TestDKGInstance_doReshare_commonNode_sendDealFail(t *testing.T) {
 	msg := types.NewStartResharing(2, 2, []mino.Address{me, fake.NewAddress(1)},
 		[]mino.Address{fake.NewAddress(0)}, []kyber.Point{pubKey1, pubKey2}, nil)
 
-	err = s.doReshare(context.Background(), msg, fake.NewAddress(0),
+	err = s.doReshare(t.Context(), msg, fake.NewAddress(0),
 		fake.NewBadSender(), channel.Timed[types.Reshare]{}, channel.Timed[types.Response]{})
 
 	require.EqualError(t, err, fake.Err("common node failed to send deals: "+
@@ -797,7 +797,7 @@ func TestDKGInstance_doReshare_commonNode_receiveDealFail(t *testing.T) {
 	reshares.Send(types.Reshare{})
 	reshares.Send(types.Reshare{})
 
-	err = s.doReshare(context.Background(), msg, fake.NewAddress(0),
+	err = s.doReshare(t.Context(), msg, fake.NewAddress(0),
 		fake.Sender{}, reshares, channel.Timed[types.Response]{})
 
 	require.Regexp(t, "^common node failed to receive deals", err.Error())
@@ -817,7 +817,7 @@ func TestDKGInstance_doReshare_newNode_ctxFail(t *testing.T) {
 	msg := types.NewStartResharing(2, 2, []mino.Address{me, fake.NewAddress(1)},
 		[]mino.Address{fake.NewAddress(2)}, nil, nil)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	err := s.doReshare(ctx, msg, nil, nil, channel.Timed[types.Reshare]{},
@@ -844,7 +844,7 @@ func TestDKGInstance_doReshare_certifyFail(t *testing.T) {
 	msg := types.NewStartResharing(2, 2, []mino.Address{me, fake.NewAddress(1)},
 		[]mino.Address{}, nil, nil)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	err := s.doReshare(ctx, msg, nil, nil, channel.Timed[types.Reshare]{},
@@ -874,7 +874,7 @@ func TestDKGInstance_doReshare_switchStateFail(t *testing.T) {
 	responses.Send(types.Response{})
 	responses.Send(types.Response{})
 
-	err := s.doReshare(context.Background(), msg, nil, nil,
+	err := s.doReshare(t.Context(), msg, nil, nil,
 		channel.Timed[types.Reshare]{}, responses)
 
 	require.EqualError(t, err, "failed to switch state: "+
@@ -903,7 +903,7 @@ func TestDKGInstance_doReshare_finalizeFail(t *testing.T) {
 	responses.Send(types.Response{})
 	responses.Send(types.Response{})
 
-	err := s.doReshare(context.Background(), msg, nil, fake.NewBadSender(),
+	err := s.doReshare(t.Context(), msg, nil, fake.NewBadSender(),
 		channel.Timed[types.Reshare]{}, responses)
 
 	require.EqualError(t, err, fake.Err("failed to announce dkg public key: "+
@@ -917,7 +917,7 @@ func TestDKGInstance_sendDealsResharing_dealsFail(t *testing.T) {
 		},
 	}
 
-	err := s.sendDealsResharing(context.TODO(), nil, nil, nil)
+	err := s.sendDealsResharing(t.Context(), nil, nil, nil)
 	require.EqualError(t, err, fake.Err("failed to compute the deals"))
 }
 
@@ -928,7 +928,7 @@ func TestDKGInstance_sendDealsResharing_ctxFail(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	err := s.sendDealsResharing(ctx, blockingSender{}, make([]mino.Address, 1), nil)
@@ -997,7 +997,7 @@ func TestDKGInstance_handleDeal_responseFail(t *testing.T) {
 		},
 	}
 
-	err = s.handleDeal(context.Background(), dealMsg, fake.NewBadSender(),
+	err = s.handleDeal(t.Context(), dealMsg, fake.NewBadSender(),
 		s.startRes.getParticipants())
 
 	require.EqualError(t, err, fake.Err("failed to send response to 'fake.Address[0]'"))
@@ -1042,7 +1042,7 @@ func TestDKGInstance_handleDeal_ctxFail(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.TODO())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	err = s.handleDeal(ctx, dealMsg, blockingSender{}, s.startRes.getParticipants())

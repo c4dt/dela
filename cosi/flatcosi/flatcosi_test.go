@@ -56,7 +56,7 @@ func TestActor_Sign(t *testing.T) {
 	rpc.SendResponse(nil, cosi.SignatureResponse{Signature: fake.Signature{}})
 	rpc.Done()
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	sig, err := actor.Sign(ctx, message, ca)
@@ -71,7 +71,7 @@ func TestActor_NetworkError_Sign(t *testing.T) {
 		reactor: fakeReactor{},
 	}
 
-	ctx := context.Background()
+	ctx := t.Context()
 	message := fake.Message{}
 	roster := fake.NewAuthority(3, fake.NewSigner)
 
@@ -86,7 +86,7 @@ func TestActor_FailVerifier_Sign(t *testing.T) {
 		reactor: fakeReactor{},
 	}
 
-	ctx := context.Background()
+	ctx := t.Context()
 	message := fake.Message{}
 	roster := fake.NewAuthority(3, fake.NewSigner)
 
@@ -101,7 +101,7 @@ func TestActor_DenyingReactor_Sign(t *testing.T) {
 		reactor: fakeReactor{err: fake.GetError()},
 	}
 
-	ctx := context.Background()
+	ctx := t.Context()
 	message := fake.Message{}
 	roster := fake.NewAuthority(3, fake.NewSigner)
 
@@ -123,7 +123,7 @@ func TestActor_SignWrongSignature(t *testing.T) {
 	rpc.SendResponse(nil, cosi.SignatureResponse{Signature: fake.Signature{}})
 	rpc.Done()
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	_, err := actor.Sign(ctx, message, ca)
 	require.EqualError(t, err, fake.Err("couldn't verify the aggregation"))
@@ -142,7 +142,7 @@ func TestActor_RPCError_Sign(t *testing.T) {
 
 	rpc.Done()
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	sig, err := actor.Sign(ctx, message, ca)
@@ -161,7 +161,7 @@ func TestActor_Context_Sign(t *testing.T) {
 		reactor: fakeReactor{},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	rpc.SendResponseWithError(nil, fake.GetError())
@@ -184,7 +184,7 @@ func TestActor_SignProcessError(t *testing.T) {
 
 	rpc.SendResponse(nil, fake.Message{})
 	rpc.Done()
-	_, err := actor.Sign(context.Background(), fake.Message{}, ca)
+	_, err := actor.Sign(t.Context(), fake.Message{}, ca)
 	require.EqualError(t, err,
 		"couldn't process response: invalid response type 'fake.Message'")
 

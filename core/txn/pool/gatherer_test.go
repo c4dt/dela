@@ -77,7 +77,7 @@ func TestSimpleGatherer_Remove(t *testing.T) {
 func TestSimpleGatherer_Wait(t *testing.T) {
 	gatherer := NewSimpleGatherer().(*simpleGatherer)
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	cb := func() {
 		gatherer.Lock()
@@ -90,7 +90,7 @@ func TestSimpleGatherer_Wait(t *testing.T) {
 	txs := gatherer.Wait(ctx, Config{Min: 1, Callback: cb})
 	require.Len(t, txs, 1)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	txs = gatherer.Wait(ctx, Config{Min: 1})
@@ -107,7 +107,7 @@ func TestSimpleGatherer_Close(t *testing.T) {
 	require.NoError(t, gatherer.Add(newTx(1, "Alice")))
 	require.NoError(t, gatherer.Remove(newTx(0, "Alice")))
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	wg := sync.WaitGroup{}

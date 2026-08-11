@@ -30,7 +30,7 @@ func TestActor_Sign(t *testing.T) {
 
 	actor.SetThreshold(OneThreshold)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	sig, err := actor.Sign(ctx, fake.Message{}, roster)
@@ -47,7 +47,7 @@ func TestActor_BadNetwork_Sign(t *testing.T) {
 
 	roster := fake.NewAuthority(3, fake.NewSigner)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	_, err := actor.Sign(ctx, fake.Message{}, roster)
@@ -63,7 +63,7 @@ func TestActor_BadReactor_Sign(t *testing.T) {
 
 	roster := fake.NewAuthority(3, fake.NewSigner)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	_, err := actor.Sign(ctx, fake.Message{}, roster)
@@ -88,7 +88,7 @@ func TestActor_MalformedResponse_Sign(t *testing.T) {
 
 	roster := fake.NewAuthority(3, fake.NewSigner)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	_, err := actor.Sign(ctx, fake.Message{}, roster)
@@ -106,7 +106,7 @@ func TestActor_CanceledContext_Sign(t *testing.T) {
 
 	roster := fake.NewAuthority(3, fake.NewSigner)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	_, err := actor.Sign(ctx, fake.Message{}, roster)
@@ -129,7 +129,7 @@ func TestActor_TooManyErrors_Sign(t *testing.T) {
 
 	roster := fake.NewAuthority(3, fake.NewSigner)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	_, err := actor.Sign(ctx, fake.Message{}, roster)
@@ -158,7 +158,7 @@ func TestActor_InvalidSignature_Sign(t *testing.T) {
 		return fake.NewSignerWithPublicKey(fake.NewBadPublicKey())
 	})
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	_, err := actor.Sign(ctx, fake.Message{}, roster)

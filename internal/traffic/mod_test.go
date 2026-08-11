@@ -2,7 +2,6 @@ package traffic
 
 import (
 	"bytes"
-	"context"
 	"io"
 	"os"
 	"path/filepath"
@@ -24,10 +23,10 @@ func TestTraffic_Integration(t *testing.T) {
 	traffic := NewTraffic(src, io.Discard)
 
 	header := metadata.New(map[string]string{headerURIKey: "test"})
-	ctx := metadata.NewOutgoingContext(context.Background(), header)
+	ctx := metadata.NewOutgoingContext(t.Context(), header)
 
 	traffic.LogRecv(ctx, gw, newFakePacket(src, a2))
-	traffic.LogSend(context.Background(), gw, newFakePacket(fake.NewAddress(0)))
+	traffic.LogSend(t.Context(), gw, newFakePacket(fake.NewAddress(0)))
 
 	buffer := new(bytes.Buffer)
 	traffic.Display(buffer)
@@ -110,15 +109,15 @@ func TestTraffic_LogRecv(t *testing.T) {
 	var traffic *Traffic
 
 	// Should not panic
-	traffic.LogRecv(context.Background(), nil, nil)
+	traffic.LogRecv(t.Context(), nil, nil)
 
 	traffic = NewTraffic(fake.NewAddress(0), io.Discard)
 	require.Len(t, traffic.items, 0)
 
-	traffic.LogRecv(context.Background(), nil, nil)
+	traffic.LogRecv(t.Context(), nil, nil)
 	require.Len(t, traffic.items, 1)
 
-	ctx := metadata.NewOutgoingContext(context.Background(), metadata.New(nil))
+	ctx := metadata.NewOutgoingContext(t.Context(), metadata.New(nil))
 	traffic.LogRecv(ctx, nil, nil)
 	require.Len(t, traffic.items, 2)
 }
@@ -136,8 +135,8 @@ func TestTraffic_LogRelay(t *testing.T) {
 
 func TestGenerateItemsGraphViz(t *testing.T) {
 	traffic := NewTraffic(fake.NewAddress(0), io.Discard)
-	traffic.LogRecv(context.Background(), fake.NewAddress(1), newFakePacket(fake.NewAddress(2)))
-	traffic.LogSend(context.Background(), fake.NewAddress(1), newFakePacket(fake.NewAddress(2)))
+	traffic.LogRecv(t.Context(), fake.NewAddress(1), newFakePacket(fake.NewAddress(2)))
+	traffic.LogSend(t.Context(), fake.NewAddress(1), newFakePacket(fake.NewAddress(2)))
 
 	traffic2 := NewTraffic(fake.NewAddress(1), io.Discard)
 
@@ -163,13 +162,13 @@ func TestGenerateEventGraphViz(t *testing.T) {
 
 func TestWatcherIns(t *testing.T) {
 	watcher := GlobalWatcher
-	events := watcher.WatchIns(context.Background())
+	events := watcher.WatchIns(t.Context())
 
 	traffic := NewTraffic(fake.NewAddress(0), io.Discard)
 
 	addr := fake.NewAddress(0)
 	pkt := newFakePacket(fake.NewAddress(1), fake.NewAddress(2))
-	traffic.LogRecv(context.Background(), addr, pkt)
+	traffic.LogRecv(t.Context(), addr, pkt)
 
 	select {
 	case event := <-events:
@@ -182,13 +181,13 @@ func TestWatcherIns(t *testing.T) {
 
 func TestWatcherOuts(t *testing.T) {
 	watcher := GlobalWatcher
-	events := watcher.WatchOuts(context.Background())
+	events := watcher.WatchOuts(t.Context())
 
 	traffic := NewTraffic(fake.NewAddress(0), io.Discard)
 
 	addr := fake.NewAddress(0)
 	pkt := newFakePacket(fake.NewAddress(1), fake.NewAddress(2))
-	traffic.LogSend(context.Background(), addr, pkt)
+	traffic.LogSend(t.Context(), addr, pkt)
 
 	select {
 	case event := <-events:

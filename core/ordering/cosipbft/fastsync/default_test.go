@@ -26,7 +26,7 @@ func TestDefaultSync_Basic(t *testing.T) {
 
 	syncs, genesis, roster := makeNodes(t, n)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := syncs[0].Sync(ctx, roster, Config{SplitMessageSize: 1})
@@ -69,7 +69,7 @@ func TestDefaultSync_SplitMessage(t *testing.T) {
 	for _, test := range tests {
 		syncs, genesis, roster := makeNodes(t, 2)
 
-		ctx, cancel := context.WithCancel(context.Background())
+		ctx, cancel := context.WithCancel(t.Context())
 
 		storeBlocks(t, syncs[0].blocks, num, genesis.GetHash().Bytes()...)
 

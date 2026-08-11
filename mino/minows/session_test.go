@@ -301,7 +301,7 @@ func Test_session_Recv_ContextCancelled(t *testing.T) {
 
 	_, receiver, stop := mustStream(t, r, player)
 	defer stop()
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	_, _, err := receiver.Recv(ctx)
@@ -317,7 +317,7 @@ func mustStream(
 	t *testing.T, rpc mino.RPC,
 	minos ...mino.Mino,
 ) (mino.Sender, mino.Receiver, func()) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	var addrs []mino.Address
 	for _, m := range minos {
 		addrs = append(addrs, m.GetAddress())

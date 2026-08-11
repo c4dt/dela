@@ -40,7 +40,7 @@ func TestIntegration_Scenario_Stream(t *testing.T) {
 
 	authority := fake.NewAuthorityFromMino(fake.NewSigner, mm...)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	sender, recv, err := rpcs[0].Stream(ctx, authority)
@@ -52,7 +52,7 @@ func TestIntegration_Scenario_Stream(t *testing.T) {
 		err := <-sender.Send(fake.Message{}, to)
 		require.NoError(t, err)
 
-		from, msg, err := recv.Recv(context.Background())
+		from, msg, err := recv.Recv(t.Context())
 		require.NoError(t, err)
 		require.True(t, to.Equal(from))
 		require.IsType(t, fake.Message{}, msg)
@@ -74,7 +74,7 @@ func TestIntegration_Scenario_Call(t *testing.T) {
 
 	authority := fake.NewAuthorityFromMino(fake.NewSigner, mm...)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	resps, err := rpcs[0].Call(ctx, fake.Message{}, authority)
@@ -123,7 +123,7 @@ func TestMinogrpc_Scenario_Failures(t *testing.T) {
 
 	authority := fake.NewAuthorityFromMino(fake.NewSigner, srvs...)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
 	defer cancel()
 
 	sender, recvr, err := rpcs[1].Stream(ctx, authority)
@@ -143,7 +143,7 @@ func TestMinogrpc_Scenario_Failures(t *testing.T) {
 		checkError(t, <-errs, srvs[0])
 		require.NoError(t, <-errs)
 
-		from, _, err := recvr.Recv(context.Background())
+		from, _, err := recvr.Recv(t.Context())
 		require.NoError(t, err)
 		require.True(t, to.Equal(from))
 	}
@@ -170,7 +170,7 @@ func TestMinogrpc_Scenario_Failures(t *testing.T) {
 		checkError(t, <-errs, srvs[0], srvs[2], srvs[4])
 		require.NoError(t, <-errs)
 
-		from, _, err := recvr.Recv(context.Background())
+		from, _, err := recvr.Recv(t.Context())
 		require.NoError(t, err)
 		require.True(t, to.Equal(from))
 	}
@@ -196,7 +196,7 @@ func TestOverlayServer_Join(t *testing.T) {
 	cert := overlay.GetCertificateChain()
 	token := overlay.tokens.Generate(time.Hour)
 
-	ctx := context.Background()
+	ctx := t.Context()
 	req := &ptypes.JoinRequest{
 		Token: token,
 		Chain: &ptypes.CertificateChain{
@@ -217,7 +217,7 @@ func TestOverlayJoin_InvalidToken_Join(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	req := &ptypes.JoinRequest{Token: "abc"}
@@ -238,7 +238,7 @@ func TestOverlayJoin_BadAddress_Join(t *testing.T) {
 
 	token := overlay.tokens.Generate(time.Hour)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	req := &ptypes.JoinRequest{Token: token}
@@ -260,7 +260,7 @@ func TestOverlayJoin_BadNetwork_Join(t *testing.T) {
 
 	token := overlay.tokens.Generate(time.Hour)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	req := &ptypes.JoinRequest{Token: token}
@@ -283,7 +283,7 @@ func TestOverlayJoin_BadConn_Join(t *testing.T) {
 
 	token := overlay.tokens.Generate(time.Hour)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	req := &ptypes.JoinRequest{Token: token}
@@ -301,7 +301,7 @@ func TestOverlayServer_Share(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	from := session.NewAddress("127.0.0.1:8080")
@@ -341,7 +341,7 @@ func TestOverlayServer_Share_Bad_Cert(t *testing.T) {
 		Address: fromBuf,
 		Value:   []byte("wrong cert"),
 	}
-	_, err = overlay.Share(context.Background(), msg)
+	_, err = overlay.Share(t.Context(), msg)
 	require.EqualError(t, err, "couldn't parse certificate: x509: malformed certificate")
 }
 
@@ -368,7 +368,7 @@ func TestOverlayServer_Share_Chain_OK(t *testing.T) {
 		Value:   chain,
 	}
 
-	_, err = overlay.Share(context.Background(), msg)
+	_, err = overlay.Share(t.Context(), msg)
 	require.NoError(t, err)
 }
 
@@ -391,7 +391,7 @@ func TestOverlayServer_Share_Malformed_Address(t *testing.T) {
 		Value:   chain,
 	}
 
-	_, err = overlay.Share(context.Background(), msg)
+	_, err = overlay.Share(t.Context(), msg)
 	require.NotNil(t, err)
 	require.True(t, strings.HasPrefix(err.Error(), "malformed address:"), err)
 }
@@ -419,7 +419,7 @@ func TestOverlayServer_Share_Chain_Invalid(t *testing.T) {
 		Value:   chain.Certificate[0],
 	}
 
-	_, err = overlay.Share(context.Background(), msg)
+	_, err = overlay.Share(t.Context(), msg)
 	require.EqualError(t, err,
 		"chain cert invalid: x509: cannot validate certificate for 127.0.0.1 because it doesn't contain any IP SANs")
 }
@@ -462,7 +462,7 @@ func TestOverlayServer_UnknownHandler_Call(t *testing.T) {
 	_, err := overlay.Call(ctx, nil)
 	require.EqualError(t, err, "handler 'unknown' is not registered")
 
-	_, err = overlay.Call(context.Background(), nil)
+	_, err = overlay.Call(t.Context(), nil)
 	require.EqualError(t, err, "handler '' is not registered")
 
 	_, err = overlay.Call(makeCtx(), nil)
@@ -534,7 +534,7 @@ func TestOverlayServer_Stream(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	inCtx := metadata.NewIncomingContext(ctx, metadata.Pairs(
@@ -570,7 +570,7 @@ func TestOverlay_MissingHeaders_Stream(t *testing.T) {
 		},
 	}
 
-	stream := &fakeSrvStream{ctx: context.Background()}
+	stream := &fakeSrvStream{ctx: t.Context()}
 
 	err := overlay.Stream(stream)
 	require.EqualError(t, err, "missing headers")
@@ -753,7 +753,7 @@ func TestOverlay_Forward(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, ack)
 
-	_, err = overlay.Forward(context.Background(), &ptypes.Packet{})
+	_, err = overlay.Forward(t.Context(), &ptypes.Packet{})
 	require.EqualError(t, err, "no header in the context")
 
 	_, err = overlay.Forward(makeCtx(headerURIKey, "unknown"), &ptypes.Packet{})
@@ -1042,7 +1042,7 @@ func TestConnManager_BadTracer_Acquire(t *testing.T) {
 }
 
 func TestDecorateClientTrace_NoFound(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	decorateClientTrace(ctx, nil, "", nil, nil, nil)
 }
 

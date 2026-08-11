@@ -1,6 +1,6 @@
 module go.dedis.ch/dela
 
-go 1.23.8
+go 1.25.0
 
 require (
 	github.com/libp2p/go-libp2p v0.41.1

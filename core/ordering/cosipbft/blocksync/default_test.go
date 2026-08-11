@@ -29,7 +29,7 @@ func TestDefaultSync_Basic(t *testing.T) {
 
 	syncs, genesis, roster := makeNodes(t, n)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := syncs[0].Sync(ctx, roster, Config{
@@ -103,7 +103,7 @@ func TestDefaultSync_Sync(t *testing.T) {
 
 	storeBlocks(t, sync.blocks, 1)
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	err := sync.Sync(ctx, mino.NewAddresses(), Config{MinSoft: 1, MinHard: 1})
 	require.NoError(t, err)

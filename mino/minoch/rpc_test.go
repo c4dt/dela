@@ -24,7 +24,7 @@ func TestRPC_Call(t *testing.T) {
 	mB := MustCreate(manager, "B")
 	mino.MustCreateRPC(mB, "test", fakeHandler{}, fake.MessageFactory{})
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	addrs := mino.NewAddresses(mA.GetAddress(), mB.GetAddress())
@@ -47,7 +47,7 @@ func TestRPC_Filter_Call(t *testing.T) {
 
 	m.AddFilter(func(m mino.Request) bool { return false })
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	resps, err := rpc.Call(ctx, fake.Message{}, mino.NewAddresses(m.GetAddress()))
@@ -62,7 +62,7 @@ func TestRPC_BadContext_Call(t *testing.T) {
 		context: fake.NewBadContext(),
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	_, err := rpc.Call(ctx, fake.Message{}, nil)
@@ -76,7 +76,7 @@ func TestRPC_BadFactory_Call(t *testing.T) {
 
 	rpc := mino.MustCreateRPC(m, "test", fakeHandler{}, fake.NewBadMessageFactory())
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	resps, err := rpc.Call(ctx, fake.Message{}, mino.NewAddresses(m.GetAddress()))
@@ -92,7 +92,7 @@ func TestRPC_UnkownPeer_Call(t *testing.T) {
 	m := MustCreate(manager, "A")
 	rpc := mino.MustCreateRPC(m, "test", fakeHandler{}, fake.MessageFactory{})
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	to := address{
@@ -111,7 +111,7 @@ func TestRPC_MissingHandler_Call(t *testing.T) {
 
 	mB := MustCreate(manager, "B")
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	resps, err := rpcA.Call(ctx, fake.Message{}, mino.NewAddresses(mB.GetAddress()))
@@ -130,7 +130,7 @@ func TestRPC_BadHandler_Call(t *testing.T) {
 	mB := MustCreate(manager, "B")
 	mino.MustCreateRPC(mB, "test", badHandler{}, fake.MessageFactory{})
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	resps, err := rpcA.Call(ctx, fake.Message{}, mino.NewAddresses(mB.GetAddress()))
@@ -146,16 +146,16 @@ func TestRPC_Stream(t *testing.T) {
 	m := MustCreate(manager, "A")
 	rpc := mino.MustCreateRPC(m, "test", fakeStreamHandler{}, fake.MessageFactory{})
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	sender, receiver, err := rpc.Stream(ctx, mino.NewAddresses(m.GetAddress()))
 	require.NoError(t, err)
 
 	sender.Send(fake.Message{}, m.GetAddress())
-	_, _, err = receiver.Recv(context.Background())
+	_, _, err = receiver.Recv(t.Context())
 	require.NoError(t, err)
 
-	ctx, cancel2 := context.WithCancel(context.Background())
+	ctx, cancel2 := context.WithCancel(t.Context())
 	cancel2() // fake a timeout
 	_, _, err = receiver.Recv(ctx)
 	require.Equal(t, err, context.Canceled)
@@ -170,7 +170,7 @@ func TestRPC_Failures_Stream(t *testing.T) {
 
 	rpc := mino.MustCreateRPC(m, "test", fakeBadStreamHandler{}, fake.MessageFactory{})
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	out, in, err := rpc.Stream(ctx, mino.NewAddresses(m.GetAddress()))
@@ -204,7 +204,7 @@ func TestRPC_Full_Stream(t *testing.T) {
 	m := MustCreate(manager, "A")
 	rpc := mino.MustCreateRPC(m, "test", fakeStreamHandler{}, fake.MessageFactory{})
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	sender, _, err := rpc.Stream(ctx, mino.NewAddresses(m.GetAddress()))
 	require.NoError(t, err)
@@ -229,14 +229,14 @@ func TestReceiver_Recv(t *testing.T) {
 		message: []byte(`{}`),
 	}
 
-	from, msg, err := recv.Recv(context.Background())
+	from, msg, err := recv.Recv(t.Context())
 	require.NoError(t, err)
 	require.Equal(t, address{id: "A"}, from)
 	require.NotNil(t, msg)
 
 	recv.factory = fake.NewBadMessageFactory()
 	recv.out <- Envelope{}
-	_, _, err = recv.Recv(context.Background())
+	_, _, err = recv.Recv(t.Context())
 	require.EqualError(t, err, fake.Err("couldn't deserialize"))
 }
 

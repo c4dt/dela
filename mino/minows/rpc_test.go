@@ -23,7 +23,7 @@ func Test_rpc_Call(t *testing.T) {
 	defer stop()
 	mustCreateRPC(t, player, handler)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	req := fake.Message{}
 	players := mino.NewAddresses(player.GetAddress())
@@ -48,7 +48,7 @@ func Test_rpc_Call_ToSelf(t *testing.T) {
 	defer stop()
 	r := mustCreateRPC(t, initiator, handler)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	req := fake.Message{}
 	players := mino.NewAddresses(initiator.GetAddress())
@@ -72,7 +72,7 @@ func Test_rpc_Call_NoPlayers(t *testing.T) {
 	defer stop()
 	r := mustCreateRPC(t, initiator, handler)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	req := fake.Message{}
 	players := mino.NewAddresses()
@@ -93,7 +93,7 @@ func Test_rpc_Call_WrongAddressType(t *testing.T) {
 	defer stop()
 	mustCreateRPC(t, player, handler)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	req := fake.Message{}
 	players := mino.NewAddresses(fake.Address{})
@@ -114,7 +114,7 @@ func Test_rpc_Call_DiffNamespace(t *testing.T) {
 	defer stop()
 	mustCreateRPC(t, player.WithSegment("segment"), handler)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	req := fake.Message{}
 	players := mino.NewAddresses(player.GetAddress())
@@ -142,7 +142,7 @@ func Test_rpc_Call_ContextCancelled(t *testing.T) {
 	defer stop()
 	mustCreateRPC(t, player, handler)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	req := fake.Message{}
 	players := mino.NewAddresses(player.GetAddress())
 
@@ -165,7 +165,7 @@ func Test_rpc_Stream(t *testing.T) {
 	defer stop()
 	mustCreateRPC(t, player, handler)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	players := mino.NewAddresses(player.GetAddress())
 
@@ -182,7 +182,7 @@ func Test_rpc_Stream_ToSelf(t *testing.T) {
 	defer stop()
 	r := mustCreateRPC(t, initiator, handler)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	players := mino.NewAddresses(initiator.GetAddress())
 
@@ -199,7 +199,7 @@ func Test_rpc_Stream_NoPlayers(t *testing.T) {
 	defer stop()
 	r := mustCreateRPC(t, initiator, handler)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	players := mino.NewAddresses()
 
@@ -214,7 +214,7 @@ func Test_rpc_Stream_WrongAddressType(t *testing.T) {
 	defer stop()
 	r := mustCreateRPC(t, initiator, handler)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	players := mino.NewAddresses(fake.Address{})
 
@@ -233,7 +233,7 @@ func Test_rpc_Stream_ContextCancelled(t *testing.T) {
 	defer stop()
 	mustCreateRPC(t, player, handler)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	players := mino.NewAddresses(player.GetAddress())
 
 	cancel()

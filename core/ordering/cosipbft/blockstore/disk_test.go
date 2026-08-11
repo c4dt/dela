@@ -185,7 +185,7 @@ func TestInDisk_Watch(t *testing.T) {
 
 	store := NewDiskStore(db, makeBlockFac())
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	links := store.Watch(ctx)

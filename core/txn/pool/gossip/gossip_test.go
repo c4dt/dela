@@ -48,7 +48,7 @@ func TestPool_Basic(t *testing.T) {
 		}
 	}()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
 	defer cancel()
 
 	txs := pools[0].Gather(ctx, pool.Config{Min: 150})
@@ -129,7 +129,7 @@ func TestPool_Gather(t *testing.T) {
 		gatherer: pool.NewSimpleGatherer(),
 	}
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	cb := func() {
 		require.NoError(t, p.Add(makeFakeTx(0)))
@@ -142,7 +142,7 @@ func TestPool_Gather(t *testing.T) {
 	txs = p.Gather(ctx, pool.Config{Min: 2})
 	require.Len(t, txs, 2)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	txs = p.Gather(ctx, pool.Config{Min: 3})
