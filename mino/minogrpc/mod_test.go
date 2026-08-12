@@ -1,7 +1,6 @@
 package minogrpc
 
 import (
-	"context"
 	"net"
 	"sync"
 	"testing"
@@ -278,7 +277,7 @@ func TestMinogrpc_String(t *testing.T) {
 }
 
 func TestMinogrpc_DecorateTrace_NoFound(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	decorateServerTrace(ctx, nil, "", nil, nil, nil)
 }
 

@@ -23,13 +23,13 @@ import (
 
 func TestSessionNew(t *testing.T) {
 	curr := os.Getenv(traffic.EnvVariable)
-	defer os.Setenv(traffic.EnvVariable, curr)
+	defer t.Setenv(traffic.EnvVariable, curr)
 
-	os.Setenv(traffic.EnvVariable, "log")
+	t.Setenv(traffic.EnvVariable, "log")
 	sess := NewSession(nil, fake.NewAddress(999), nil, nil, fake.NewContext(), nil)
 	require.NotNil(t, sess.(*session).traffic)
 
-	os.Setenv(traffic.EnvVariable, "print")
+	t.Setenv(traffic.EnvVariable, "print")
 	sess = NewSession(nil, fake.NewAddress(999), nil, nil, fake.NewContext(), nil)
 	require.NotNil(t, sess.(*session).traffic)
 
@@ -291,7 +291,7 @@ func TestSession_Recv(t *testing.T) {
 	sess.queue.Push(fakePkt{})
 	sess.queue.Push(fakePkt{})
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 
 	from, msg, err := sess.Recv(ctx)
 	require.NoError(t, err)
@@ -344,15 +344,15 @@ func TestRelay_Send(t *testing.T) {
 		conn: fakeConnection{},
 	}
 
-	ack, err := r.Send(context.Background(), fakePkt{})
+	ack, err := r.Send(t.Context(), fakePkt{})
 	require.NoError(t, err)
 	require.NotNil(t, ack)
 
-	_, err = r.Send(context.Background(), fakePkt{err: fake.GetError()})
+	_, err = r.Send(t.Context(), fakePkt{err: fake.GetError()})
 	require.EqualError(t, err, fake.Err("failed to serialize"))
 
 	r.conn = fakeConnection{err: fake.GetError()}
-	_, err = r.Send(context.Background(), fakePkt{})
+	_, err = r.Send(t.Context(), fakePkt{})
 	require.EqualError(t, err, fake.Err("client"))
 }
 
@@ -374,11 +374,11 @@ func TestStreamRelay_Send(t *testing.T) {
 		stream: &fakeStream{},
 	}
 
-	ack, err := r.Send(context.Background(), fakePkt{})
+	ack, err := r.Send(t.Context(), fakePkt{})
 	require.NoError(t, err)
 	require.Empty(t, ack.Errors)
 
-	_, err = r.Send(context.Background(), fakePkt{err: fake.GetError()})
+	_, err = r.Send(t.Context(), fakePkt{err: fake.GetError()})
 	require.EqualError(t, err, fake.Err("failed to serialize"))
 }
 

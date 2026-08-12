@@ -27,7 +27,7 @@ func NewPublicKeyFactory(pubkey PublicKey) PublicKeyFactory {
 // NewBadPublicKeyFactory returns a fake public key factory that returns an
 // error when appropriate.
 func NewBadPublicKeyFactory() PublicKeyFactory {
-	return PublicKeyFactory{err: fakeErr}
+	return PublicKeyFactory{err: errFake}
 }
 
 // Deserialize implements serde.Factory.
@@ -58,7 +58,7 @@ type Signature struct {
 
 // NewBadSignature returns a signature that will return error when appropriate.
 func NewBadSignature() Signature {
-	return Signature{err: fakeErr}
+	return Signature{err: errFake}
 }
 
 // Equal implements crypto.Signature.
@@ -99,14 +99,14 @@ func NewSignatureFactory(s Signature) SignatureFactory {
 // NewBadSignatureFactory returns a signature factory that will return an error
 // when appropriate.
 func NewBadSignatureFactory() SignatureFactory {
-	return SignatureFactory{err: fakeErr}
+	return SignatureFactory{err: errFake}
 }
 
 // NewBadSignatureFactoryWithDelay returns a signature factory that will return
 // an error after some calls.
 func NewBadSignatureFactoryWithDelay(value int) SignatureFactory {
 	return SignatureFactory{
-		err:     fakeErr,
+		err:     errFake,
 		Counter: &Counter{Value: value},
 	}
 }
@@ -138,14 +138,14 @@ type PublicKey struct {
 // appropriate.
 func NewBadPublicKey() PublicKey {
 	return PublicKey{
-		err:       fakeErr,
-		verifyErr: fakeErr,
+		err:       errFake,
+		verifyErr: errFake,
 	}
 }
 
 // NewInvalidPublicKey returns a fake public key that never verifies.
 func NewInvalidPublicKey() PublicKey {
-	return PublicKey{verifyErr: fakeErr}
+	return PublicKey{verifyErr: errFake}
 }
 
 // Verify implements crypto.PublicKey.
@@ -221,7 +221,7 @@ func NewSignerWithPublicKey(k PublicKey) Signer {
 // NewBadSigner returns a fake signer that will return an error when
 // appropriate.
 func NewBadSigner() Signer {
-	return Signer{err: fakeErr}
+	return Signer{err: errFake}
 }
 
 // GetPublicKeyFactory implements crypto.Signer.
@@ -278,14 +278,14 @@ type Verifier struct {
 
 // NewBadVerifier returns a verifier that will return an error when appropriate.
 func NewBadVerifier() Verifier {
-	return Verifier{err: fakeErr}
+	return Verifier{err: errFake}
 }
 
 // NewBadVerifierWithDelay returns a verifier that will return an error after a
 // given delay.
 func NewBadVerifierWithDelay(value int) Verifier {
 	return Verifier{
-		err:   fakeErr,
+		err:   errFake,
 		count: NewCounter(value),
 	}
 }
@@ -324,7 +324,7 @@ func NewVerifierFactoryWithCalls(c *Call) VerifierFactory {
 // NewBadVerifierFactory returns a fake verifier factory that returns an error
 // when appropriate.
 func NewBadVerifierFactory() VerifierFactory {
-	return VerifierFactory{err: fakeErr}
+	return VerifierFactory{err: errFake}
 }
 
 // FromAuthority implements crypto.VerifierFactory.
@@ -353,13 +353,13 @@ type Hash struct {
 
 // NewBadHash returns a fake hash that returns an error when appropriate.
 func NewBadHash() *Hash {
-	return &Hash{err: fakeErr}
+	return &Hash{err: errFake}
 }
 
 // NewBadHashWithDelay returns a fake hash that returns an error after a certain
 // amount of calls.
 func NewBadHashWithDelay(delay int) *Hash {
-	return &Hash{err: fakeErr, delay: delay}
+	return &Hash{err: errFake, delay: delay}
 }
 
 // Write implements hash.Hash.

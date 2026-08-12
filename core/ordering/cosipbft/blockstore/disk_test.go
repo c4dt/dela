@@ -2,7 +2,7 @@ package blockstore
 
 import (
 	"context"
-	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -185,7 +185,7 @@ func TestInDisk_Watch(t *testing.T) {
 
 	store := NewDiskStore(db, makeBlockFac())
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	links := store.Watch(ctx)
@@ -234,15 +234,11 @@ func TestInDisk_WithTx(t *testing.T) {
 // Utility functions
 
 func makeDB(t *testing.T) (kv.DB, func()) {
-	file, err := os.CreateTemp(os.TempDir(), "dela-blockstore")
-	require.NoError(t, err)
-
-	db, err := kv.New(file.Name())
+	db, err := kv.New(filepath.Join(t.TempDir(), "test.db"))
 	require.NoError(t, err)
 
 	clean := func() {
 		db.Close()
-		file.Close()
 	}
 
 	return db, clean

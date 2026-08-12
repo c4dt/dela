@@ -66,7 +66,7 @@ func testserviceScenarioBasic(t *testing.T, sm syncMethodType) {
 
 	signer := nodes[0].signer
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	initial := ro.Take(mino.RangeFilter(0, 4)).(crypto.CollectiveAuthority)
@@ -137,7 +137,7 @@ func TestService_Scenario_ViewChange_Basic(t *testing.T) {
 	// receive any of them.
 	require.NoError(t, nodes[0].pool.Close())
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := nodes[1].service.Setup(ctx, ro)
@@ -164,7 +164,7 @@ func TestService_Scenario_ViewChange_Request(t *testing.T) {
 		Pool: nodes[3].service.pool,
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := nodes[1].service.Setup(ctx, ro)
@@ -198,7 +198,7 @@ func TestService_Scenario_ViewChange_NoRequest(t *testing.T) {
 
 	signer := nodes[0].signer
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	initial := ro.Take(mino.RangeFilter(0, 4)).(crypto.CollectiveAuthority)
@@ -258,7 +258,7 @@ func TestService_Scenario_FinalizeFailure(t *testing.T) {
 		nodes[i].onet.AddFilter(filter)
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := nodes[0].service.Setup(ctx, ro)
@@ -317,7 +317,7 @@ func TestService_Setup(t *testing.T) {
 	rpc.Done()
 
 	a := fake.NewAuthority(3, fake.NewSigner)
-	ctx := context.Background()
+	ctx := t.Context()
 
 	err := srvc.Setup(ctx, a)
 	require.NoError(t, err)
@@ -342,7 +342,7 @@ func TestService_AlreadySet_Setup(t *testing.T) {
 
 	a := fake.NewAuthority(3, fake.NewSigner)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.Setup(ctx, a)
@@ -361,7 +361,7 @@ func TestService_FailReadGenesis_Setup(t *testing.T) {
 
 	a := fake.NewAuthority(3, fake.NewSigner)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.Setup(ctx, a)
@@ -380,7 +380,7 @@ func TestService_FailPropagate_Setup(t *testing.T) {
 
 	a := fake.NewAuthority(3, fake.NewSigner)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.Setup(ctx, a)
@@ -402,7 +402,7 @@ func TestService_RequestFailure_Setup(t *testing.T) {
 
 	a := fake.NewAuthority(3, fake.NewSigner)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.Setup(ctx, a)
@@ -474,7 +474,7 @@ func TestService_DoRound(t *testing.T) {
 	rpc.SendResponseWithError(fake.NewAddress(2), fake.GetError())
 	rpc.Done()
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Round with timeout but no transaction in the pool.
 	err := srvc.doRound(ctx)
@@ -519,7 +519,7 @@ func TestService_ViewchangeFailed_DoRound(t *testing.T) {
 
 	require.NoError(t, srvc.pool.Add(makeTx(t, 0, fake.NewSigner())))
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.doRound(ctx)
@@ -549,7 +549,7 @@ func TestService_FailPBFTExpire_DoRound(t *testing.T) {
 
 	require.NoError(t, srvc.pool.Add(makeTx(t, 0, fake.NewSigner())))
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.doRound(ctx)
@@ -573,7 +573,7 @@ func TestService_FailSendViews_DoRound(t *testing.T) {
 
 	require.NoError(t, srvc.pool.Add(makeTx(t, 0, fake.NewSigner())))
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.doRound(ctx)
@@ -591,7 +591,7 @@ func TestService_FailReadRoster_DoRound(t *testing.T) {
 	srvc.tree = blockstore.NewTreeCache(fakeTree{})
 	srvc.rosterFac = badRosterFac{}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.doRound(ctx)
@@ -610,7 +610,7 @@ func TestService_FailReadLeader_DoRound(t *testing.T) {
 	srvc.rosterFac = authority.NewFactory(fake.AddressFactory{}, fake.PublicKeyFactory{})
 	srvc.pbftsm = fakeSM{errLeader: fake.GetError()}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.doRound(ctx)
@@ -631,7 +631,7 @@ func TestService_FailSync_DoRound(t *testing.T) {
 	srvc.pbftsm = fakeSM{}
 	srvc.bsync = fakeSync{err: fake.GetError()}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.doRound(ctx)
@@ -656,7 +656,7 @@ func TestService_FailPBFT_DoRound(t *testing.T) {
 
 	require.NoError(t, srvc.pool.Add(makeTx(t, 0, fake.NewSigner())))
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.doRound(ctx)
@@ -679,7 +679,7 @@ func TestService_DoPBFT(t *testing.T) {
 	srvc.pool = mem.NewPool()
 	srvc.rpc = rpc
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	rpc.SendResponseWithError(fake.NewAddress(5), fake.GetError())
@@ -691,7 +691,7 @@ func TestService_DoPBFT(t *testing.T) {
 	require.NoError(t, err)
 
 	// This time the gathering succeeds.
-	ctx = context.Background()
+	ctx = t.Context()
 	require.NoError(t, srvc.pool.Add(makeTx(t, 0, fake.NewSigner())))
 	err = srvc.doPBFT(ctx)
 	require.NoError(t, err)
@@ -706,7 +706,7 @@ func TestService_ContextCanceld_DoPBFT(t *testing.T) {
 
 	require.NoError(t, srvc.pool.Add(makeTx(t, 0, fake.NewSigner())))
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	err := srvc.doPBFT(ctx)
@@ -722,7 +722,7 @@ func TestService_FailValidation_DoPBFT(t *testing.T) {
 
 	require.NoError(t, srvc.pool.Add(makeTx(t, 0, fake.NewSigner())))
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	srvc.val = fakeValidation{err: fake.GetError()}
@@ -742,7 +742,7 @@ func TestService_FailCreateBlock_DoPBFT(t *testing.T) {
 
 	require.NoError(t, srvc.pool.Add(makeTx(t, 0, fake.NewSigner())))
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.doPBFT(ctx)
@@ -761,7 +761,7 @@ func TestService_FailPrepare_DoPBFT(t *testing.T) {
 
 	require.NoError(t, srvc.pool.Add(makeTx(t, 0, fake.NewSigner())))
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.doPBFT(ctx)
@@ -779,7 +779,7 @@ func TestService_FailReadRoster_DoPBFT(t *testing.T) {
 
 	require.NoError(t, srvc.pool.Add(makeTx(t, 0, fake.NewSigner())))
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.doPBFT(ctx)
@@ -799,7 +799,7 @@ func TestService_FailPrepareSig_DoPBFT(t *testing.T) {
 
 	require.NoError(t, srvc.pool.Add(makeTx(t, 0, fake.NewSigner())))
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.doPBFT(ctx)
@@ -822,7 +822,7 @@ func TestService_FailCommitSign_DoPBFT(t *testing.T) {
 
 	require.NoError(t, srvc.pool.Add(makeTx(t, 0, fake.NewSigner())))
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.doPBFT(ctx)
@@ -843,7 +843,7 @@ func TestService_FailPropagation_DoPBFT(t *testing.T) {
 
 	require.NoError(t, srvc.pool.Add(makeTx(t, 0, fake.NewSigner())))
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.doPBFT(ctx)
@@ -868,7 +868,7 @@ func TestService_FailWakeUp_DoPBFT(t *testing.T) {
 
 	require.NoError(t, srvc.pool.Add(makeTx(t, 0, fake.NewSigner())))
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	err := srvc.doPBFT(ctx)
@@ -885,7 +885,7 @@ func TestService_WakeUp(t *testing.T) {
 	srvc.rosterFac = authority.NewFactory(fake.AddressFactory{}, fake.PublicKeyFactory{})
 	srvc.rpc = rpc
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	rpc.SendResponseWithError(fake.NewAddress(5), fake.GetError())
 	rpc.Done()
@@ -1064,8 +1064,7 @@ func makeAuthorityTimeout(t *testing.T, n int, mult int, opts ...ServiceOption) 
 		c := threshold.NewThreshold(m, signer)
 		c.SetThreshold(threshold.ByzantineThreshold)
 
-		dir, err := os.MkdirTemp(os.TempDir(), "cosipbft")
-		require.NoError(t, err)
+		dir := t.TempDir()
 
 		db, err := kv.New(filepath.Join(dir, "test.db"))
 		require.NoError(t, err)

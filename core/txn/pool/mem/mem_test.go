@@ -66,7 +66,7 @@ func TestPool_SetPlayers(t *testing.T) {
 func TestPool_Gather(t *testing.T) {
 	p := NewPool()
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	cb := func() {
 		require.NoError(t, p.Add(fakeTx{}))
@@ -78,7 +78,7 @@ func TestPool_Gather(t *testing.T) {
 	txs = p.Gather(ctx, pool.Config{Min: 1})
 	require.Len(t, txs, 1)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	txs = p.Gather(ctx, pool.Config{Min: 2})

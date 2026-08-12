@@ -1,7 +1,6 @@
 package kv
 
 import (
-	"os"
 	"path/filepath"
 	"testing"
 	"time"
@@ -10,19 +9,12 @@ import (
 	"golang.org/x/xerrors"
 )
 
-const delaTestDir = "dela-core-kv"
-
 func TestBoltDB_UpdateAndView(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
-
-	db, err := New(filepath.Join(dir, "test.db"))
-	require.NoError(t, err)
+	db, clean := makeDB(t)
+	defer clean()
 
 	ch := make(chan struct{})
-	err = db.Update(func(txn WritableTx) error {
+	err := db.Update(func(txn WritableTx) error {
 		txn.OnCommit(func() { close(ch) })
 
 		bucket, err := txn.GetBucketOrCreate([]byte("bucket"))
@@ -51,12 +43,7 @@ func TestBoltDB_UpdateAndView(t *testing.T) {
 }
 
 func TestBoltDB_Close(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
-
-	defer os.RemoveAll(dir)
-
-	db, err := New(filepath.Join(dir, "test.db"))
+	db, err := New(filepath.Join(t.TempDir(), "test.db"))
 	require.NoError(t, err)
 
 	err = db.Close()
@@ -65,15 +52,10 @@ func TestBoltDB_Close(t *testing.T) {
 }
 
 func TestBoltTx_GetBucket(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
+	db, clean := makeDB(t)
+	defer clean()
 
-	defer os.RemoveAll(dir)
-
-	db, err := New(filepath.Join(dir, "test.db"))
-	require.NoError(t, err)
-
-	err = db.Update(func(tx WritableTx) error {
+	err := db.Update(func(tx WritableTx) error {
 		require.Nil(t, tx.GetBucket([]byte("unknown")))
 
 		_, err := tx.GetBucketOrCreate([]byte("A"))
@@ -89,15 +71,10 @@ func TestBoltTx_GetBucket(t *testing.T) {
 }
 
 func TestBoltBucket_Get_Set_Delete(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
+	db, clean := makeDB(t)
+	defer clean()
 
-	defer os.RemoveAll(dir)
-
-	db, err := New(filepath.Join(dir, "test.db"))
-	require.NoError(t, err)
-
-	err = db.Update(func(txn WritableTx) error {
+	err := db.Update(func(txn WritableTx) error {
 		b, err := txn.GetBucketOrCreate([]byte("bucket"))
 		require.NoError(t, err)
 
@@ -121,15 +98,10 @@ func TestBoltBucket_Get_Set_Delete(t *testing.T) {
 }
 
 func TestBoltBucket_ForEach(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
+	db, clean := makeDB(t)
+	defer clean()
 
-	defer os.RemoveAll(dir)
-
-	db, err := New(filepath.Join(dir, "test.db"))
-	require.NoError(t, err)
-
-	err = db.Update(func(txn WritableTx) error {
+	err := db.Update(func(txn WritableTx) error {
 		b, err := txn.GetBucketOrCreate([]byte("test"))
 		require.NoError(t, err)
 
@@ -149,15 +121,10 @@ func TestBoltBucket_ForEach(t *testing.T) {
 }
 
 func TestBoltBucket_Scan(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), delaTestDir)
-	require.NoError(t, err)
+	db, clean := makeDB(t)
+	defer clean()
 
-	defer os.RemoveAll(dir)
-
-	db, err := New(filepath.Join(dir, "test.db"))
-	require.NoError(t, err)
-
-	err = db.Update(func(txn WritableTx) error {
+	err := db.Update(func(txn WritableTx) error {
 		b, err := txn.GetBucketOrCreate([]byte("bucket"))
 		require.NoError(t, err)
 
@@ -186,4 +153,15 @@ func TestBoltBucket_Scan(t *testing.T) {
 		return nil
 	})
 	require.NoError(t, err)
+}
+
+func makeDB(t *testing.T) (DB, func()) {
+	db, err := New(filepath.Join(t.TempDir(), "test.db"))
+	require.NoError(t, err)
+
+	clean := func() {
+		db.Close()
+	}
+
+	return db, clean
 }

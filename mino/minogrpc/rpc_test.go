@@ -28,7 +28,7 @@ func TestRPC_Call(t *testing.T) {
 		},
 	}
 
-	ctx := context.Background()
+	ctx := t.Context()
 	addrs := []mino.Address{session.NewAddress("A"), session.NewAddress("B")}
 
 	msgs, err := rpc.Call(ctx, fake.Message{}, mino.NewAddresses(addrs...))
@@ -60,7 +60,7 @@ func TestRPC_EmptyAnswer_Call(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	addrs := mino.NewAddresses(session.NewAddress(""))
@@ -79,7 +79,7 @@ func TestRPC_FailSerialize_Call(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	_, err := rpc.Call(ctx, fake.Message{}, mino.NewAddresses())
@@ -95,7 +95,7 @@ func TestRPC_FailConn_Call(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	addrs := mino.NewAddresses(session.NewAddress(""))
@@ -117,7 +117,7 @@ func TestRPC_BadConn_Call(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	addrs := mino.NewAddresses(session.NewAddress(""))
@@ -139,7 +139,7 @@ func TestRPC_FailDeserialize_Call(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	addrs := mino.NewAddresses(session.NewAddress(""))
@@ -168,7 +168,7 @@ func TestRPC_Stream(t *testing.T) {
 		factory: fake.MessageFactory{},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	// Send to multiple addresses.
@@ -198,7 +198,7 @@ func TestRPC_Stream(t *testing.T) {
 func TestRPC_EmptyPlayers_Stream(t *testing.T) {
 	rpc := &RPC{}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	_, _, err := rpc.Stream(ctx, mino.NewAddresses())
@@ -212,7 +212,7 @@ func TestRPC_FailRtingTable_Stream(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	_, _, err := rpc.Stream(ctx, mino.NewAddresses(session.NewAddress("")))
@@ -226,7 +226,7 @@ func TestRPC_BadAddress_Stream(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	addrs := mino.NewAddresses(session.NewAddress(""), fake.NewBadAddress())
@@ -243,7 +243,7 @@ func TestRPC_BadGateway_Stream(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	addrs := mino.NewAddresses(session.NewAddress(""))
@@ -262,7 +262,7 @@ func TestRPC_BadConn_Stream(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	addrs := mino.NewAddresses(session.NewAddress(""))
@@ -283,7 +283,7 @@ func TestRPC_BadStream_Stream(t *testing.T) {
 		},
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	addrs := mino.NewAddresses(session.NewAddress(""))

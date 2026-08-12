@@ -105,7 +105,7 @@ func TestInMemory_Watch(t *testing.T) {
 	num := 20
 	store := NewInMemory()
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	ch := store.Watch(ctx)

@@ -1,7 +1,6 @@
 package threshold
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -31,7 +30,7 @@ func TestThreshold_Scenario_Basic(t *testing.T) {
 	_, err = c2.Listen(fakeReactor{err: fake.GetError()})
 	require.NoError(t, err)
 
-	ctx := context.Background()
+	ctx := t.Context()
 	sig, err := actor.Sign(ctx, fake.Message{}, ca)
 	require.NoError(t, err)
 	require.NotNil(t, sig)
