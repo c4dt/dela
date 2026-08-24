@@ -294,3 +294,27 @@ func mustCreateRPC(t *testing.T, m mino.Mino, h mino.Handler) mino.RPC {
 	require.NoError(t, err)
 	return r
 }
+
+// forwardHandler implements mino.Handler
+// Forwards received stream messages to a configured target.
+// - implements mino.Handler
+type forwardHandler struct {
+	target mino.Address
+	result chan error
+}
+
+func (h forwardHandler) Process(req mino.Request) (serde.Message, error) {
+	return req.Message, nil
+}
+
+func (h forwardHandler) Stream(out mino.Sender, in mino.Receiver) error {
+	_, msg, err := in.Recv(context.Background())
+	if err != nil {
+		return err
+	}
+
+	err = <-out.Send(msg, h.target)
+	h.result <- err
+
+	return err
+}
