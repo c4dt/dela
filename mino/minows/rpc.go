@@ -100,32 +100,38 @@ func (r rpc) Stream(ctx context.Context, players mino.Players) (mino.Sender, min
 	if players == nil || players.Len() == 0 {
 		return nil, nil, xerrors.New("no players")
 	}
+	addrs, err := toAddresses(players)
+	if err != nil {
+		return nil, nil, err
+	}
 
 	initiator, err := libp2p.New(libp2p.NoListenAddrs)
 	if err != nil {
 		return nil, nil, xerrors.Errorf("could not start host: %v", err)
 	}
-
-	go func() {
-		<-ctx.Done()
-		err := initiator.Close()
-		if err != nil {
+	opened := make([]network.Stream, 0, len(addrs))
+	closeAll := func() {
+		for _, stream := range opened {
+			if err := stream.Close(); err != nil {
+				r.logger.Error().Err(err).Msg("could not close stream")
+			}
+		}
+		if err := initiator.Close(); err != nil {
 			r.logger.Error().Err(err).Msg("could not close host")
+		}
+	}
+	setupDone := false
+	defer func() {
+		if !setupDone {
+			closeAll()
 		}
 	}()
 
-	errs := make(chan error, players.Len())
-	streams := make(chan network.Stream, players.Len())
+	errs := make(chan error, len(addrs))
+	streams := make(chan network.Stream, len(addrs))
 	var wg sync.WaitGroup
-	wg.Add(players.Len())
-	for iter := players.AddressIterator(); iter.HasNext(); {
-		player := iter.GetNext()
-		addr, ok := player.(address)
-		if !ok {
-			return nil, nil, xerrors.Errorf("%v: %T",
-				ErrWrongAddressType, player)
-		}
-
+	wg.Add(len(addrs))
+	for _, addr := range addrs {
 		go func(addr address) {
 			defer wg.Done()
 			initiator.Peerstore().AddAddr(addr.identity, addr.location,
@@ -138,40 +144,48 @@ func (r rpc) Stream(ctx context.Context, players mino.Players) (mino.Sender, min
 				return
 			}
 			streams <- stream
-
-			go func() {
-				<-ctx.Done()
-				err = stream.Reset()
-				if err != nil {
-					r.logger.Error().Err(err).Msg("could not reset stream")
-				}
-			}()
 		}(addr)
 	}
 
 	wg.Wait()
 	close(errs)
 	close(streams)
+
+	var openErr error
 	for err := range errs {
-		return nil, nil, err
+		if openErr == nil {
+			openErr = err
+		}
 	}
 
-	opened := make([]network.Stream, 0, players.Len())
 	for stream := range streams {
 		opened = append(opened, stream)
+	}
+	if openErr != nil {
+		return nil, nil, openErr
 	}
 	o, err := r.createOrchestrator(ctx, initiator, opened)
 	if err != nil {
 		return nil, nil, xerrors.Errorf("could not create orchestrator: %v", err)
 	}
+
+	go func() {
+		<-ctx.Done()
+		closeAll()
+	}()
+	setupDone = true
+
 	return o, o, nil
 }
 
 func (r rpc) handleCall(stream network.Stream) {
+	defer stream.Close()
+
 	dec := gob.NewDecoder(stream)
 	from, req, err := r.receive(dec)
 	if err != nil {
 		r.logger.Error().Err(err).Msg("could not receive")
+		return
 	}
 
 	id := stream.Conn().RemotePeer()
@@ -192,6 +206,8 @@ func (r rpc) handleStream(stream network.Stream) {
 	p := r.createParticipant(stream)
 
 	go func() {
+		defer stream.Close()
+
 		err := r.handler.Stream(p, p)
 		if err != nil {
 			r.logger.Error().Err(err).Msg("could not handle stream")
@@ -226,6 +242,12 @@ func (r rpc) unicast(ctx context.Context, dest address, req serde.Message) (
 	if err != nil {
 		return nil, xerrors.Errorf("could not open stream: %v", err)
 	}
+	defer stream.Close()
+
+	stopReset := context.AfterFunc(ctx, func() {
+		_ = stream.Reset()
+	})
+	defer stopReset()
 
 	dec := gob.NewEncoder(stream)
 	err = r.send(dec, req)
@@ -248,14 +270,6 @@ func (r rpc) openStream(ctx context.Context, dest address,
 	if err != nil {
 		return nil, xerrors.Errorf("could not open stream: %v", err)
 	}
-
-	go func() {
-		<-ctx.Done()
-		err := stream.Reset()
-		if err != nil {
-			r.logger.Error().Err(err).Msg("could not reset stream")
-		}
-	}()
 
 	return stream, nil
 }
@@ -326,6 +340,7 @@ func (r rpc) createOrchestrator(ctx context.Context,
 	m := &messageHandler{
 		logger: r.logger.With().Stringer("mino", myAddr).
 			Stringer("orchestrator", xid.New()).Logger(),
+		ctx:     ctx,
 		myAddr:  myAddr,
 		rpc:     r,
 		streams: streams,
@@ -343,6 +358,7 @@ func (r rpc) createParticipant(stream network.Stream) messageHandler {
 	ctx, cancel := context.WithCancel(context.Background())
 	m := messageHandler{
 		logger:  r.logger.With().Stringer("participant", xid.New()).Logger(),
+		ctx:     ctx,
 		myAddr:  r.mino.myAddr,
 		rpc:     r,
 		cancel:  cancel,
