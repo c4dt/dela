@@ -141,9 +141,8 @@ func (r rpc) Stream(ctx context.Context, players mino.Players) (mino.Sender, min
 
 			go func() {
 				<-ctx.Done()
-				err = stream.Reset()
-				if err != nil {
-					r.logger.Error().Err(err).Msg("could not reset stream")
+				if err := stream.Close(); err != nil {
+					r.logger.Error().Err(err).Msg("could not close stream")
 				}
 			}()
 		}(addr)
