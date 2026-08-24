@@ -93,6 +93,38 @@ func Test_session_Send_ToSelf(t *testing.T) {
 	require.NotEqual(t, s.(*messageHandler).myAddr, initiator.GetAddress())
 }
 
+func Test_session_Send_ParticipantToParticipant(t *testing.T) {
+	handler := newEchoHandler()
+
+	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
+	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
+	defer stop()
+	r := mustCreateRPC(t, initiator, handler)
+
+	const addrPlayer1 = "/ip4/127.0.0.1/tcp/6002/ws"
+	player1, stop := mustCreateMinows(t, addrPlayer1, addrPlayer1)
+	defer stop()
+
+	const addrPlayer2 = "/ip4/127.0.0.1/tcp/6003/ws"
+	player2, stop := mustCreateMinows(t, addrPlayer2, addrPlayer2)
+	defer stop()
+	mustCreateRPC(t, player2, handler)
+
+	result := make(chan error, 1)
+	mustCreateRPC(t, player1, forwardHandler{
+		target: player2.GetAddress(),
+		result: result,
+	})
+
+	s, _, stop := mustStream(t, r, player1, player2)
+	defer stop()
+
+	errs := s.Send(fake.Message{}, player1.GetAddress())
+	require.NoError(t, <-errs)
+
+	require.NoError(t, <-result)
+}
+
 func Test_session_Send_WrongAddressType(t *testing.T) {
 	handler := newEchoHandler()
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
