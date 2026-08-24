@@ -1,7 +1,9 @@
 package minows
 
 import (
+	"bytes"
 	"context"
+	"encoding/gob"
 	"io"
 	"testing"
 	"time"
@@ -179,12 +181,19 @@ func Test_session_Send_SessionEnded(t *testing.T) {
 
 	errs := s.Send(fake.Message{}, initiator.GetAddress(), player.GetAddress())
 	for i := 0; i < 2; i++ {
-		require.ErrorContains(t, <-errs, context.Canceled.Error())
+		require.ErrorIs(t, <-errs, context.Canceled)
 	}
 
 	_, open := <-errs
 	require.False(t, open)
 	require.Nil(t, handler.messages)
+}
+
+func Test_session_Listen_PreservesEOF(t *testing.T) {
+	decoder := gob.NewDecoder(bytes.NewReader(nil))
+
+	_, err := (messageHandler{}).listen(decoder)
+	require.ErrorIs(t, err, io.EOF)
 }
 
 func Test_session_RemainsOpenWhileStreamExists(t *testing.T) {
