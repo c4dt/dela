@@ -168,10 +168,13 @@ func (r rpc) Stream(ctx context.Context, players mino.Players) (mino.Sender, min
 }
 
 func (r rpc) handleCall(stream network.Stream) {
+	defer stream.Close()
+
 	dec := gob.NewDecoder(stream)
 	from, req, err := r.receive(dec)
 	if err != nil {
 		r.logger.Error().Err(err).Msg("could not receive")
+		return
 	}
 
 	id := stream.Conn().RemotePeer()
@@ -192,6 +195,8 @@ func (r rpc) handleStream(stream network.Stream) {
 	p := r.createParticipant(stream)
 
 	go func() {
+		defer stream.Close()
+
 		err := r.handler.Stream(p, p)
 		if err != nil {
 			r.logger.Error().Err(err).Msg("could not handle stream")
@@ -226,6 +231,12 @@ func (r rpc) unicast(ctx context.Context, dest address, req serde.Message) (
 	if err != nil {
 		return nil, xerrors.Errorf("could not open stream: %v", err)
 	}
+	defer stream.Close()
+
+	stopReset := context.AfterFunc(ctx, func() {
+		_ = stream.Reset()
+	})
+	defer stopReset()
 
 	dec := gob.NewEncoder(stream)
 	err = r.send(dec, req)
@@ -248,14 +259,6 @@ func (r rpc) openStream(ctx context.Context, dest address,
 	if err != nil {
 		return nil, xerrors.Errorf("could not open stream: %v", err)
 	}
-
-	go func() {
-		<-ctx.Done()
-		err := stream.Reset()
-		if err != nil {
-			r.logger.Error().Err(err).Msg("could not reset stream")
-		}
-	}()
 
 	return stream, nil
 }
