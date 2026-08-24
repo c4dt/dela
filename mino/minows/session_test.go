@@ -192,6 +192,39 @@ func Test_session_Send_SessionEnded(t *testing.T) {
 	require.Nil(t, handler.messages)
 }
 
+func Test_session_RemainsOpenWhileStreamExists(t *testing.T) {
+	handler := newEchoHandler()
+	const addrInitiator = "/ip4/127.0.0.1/tcp/6031/ws"
+	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
+	defer stop()
+	rpc := mustCreateRPC(t, initiator, handler)
+
+	const addrPlayer = "/ip4/127.0.0.1/tcp/6032/ws"
+	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
+	defer stop()
+	mustCreateRPC(t, player, handler)
+
+	sender, _, stop := mustStream(t, rpc, player)
+	defer stop()
+
+	time.Sleep(2100 * time.Millisecond)
+
+	const messageCount = 10
+	for i := 0; i < messageCount; i++ {
+		errs := sender.Send(fake.Message{}, player.GetAddress())
+		require.NoError(t, <-errs)
+	}
+
+	timeout := time.After(2 * time.Second)
+	for i := 0; i < messageCount; i++ {
+		select {
+		case <-handler.msgCounter:
+		case <-timeout:
+			t.Fatalf("received %d of %d messages", i, messageCount)
+		}
+	}
+}
+
 func Test_session_Recv(t *testing.T) {
 	handler := newEchoHandler()
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"

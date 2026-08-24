@@ -130,11 +130,12 @@ func (m messageHandler) passMessages(
 }
 
 func (m messageHandler) waitAllClosed() {
+outer:
 	for {
 		for _, s := range m.streams[0].Conn().GetStreams() {
 			if s.ID() == m.streams[0].ID() {
 				time.Sleep(2 * time.Second)
-				continue
+				continue outer
 			}
 		}
 		break
