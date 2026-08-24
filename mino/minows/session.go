@@ -154,6 +154,10 @@ func (m messageHandler) send(addr mino.Address, msg serde.Message) error {
 	}
 
 	encoder, ok := m.outs[unwrapped.identity]
+	if m.isParticipant() {
+		orchestrator := m.streams[0].Conn().RemotePeer()
+		encoder, ok = m.outs[orchestrator]
+	}
 	if !ok {
 		return xerrors.Errorf("%v: %v", ErrNotPlayer, addr)
 	}
