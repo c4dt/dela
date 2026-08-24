@@ -26,6 +26,7 @@ const MaxUnreadAllowed = 1e3
 type messageHandler struct {
 	logger zerolog.Logger
 
+	ctx     context.Context
 	myAddr  mino.Address
 	rpc     rpc
 	streams []network.Stream
@@ -144,6 +145,12 @@ outer:
 }
 
 func (m messageHandler) send(addr mino.Address, msg serde.Message) error {
+	select {
+	case <-m.ctx.Done():
+		return m.ctx.Err()
+	default:
+	}
+
 	var unwrapped address
 	switch a := addr.(type) {
 	case address:

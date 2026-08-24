@@ -328,6 +328,7 @@ func (r rpc) createOrchestrator(ctx context.Context,
 	m := &messageHandler{
 		logger: r.logger.With().Stringer("mino", myAddr).
 			Stringer("orchestrator", xid.New()).Logger(),
+		ctx:     ctx,
 		myAddr:  myAddr,
 		rpc:     r,
 		streams: streams,
@@ -345,6 +346,7 @@ func (r rpc) createParticipant(stream network.Stream) messageHandler {
 	ctx, cancel := context.WithCancel(context.Background())
 	m := messageHandler{
 		logger:  r.logger.With().Stringer("participant", xid.New()).Logger(),
+		ctx:     ctx,
 		myAddr:  r.mino.myAddr,
 		rpc:     r,
 		cancel:  cancel,

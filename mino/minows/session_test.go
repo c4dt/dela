@@ -3,12 +3,9 @@ package minows
 import (
 	"context"
 	"io"
-	"strings"
 	"testing"
 	"time"
 
-	"github.com/libp2p/go-libp2p/core/network"
-	"github.com/libp2p/go-yamux/v4"
 	"github.com/stretchr/testify/require"
 	"go.dedis.ch/dela/mino"
 	"go.dedis.ch/dela/serde"
@@ -182,9 +179,7 @@ func Test_session_Send_SessionEnded(t *testing.T) {
 
 	errs := s.Send(fake.Message{}, initiator.GetAddress(), player.GetAddress())
 	for i := 0; i < 2; i++ {
-		err := (<-errs).Error()
-		require.True(t, strings.Contains(err, network.ErrReset.Error()) ||
-			strings.Contains(err, yamux.ErrSessionShutdown.Error()))
+		require.ErrorContains(t, <-errs, context.Canceled.Error())
 	}
 
 	_, open := <-errs
