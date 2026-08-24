@@ -153,7 +153,13 @@ func (m messageHandler) send(addr mino.Address, msg serde.Message) error {
 		return xerrors.Errorf("%v: %T", ErrWrongAddressType, addr)
 	}
 
-	encoder, ok := m.outs[unwrapped.identity]
+	nextHop := unwrapped.identity
+
+	if m.isParticipant() {
+		nextHop = m.streams[0].Conn().RemotePeer()
+	}
+
+	encoder, ok := m.outs[nextHop]
 	if !ok {
 		return xerrors.Errorf("%v: %v", ErrNotPlayer, addr)
 	}
