@@ -264,6 +264,53 @@ func Test_rpc_Stream(t *testing.T) {
 	require.NotNil(t, receiver)
 }
 
+func Test_rpc_Stream_PartialConnectivity(t *testing.T) {
+	handler := newEchoHandler()
+	const addrInitiator = "/ip4/127.0.0.1/tcp/6051/ws"
+	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
+	defer stop()
+	r := mustCreateRPC(t, initiator, handler)
+
+	const addrPlayer = "/ip4/127.0.0.1/tcp/6052/ws"
+	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
+	defer stop()
+	mustCreateRPC(t, player, handler)
+
+	unreachable := mustCreateAddress(t, "/ip4/127.0.0.1/tcp/6059/ws",
+		"QmaD31nEzFGwD8dK96UFWHtTYTqYJgHLMYSFz4W4Hm2WCU")
+	players := mino.NewAddresses(player.GetAddress(), unreachable)
+	ctx, cancel := context.WithTimeout(t.Context(), 2*time.Second)
+	defer cancel()
+
+	sender, receiver, err := r.Stream(ctx, players)
+	require.NoError(t, err)
+	require.NotNil(t, sender)
+	require.NotNil(t, receiver)
+
+	errs := sender.Send(fake.Message{}, player.GetAddress(), unreachable)
+	require.ErrorContains(t, <-errs, "not player")
+	_, open := <-errs
+	require.False(t, open)
+	handler.wait(1)
+}
+
+func Test_rpc_Stream_NoReachablePlayers(t *testing.T) {
+	handler := newEchoHandler()
+	const addrInitiator = "/ip4/127.0.0.1/tcp/6061/ws"
+	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
+	defer stop()
+	r := mustCreateRPC(t, initiator, handler)
+
+	unreachable := mustCreateAddress(t, "/ip4/127.0.0.1/tcp/6069/ws",
+		"QmaD31nEzFGwD8dK96UFWHtTYTqYJgHLMYSFz4W4Hm2WCU")
+	players := mino.NewAddresses(unreachable)
+	ctx, cancel := context.WithTimeout(t.Context(), 2*time.Second)
+	defer cancel()
+
+	_, _, err := r.Stream(ctx, players)
+	require.ErrorContains(t, err, "could not open stream")
+}
+
 func Test_rpc_Stream_ToSelf(t *testing.T) {
 	handler := &echoHandler{}
 	const addrInitiator = "/ip4/127.0.0.1/tcp/6001/ws"
