@@ -161,7 +161,7 @@ func (r rpc) Stream(ctx context.Context, players mino.Players) (mino.Sender, min
 	for stream := range streams {
 		opened = append(opened, stream)
 	}
-	if openErr != nil {
+	if len(opened) == 0 {
 		return nil, nil, openErr
 	}
 	o, err := r.createOrchestrator(ctx, initiator, opened)
