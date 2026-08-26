@@ -244,6 +244,8 @@ func (r rpc) unicast(ctx context.Context, dest address, req serde.Message) (
 	}
 	defer stream.Close()
 
+	// Reset on context cancellation to unblock pending I/O.
+	// stopReset runs before stream.Close(), preventing a reset after normal completion.
 	stopReset := context.AfterFunc(ctx, func() {
 		_ = stream.Reset()
 	})
