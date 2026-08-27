@@ -21,6 +21,31 @@ func init() {
 	RegisterMessageFormat(fake.BadFormat, fake.NewBadFormat())
 }
 
+func TestGetPeerPubKey_Serialize(t *testing.T) {
+	request := NewGetPeerPubKey()
+
+	data, err := request.Serialize(fake.NewContext())
+	require.NoError(t, err)
+	require.Equal(t, fake.GetFakeFormatValue(), data)
+
+	_, err = request.Serialize(fake.NewBadContext())
+	require.EqualError(t, err, fake.Err("couldn't encode GetPeerPubKey"))
+}
+
+func TestGetPeerPubKeyResp(t *testing.T) {
+	publicKey := fakePoint{}
+	response := NewGetPeerPubKeyResp(publicKey)
+
+	require.Equal(t, publicKey, response.GetPublicKey())
+
+	data, err := response.Serialize(fake.NewContext())
+	require.NoError(t, err)
+	require.Equal(t, fake.GetFakeFormatValue(), data)
+
+	_, err = response.Serialize(fake.NewBadContext())
+	require.EqualError(t, err, fake.Err("couldn't encode GetPeerPubKeyResp"))
+}
+
 func TestStart_GetThreshold(t *testing.T) {
 	start := NewStart(5, nil, nil)
 

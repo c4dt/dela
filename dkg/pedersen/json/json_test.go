@@ -18,6 +18,36 @@ import (
 // suite is the Kyber suite for Pedersen.
 var suite = suites.MustFind("Ed25519")
 
+func TestMessageFormat_PeerPublicKey(t *testing.T) {
+	format := newMsgFormat()
+	ctx := serde.NewContext(fake.ContextEngine{})
+
+	data, err := format.Encode(ctx, types.NewGetPeerPubKey())
+	require.NoError(t, err)
+	require.JSONEq(t, `{"GetPeerPubKey":{}}`, string(data))
+
+	request, err := format.Decode(ctx, data)
+	require.NoError(t, err)
+	require.IsType(t, types.GetPeerPubKey{}, request)
+
+	publicKey := suite.Point().Pick(suite.RandomStream())
+	data, err = format.Encode(ctx, types.NewGetPeerPubKeyResp(publicKey))
+	require.NoError(t, err)
+
+	message, err := format.Decode(ctx, data)
+	require.NoError(t, err)
+	response := message.(types.GetPeerPubKeyResp)
+	require.True(t, publicKey.Equal(response.GetPublicKey()))
+
+	_, err = format.Encode(ctx, types.NewGetPeerPubKeyResp(badPoint{}))
+	require.EqualError(t, err,
+		fake.Err("failed to marshal pubkey"))
+
+	_, err = format.Decode(ctx, []byte(`{"GetPeerPubKeyResp":{"PublicKey":[]}}`))
+	require.EqualError(t, err,
+		"failed to unmarshal pubkey: invalid Ed25519 curve point")
+}
+
 func TestMessageFormat_EncodeStart(t *testing.T) {
 	start := types.NewStart(1, []mino.Address{fake.NewAddress(0)}, []kyber.Point{suite.Point()})
 

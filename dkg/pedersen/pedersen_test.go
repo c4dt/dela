@@ -85,6 +85,48 @@ func TestPedersen_Setup(t *testing.T) {
 	require.Regexp(t, "^the public keys does not match:", err)
 }
 
+func TestPedersen_SetupWithPlayers(t *testing.T) {
+	manager := minoch.NewManager()
+	const n = 3
+
+	actors := make([]*Actor, n)
+	addrs := make([]mino.Address, n)
+	for i := range n {
+		m := minoch.MustCreate(manager, fmt.Sprintf("peer-%d", i))
+		addrs[i] = m.GetAddress()
+		pedersen, _ := NewPedersen(m)
+		actor, err := pedersen.Listen()
+		require.NoError(t, err)
+		actors[i] = actor.(*Actor)
+	}
+
+	publicKey, err := actors[0].SetupWithPlayers(mino.NewAddresses(addrs...), n)
+	require.NoError(t, err)
+
+	K, ciphertexts, err := actors[0].Encrypt([]byte("test"))
+	require.NoError(t, err)
+	index, partial, err := actors[0].DecryptShare(K, ciphertexts[0])
+	require.NoError(t, err)
+	require.NotNil(t, partial)
+	require.GreaterOrEqual(t, index, 0)
+
+	buf, err := actors[0].MarshalBinary()
+	require.NoError(t, err)
+
+	restarted := minoch.MustCreate(minoch.NewManager(), "peer-0")
+	restoredActor, err := Restore(restarted, buf)
+	require.NoError(t, err)
+
+	restored := restoredActor.(*Actor)
+	restoredKey, err := restored.GetPublicKey()
+	require.NoError(t, err)
+	require.True(t, publicKey.Equal(restoredKey))
+
+	_, restoredPartial, err := restored.DecryptShare(K, ciphertexts[0])
+	require.NoError(t, err)
+	require.True(t, partial.Equal(restoredPartial))
+}
+
 func TestPedersen_GetPublicKey(t *testing.T) {
 	actor := Actor{
 		startRes: &state{},

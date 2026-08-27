@@ -55,6 +55,59 @@ func RegisterMessageFormat(c serde.Format, f serde.FormatEngine) {
 	msgFormats.Register(c, f)
 }
 
+// GetPeerPubKey ...
+//
+// - implements serde.Message
+type GetPeerPubKey struct{}
+
+// NewGetPeerPubKey creates a new get peer pubkey message.
+func NewGetPeerPubKey() GetPeerPubKey {
+	return GetPeerPubKey{}
+}
+
+// Serialize implements serde.Message.
+func (s GetPeerPubKey) Serialize(ctx serde.Context) ([]byte, error) {
+	format := msgFormats.Get(ctx.GetFormat())
+
+	data, err := format.Encode(ctx, s)
+	if err != nil {
+		return nil, xerrors.Errorf("couldn't encode GetPeerPubKey: %v", err)
+	}
+
+	return data, nil
+}
+
+// GetPeerPubKeyResp ...
+//
+// - implements serde.Message
+type GetPeerPubKeyResp struct {
+	publicKey kyber.Point
+}
+
+// NewGetPeerPubKeyResp creates a new get peer pubkey message.
+func NewGetPeerPubKeyResp(pubkey kyber.Point) GetPeerPubKeyResp {
+	return GetPeerPubKeyResp{
+		publicKey: pubkey,
+	}
+}
+
+// Serialize implements serde.Message.
+func (s GetPeerPubKeyResp) Serialize(ctx serde.Context) ([]byte, error) {
+	format := msgFormats.Get(ctx.GetFormat())
+
+	data, err := format.Encode(ctx, s)
+	if err != nil {
+		return nil, xerrors.Errorf("couldn't encode GetPeerPubKeyResp: %v", err)
+	}
+
+	return data, nil
+}
+
+// GetPublicKey returns the peer DKG public key.
+func (s GetPeerPubKeyResp) GetPublicKey() kyber.Point {
+	return s.publicKey
+}
+
 // Start is the message the initiator of the DKG protocol should send to all the
 // nodes.
 //

@@ -21,6 +21,12 @@ type Address []byte
 
 type PublicKey []byte
 
+type GetPeerPubKey struct{}
+
+type GetPeerPubKeyResp struct {
+	PublicKey PublicKey
+}
+
 type Start struct {
 	Threshold  int
 	Addresses  []Address
@@ -121,6 +127,8 @@ type ReencryptReply struct {
 }
 
 type Message struct {
+	GetPeerPubKey            *GetPeerPubKey            `json:",omitempty"`
+	GetPeerPubKeyResp        *GetPeerPubKeyResp        `json:",omitempty"`
 	Start                    *Start                    `json:",omitempty"`
 	StartResharing           *StartResharing           `json:",omitempty"`
 	Deal                     *Deal                     `json:",omitempty"`
@@ -155,6 +163,19 @@ func (f msgFormat) Encode(ctx serde.Context, msg serde.Message) ([]byte, error) 
 	var err error
 
 	switch in := msg.(type) {
+	case types.GetPeerPubKey:
+		m = Message{
+			GetPeerPubKey: &GetPeerPubKey{},
+		}
+	case types.GetPeerPubKeyResp:
+		v, err := in.GetPublicKey().MarshalBinary()
+		if err != nil {
+			return nil, xerrors.Errorf("failed to marshal pubkey: %v", err)
+		}
+
+		m = Message{GetPeerPubKeyResp: &GetPeerPubKeyResp{
+			PublicKey: v,
+		}}
 	case types.Start:
 		m, err = encodeStart(in)
 	case types.StartResharing:
@@ -226,6 +247,18 @@ func (f msgFormat) Decode(ctx serde.Context, data []byte) (serde.Message, error)
 	}
 
 	switch {
+	case m.GetPeerPubKey != nil:
+		return types.NewGetPeerPubKey(), nil
+
+	case m.GetPeerPubKeyResp != nil:
+		v := f.suite.Point()
+		err = v.UnmarshalBinary(m.GetPeerPubKeyResp.PublicKey)
+		if err != nil {
+			return nil, xerrors.Errorf("failed to unmarshal pubkey: %v", err)
+		}
+
+		return types.NewGetPeerPubKeyResp(v), nil
+
 	case m.Start != nil:
 		return f.decodeStart(ctx, m.Start)
 
