@@ -4,7 +4,6 @@ go 1.25.0
 
 require (
 	github.com/libp2p/go-libp2p v0.41.1
-	github.com/libp2p/go-yamux/v4 v4.0.2
 	github.com/multiformats/go-multiaddr v0.15.0
 	github.com/opentracing-contrib/go-grpc v0.1.2
 	github.com/opentracing/opentracing-go v1.2.0

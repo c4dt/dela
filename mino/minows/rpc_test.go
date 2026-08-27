@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 	"go.dedis.ch/dela/mino"
@@ -151,6 +152,94 @@ func Test_rpc_Call_ContextCancelled(t *testing.T) {
 	<-responses
 	_, ok := <-responses
 	require.False(t, ok)
+}
+
+func Test_rpc_Call_ReleasesStreams(t *testing.T) {
+	handler := &echoHandler{}
+	const addrInitiator = "/ip4/127.0.0.1/tcp/6011/ws"
+	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
+	defer stop()
+	r := mustCreateRPC(t, initiator, handler)
+
+	const addrPlayer = "/ip4/127.0.0.1/tcp/6012/ws"
+	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
+	defer stop()
+	mustCreateRPC(t, player, handler)
+
+	players := mino.NewAddresses(player.GetAddress())
+	for range 300 {
+		responses, err := r.Call(t.Context(), fake.Message{}, players)
+		require.NoError(t, err)
+
+		resp := <-responses
+		_, err = resp.GetMessageOrError()
+		require.NoError(t, err)
+		_, open := <-responses
+		require.False(t, open)
+	}
+}
+
+func Test_rpc_Stream_ReleasesHandledStream(t *testing.T) {
+	handler := &returnHandler{done: make(chan struct{})}
+	const addrInitiator = "/ip4/127.0.0.1/tcp/6041/ws"
+	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
+	defer stop()
+	r := mustCreateRPC(t, initiator, handler)
+
+	const addrPlayer = "/ip4/127.0.0.1/tcp/6042/ws"
+	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
+	defer stop()
+	mustCreateRPC(t, player, handler)
+
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	players := mino.NewAddresses(player.GetAddress())
+
+	_, _, err := r.Stream(ctx, players)
+	require.NoError(t, err)
+	select {
+	case <-handler.done:
+	case <-time.After(time.Second):
+		t.Fatal("stream handler did not return")
+	}
+
+	require.Eventually(t, func() bool {
+		for _, conn := range player.host.Network().Conns() {
+			if len(conn.GetStreams()) > 0 {
+				return false
+			}
+		}
+		return true
+	}, time.Second, 10*time.Millisecond)
+}
+
+func Test_rpc_Stream_DeliversBeforeCancel(t *testing.T) {
+	handler := &receiveHandler{received: make(chan serde.Message, 1)}
+	const addrInitiator = "/ip4/127.0.0.1/tcp/6071/ws"
+	initiator, stop := mustCreateMinows(t, addrInitiator, addrInitiator)
+	defer stop()
+	r := mustCreateRPC(t, initiator, handler)
+
+	const addrPlayer = "/ip4/127.0.0.1/tcp/6072/ws"
+	player, stop := mustCreateMinows(t, addrPlayer, addrPlayer)
+	defer stop()
+	mustCreateRPC(t, player, handler)
+
+	ctx, cancel := context.WithCancel(t.Context())
+	players := mino.NewAddresses(player.GetAddress())
+	sender, _, err := r.Stream(ctx, players)
+	require.NoError(t, err)
+
+	errs := sender.Send(fake.Message{}, player.GetAddress())
+	require.NoError(t, <-errs)
+	cancel()
+
+	select {
+	case msg := <-handler.received:
+		require.Equal(t, fake.Message{}, msg)
+	case <-time.After(time.Second):
+		t.Fatal("message was not delivered before shutdown")
+	}
 }
 
 func Test_rpc_Stream(t *testing.T) {
@@ -317,4 +406,34 @@ func (h forwardHandler) Stream(out mino.Sender, in mino.Receiver) error {
 	h.result <- err
 
 	return err
+}
+
+type returnHandler struct {
+	done chan struct{}
+}
+
+func (h *returnHandler) Process(req mino.Request) (serde.Message, error) {
+	return req.Message, nil
+}
+
+func (h *returnHandler) Stream(mino.Sender, mino.Receiver) error {
+	close(h.done)
+	return nil
+}
+
+type receiveHandler struct {
+	received chan serde.Message
+}
+
+func (h *receiveHandler) Process(req mino.Request) (serde.Message, error) {
+	return req.Message, nil
+}
+
+func (h *receiveHandler) Stream(_ mino.Sender, in mino.Receiver) error {
+	_, msg, err := in.Recv(context.Background())
+	if err != nil {
+		return err
+	}
+	h.received <- msg
+	return nil
 }
