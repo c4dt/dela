@@ -3,8 +3,8 @@ package minows
 import (
 	"context"
 	"encoding/gob"
+	"errors"
 	"io"
-	"strings"
 	"sync"
 	"time"
 
@@ -46,7 +46,7 @@ func (m messageHandler) Send(msg serde.Message, addrs ...mino.Address) <-chan er
 			defer wg.Done()
 			err := m.send(addr, msg)
 			if err != nil {
-				errs <- xerrors.Errorf("could not send %T to %v: %v", msg, addr, err)
+				errs <- xerrors.Errorf("could not send %T to %v: %w", msg, addr, err)
 				return
 			}
 			m.logger.Debug().Msgf("sent %T to %v", msg, addr)
@@ -110,12 +110,7 @@ func (m messageHandler) passMessages(
 	for {
 		pkt, err := m.listen(decoder)
 		if err != nil {
-			connError, isConnError := err.(*network.ConnError)
-			if isConnError && !connError.Remote && connError.ErrorCode == 0 {
-				m.logger.Error().Err(err).Msg("stream has been closed locally")
-				return
-			}
-			if strings.Contains(err.Error(), network.ErrReset.Error()) {
+			if errors.Is(err, io.EOF) || errors.Is(err, network.ErrReset) {
 				return
 			}
 			m.logger.Error().Err(err).Msg("message dropped")
@@ -215,7 +210,7 @@ func (m messageHandler) listen(decoder *gob.Decoder) (packet, error) {
 		var pkt packet
 		err := decoder.Decode(&pkt)
 		if err != nil {
-			return packet{}, xerrors.Errorf("could not decode packet: %v", err)
+			return packet{}, err
 		}
 
 		if m.isParticipant() {
