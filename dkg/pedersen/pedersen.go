@@ -2,6 +2,7 @@ package pedersen
 
 import (
 	"crypto/sha256"
+	"encoding/json"
 	"runtime"
 	"sync"
 	"time"
@@ -89,11 +90,13 @@ func NewPedersen(m mino.Mino) (*Pedersen, kyber.Point) {
 // in the DKG. Creates the RPC.
 func (s *Pedersen) Listen() (dkg.Actor, error) {
 	h := NewHandler(s.privKey, s.mino.GetAddress())
+	instance := h.dkgInstance.(*instance)
 
 	a := &Actor{
 		rpc:      mino.MustCreateRPC(s.mino, "dkg", h, s.factory),
 		factory:  s.factory,
 		startRes: h.dkgInstance.getState(),
+		instance: instance,
 	}
 
 	return a, nil
@@ -109,6 +112,18 @@ type Actor struct {
 	rpc      mino.RPC
 	factory  serde.Factory
 	startRes *state
+	instance *instance
+}
+
+// actorData contains the DKG state that must survive a restart.
+type actorData struct {
+	State          dkgState
+	DistKey        []byte   `json:",omitempty"`
+	Participants   [][]byte `json:",omitempty"`
+	PrivShare      []byte   `json:",omitempty"`
+	PrivShareIndex int      `json:",omitempty"`
+	PubKey         []byte
+	PrivKey        []byte
 }
 
 // Setup implement dkg.Actor. It initializes the DKG.
@@ -197,6 +212,247 @@ func (a *Actor) Setup(coAuth crypto.CollectiveAuthority, threshold int) (kyber.P
 	}
 
 	return dkgPubKeys[0], nil
+}
+
+// SetupWithPlayers initializes the DKG with a Mino roster.
+func (a *Actor) SetupWithPlayers(players mino.Players, threshold int) (kyber.Point, error) {
+	if a.startRes.Done() {
+		return nil, xerrors.Errorf("startRes is already done, only one setup call is allowed")
+	}
+
+	nbNodes := players.Len()
+	thresholdMin := 2
+	if nbNodes < 2 {
+		thresholdMin = 1
+	}
+
+	if threshold < thresholdMin || threshold > nbNodes {
+		return nil, xerrors.Errorf("DKG threshold (%d) needs to be between %d and %d",
+			threshold, thresholdMin, nbNodes)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), setupTimeout)
+	defer cancel()
+	ctx = context.WithValue(ctx, tracing.ProtocolKey, protocolNameSetup)
+
+	sender, receiver, err := a.rpc.Stream(ctx, players)
+	if err != nil {
+		return nil, xerrors.Errorf("failed to stream: %v", err)
+	}
+
+	if players.Len() == 0 {
+		return nil, xerrors.Errorf("number of nodes cannot be zero")
+	}
+
+	addrs := make([]mino.Address, 0, players.Len())
+	addrIter := players.AddressIterator()
+	for addrIter.HasNext() {
+		addrs = append(addrs, addrIter.GetNext())
+	}
+
+	// get the peer DKG pub keys
+	getPeerKey := types.NewGetPeerPubKey()
+	errs := sender.Send(getPeerKey, addrs...)
+
+	err = <-errs
+	if err != nil {
+		return nil, xerrors.Errorf("failed to send getPeerKey message: %v", err)
+	}
+
+	lenAddrs := len(addrs)
+	dkgPeerPubkeys := make([]kyber.Point, 0, lenAddrs)
+	associatedAddrs := make([]mino.Address, 0, lenAddrs)
+
+	if lenAddrs == 0 {
+		return nil, xerrors.Errorf("the list of addresses is empty")
+	}
+
+	for i := 0; i < lenAddrs; i++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+		defer cancel()
+
+		from, msg, err := receiver.Recv(ctx)
+		if err != nil {
+			return nil, xerrors.Errorf("failed to receive peer pubkey: %v", err)
+		}
+
+		dela.Logger.Info().Msgf("received a response from %v", from)
+
+		resp, ok := msg.(types.GetPeerPubKeyResp)
+		if !ok {
+			return nil, xerrors.Errorf("received an unexpected message: %T - %s", resp, resp)
+		}
+
+		dkgPeerPubkeys = append(dkgPeerPubkeys, resp.GetPublicKey())
+		associatedAddrs = append(associatedAddrs, from)
+
+		dela.Logger.Info().Msgf("Public key: %s", resp.GetPublicKey().String())
+	}
+
+	message := types.NewStart(threshold, associatedAddrs, dkgPeerPubkeys)
+
+	errs = sender.Send(message, addrs...)
+	err = <-errs
+	if err != nil {
+		return nil, xerrors.Errorf("failed to send start: %v", err)
+	}
+
+	dkgPubKeys := make([]kyber.Point, lenAddrs)
+
+	for i := 0; i < lenAddrs; i++ {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*200)
+		defer cancel()
+
+		addr, msg, err := receiver.Recv(ctx)
+		if err != nil {
+			return nil, xerrors.Errorf("got an error from '%s' while receiving: %v", addr, err)
+		}
+
+		doneMsg, ok := msg.(types.StartDone)
+		if !ok {
+			return nil, xerrors.Errorf("expected to receive a Done message, but "+
+				"go the following: %T", msg)
+		}
+
+		dkgPubKeys[i] = doneMsg.GetPublicKey()
+
+		// this is a simple check that every node sends back the same DKG pub
+		// key.
+		if i != 0 && !dkgPubKeys[i-1].Equal(doneMsg.GetPublicKey()) {
+			return nil, xerrors.Errorf("the public keys do not match: %v", dkgPubKeys)
+		}
+
+		dela.Logger.Info().Msgf("ok for %s", addr.String())
+	}
+
+	return dkgPubKeys[0], nil
+}
+
+// DecryptShare computes a partial decryption with the actor's private share.
+func (a *Actor) DecryptShare(K, C kyber.Point) (int, kyber.Point, error) {
+	if !a.startRes.Done() {
+		return 0, nil, xerrors.Errorf(initDkgFirst)
+	}
+
+	a.instance.Lock()
+	defer a.instance.Unlock()
+
+	S := suite.Point().Mul(a.instance.privShare.V, K)
+	partialVal := suite.Point().Sub(C, S)
+
+	return a.instance.privShare.I, partialVal, nil
+}
+
+// MarshalBinary returns the data needed to restore the actor after a restart.
+func (a *Actor) MarshalBinary() ([]byte, error) {
+	a.instance.Lock()
+	defer a.instance.Unlock()
+
+	privKey, err := a.instance.privKey.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
+
+	pubKey, err := suite.Point().Mul(a.instance.privKey, nil).MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
+
+	data := actorData{
+		PubKey:  pubKey,
+		PrivKey: privKey,
+	}
+
+	if a.instance.privShare != nil {
+		data.PrivShare, err = a.instance.privShare.V.MarshalBinary()
+		if err != nil {
+			return nil, err
+		}
+		data.PrivShareIndex = a.instance.privShare.I
+	}
+
+	a.startRes.Lock()
+	defer a.startRes.Unlock()
+
+	data.State = a.startRes.dkgState
+
+	if a.startRes.distrKey != nil {
+		data.DistKey, err = a.startRes.distrKey.MarshalBinary()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	data.Participants = make([][]byte, len(a.startRes.participants))
+	for i, participant := range a.startRes.participants {
+		data.Participants[i], err = participant.MarshalText()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return json.Marshal(data)
+}
+
+// Restore recreates an actor from data returned by MarshalBinary.
+func Restore(m mino.Mino, buf []byte) (dkg.Actor, error) {
+	data := actorData{}
+	err := json.Unmarshal(buf, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	privKey := suite.Scalar()
+	err = privKey.UnmarshalBinary(data.PrivKey)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal the public key as d-voting's HandlerData does, even though it
+	// can be derived from the private key.
+	pubKey := suite.Point()
+	err = pubKey.UnmarshalBinary(data.PubKey)
+	if err != nil {
+		return nil, err
+	}
+
+	startRes := &state{dkgState: data.State}
+	if len(data.DistKey) != 0 {
+		startRes.distrKey = suite.Point()
+		err = startRes.distrKey.UnmarshalBinary(data.DistKey)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	startRes.participants = make([]mino.Address, len(data.Participants))
+	for i, participant := range data.Participants {
+		startRes.participants[i] = m.GetAddressFactory().FromText(participant)
+	}
+
+	h := NewHandler(privKey, m.GetAddress())
+	instance := h.dkgInstance.(*instance)
+	instance.startRes = startRes
+	instance.running = data.State != certified
+
+	if len(data.PrivShare) != 0 {
+		privShare := suite.Scalar()
+		err = privShare.UnmarshalBinary(data.PrivShare)
+		if err != nil {
+			return nil, err
+		}
+		instance.privShare = &share.PriShare{I: data.PrivShareIndex, V: privShare}
+	}
+
+	factory := types.NewMessageFactory(m.GetAddressFactory())
+	actor := &Actor{
+		rpc:      mino.MustCreateRPC(m, "dkg", h, factory),
+		factory:  factory,
+		startRes: startRes,
+		instance: instance,
+	}
+
+	return actor, nil
 }
 
 // GetPublicKey implements dkg.Actor

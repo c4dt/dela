@@ -116,6 +116,15 @@ func (s *instance) handleMessage(
 	// receive other messages in the meantime, like a Deal.
 	switch msg := msg.(type) {
 
+	case types.GetPeerPubKey:
+		response := types.NewGetPeerPubKeyResp(suite.Point().Mul(s.privKey, nil))
+		errs := out.Send(response, from)
+		err := <-errs
+		if err != nil {
+			return xerrors.Errorf("got an error while sending the get peer pubkey resp "+
+				"reply: %v", err)
+		}
+
 	case types.Start:
 		go func() {
 			err := s.start(ctx, msg, s.deals, s.responses, from, out)
